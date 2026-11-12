@@ -2,63 +2,99 @@
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
 <h2>🚀 One-Click Smart Update</h2>
-<details open><summary>⚠️ Read Before Update</summary>
+
+<details open>
+<summary>⚠️ Read Before Update</summary>
 <div class="card" style="border-left:4px solid #f85149;margin-bottom:12px">
-</details>
-<p style="font-size:12px">Updating may overwrite custom files. Must do before update:</p>
+<p style="font-size:12px">Updating may overwrite custom files. Steps enforced by the script:</p>
 <ol style="padding-left:20px;font-size:12px;margin:4px 0">
-<li>Backup all custom files (Portal HTML/config/compose)</li>
-<li>Record current version</li>
-<li>Check if custom files overwritten after update</li>
-<li>If overwritten, restore from backup</li>
+<li>Auto-backup all compose/env/portal files before update</li>
+<li>Snapshot container state (names, images, health)</li>
+<li>Pull latest images + recreate only changed containers</li>
+<li>Verify container count matches pre-update state</li>
+<li>Restore on rollback</li>
 </ol>
 </div>
+</details>
+
 <div class="grid">
-<details open><summary>📦 Step 1: Backup</summary>
-<div class="card">
+<details open>
+<summary>🚀 One-Click Update (Recommended)</summary>
+<div class="card" style="border-left:4px solid #2ea043">
+<pre style="font-size:12px;background:#f0fff4;padding:12px;border-radius:6px"># Full update with automatic backup
+bash /home/admin958168/_docker/ubuntu/one-click-update.sh
+
+# Dry run (preview only, no changes)
+bash /home/admin958168/_docker/ubuntu/one-click-update.sh --dry-run
+
+# Skip backup (not recommended)
+bash /home/admin958168/_docker/ubuntu/one-click-update.sh --no-backup</pre>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">Script: <code>/home/admin958168/_docker/ubuntu/one-click-update.sh</code></p>
+<p style="font-size:11px;color:#6b7280">Logs: <code>/home/admin958168/_docker/ubuntu/logs/update-*.log</code></p>
+<p style="font-size:11px;color:#6b7280">Backups: <code>/home/admin958168/_docker/ubuntu/backups/YYYYMMDD-HHMMSS/</code></p>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px">BACKUP=/tmp/backup-$(date +%Y%m%d-%H%M)
+
+<details>
+<summary>🔧 Manual Update Steps</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Step 1: Backup
+BACKUP=~/docker/ubuntu/backups/$(date +%Y%m%d-%H%M)
 mkdir -p $BACKUP
-
-# BackupCustom Files
-cp -r ~/docker/_portainer/www/Developer-ms202603jpc/ $BACKUP/
-cp ~/docker/ubuntu/port-registry.json $BACKUP/
 cp ~/docker/ubuntu/docker-compose.yml $BACKUP/
+cp ~/docker/_portainer/.env $BACKUP/portainer-.env
 
-# Backup Stack Config
-for s in 14 15 16; do
-  cp ~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/$s/.env $BACKUP/stack$s.env
-done</pre></div>
-<details open><summary>🔄 Step 2: UpdateService</summary>
-<div class="card">
-</details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px">cd ~/docker/ubuntu
-
-# Core Services (Forgejo/Windmill/Woodpecker)
+# Step 2: Pull and recreate
+cd ~/docker/ubuntu
 docker compose pull && docker compose up -d
+cd ~/docker/_portainer
+docker compose up -d
 
-# Portainer Stacks
+# Step 3: Stacks
 for s in 14 15 16; do
-  cd Official-Area_Portainer/data/portainer/compose/$s
+  cd ~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/$s
   docker compose pull && docker compose up -d
-  cd ~/docker/ubuntu
 done
 
-# Cleanup Old Images
-docker image prune -f</pre></div>
-<details open><summary>✅ Step 3: Verify</summary>
-<div class="card">
+# Step 4: Cleanup
+docker image prune -f</pre>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># CheckAllContainerStatus
-docker ps --format 'table {{.Names}}\t{{.Status}}'
 
-# Verify Services Reachable
-for p in 8000 9000 53000 58090 58100 59009; do
+<details open>
+<summary>✅ Post-Update Verification</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Container health check
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}'
+
+# Service reachability
+for p in 8000 9000 53000 58090 58100 59000 59009; do
   curl -so /dev/null -w "%{http_code} :$p\n" http://10.1.4.201:$p/
 done
 
-# Compare Custom Files
-diff $BACKUP/Developer-ms202603jpc/index.html ~/docker/_portainer/www/Developer-ms202603jpc/index.html</pre></div>
-</div></div>
+# Live status JSON
+bash /home/admin958168/_docker/ubuntu/live-status.sh health
 
-<!-- 06. Version Info -->
+# Compare pre/post state
+diff ~/docker/ubuntu/logs/pre-update-state.txt \
+     ~/docker/ubuntu/logs/post-update-state.txt</pre>
+</div>
+</details>
+
+<details>
+<summary>⏪ Rollback (if update breaks something)</summary>
+<div class="card" style="border-left:4px solid #f85149">
+<pre style="font-size:11px;background:#fef2f2;padding:8px;border-radius:6px"># Find latest backup
+ls -lt ~/docker/ubuntu/backups/ | head -5
+
+# Restore compose files from backup
+BACKUP=~/docker/ubuntu/backups/YYYYMMDD-HHMMSS
+cp $BACKUP/ubuntu-compose.yml ~/docker/ubuntu/docker-compose.yml
+cp $BACKUP/portainer-.env ~/docker/_portainer/.env
+
+# Restart with restored config
+cd ~/docker/ubuntu && docker compose up -d
+cd ~/docker/_portainer && docker compose up -d</pre>
+</div>
+</details>
+</div>

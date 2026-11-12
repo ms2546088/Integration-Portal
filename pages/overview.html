@@ -2,6 +2,22 @@
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
 <h2>📊 System Overview</h2>
+
+<details open>
+<summary>💚 Live System Health</summary>
+<div class="card" id="live-health" style="border-left:4px solid #2ea043">
+<div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px" id="health-grid">
+<div><strong>Containers</strong><br><span id="h-total">--</span> total / <span id="h-running" style="color:#2ea043">--</span> running</div>
+<div><strong>Memory</strong><br><span id="h-mem">--</span></div>
+<div><strong>Swap</strong><br><span id="h-swap">--</span></div>
+<div><strong>Disk</strong><br><span id="h-disk">--</span></div>
+<div><strong>CPU</strong><br><span id="h-cpu">--</span> cores | Load: <span id="h-load">--</span></div>
+<div><strong>Last Check</strong><br><span id="h-time">--</span></div>
+</div>
+<p style="font-size:11px;color:#6b7280;margin-top:8px">Data source: <code>bash live-status.sh health</code> | Path: <code>/home/admin958168/_docker/ubuntu/live-status.sh</code></p>
+</div>
+</details>
+
 <div class="grid" id="overview-cards"></div>
 
 <details open>
@@ -22,7 +38,7 @@
 .arch-flow .arch-node:nth-child(6){animation-delay:.3s}.arch-flow .arch-node:nth-child(8){animation-delay:.4s}
 </style>
 <div class="arch-layer">
-<div class="arch-layer-title">👤 DeverLayer</div>
+<div class="arch-layer-title">👤 Developer Layer</div>
 <div class="arch-flow">
 <div class="arch-node"><strong>Developer</strong><small>VSCode/Cursor</small></div>
 <span class="arch-arrow">→</span>
@@ -31,7 +47,7 @@
 <div class="arch-node"><strong>git push</strong><small>Code Changes</small></div>
 </div></div>
 <div class="arch-layer">
-<div class="arch-layer-title">📦 Version Control+CI/CD Layer</div>
+<div class="arch-layer-title">📦 Version Control + CI/CD Layer</div>
 <div class="arch-flow">
 <div class="arch-node"><strong>🦊 Forgejo :53000</strong><small>Git Server</small></div>
 <span class="arch-arrow">⇄</span>
@@ -42,7 +58,7 @@
 <div class="arch-node"><strong>📦 Registry :55000</strong><small>Docker Images</small></div>
 </div></div>
 <div class="arch-layer">
-<div class="arch-layer-title">🚀 Deploy+ManageLayer</div>
+<div class="arch-layer-title">🚀 Deploy + Management Layer</div>
 <div class="arch-flow">
 <div class="arch-node"><strong>☁️ Coolify :8000</strong><small>Auto Deploy</small></div>
 <span class="arch-arrow">→</span>
@@ -51,7 +67,7 @@
 <div class="arch-node"><strong>🐳 Docker Engine</strong><small>24 Containers</small></div>
 </div></div>
 <div class="arch-layer">
-<div class="arch-layer-title">⚙️ Automation+SystemLayer</div>
+<div class="arch-layer-title">⚙️ Automation + System Layer</div>
 <div class="arch-flow">
 <div class="arch-node"><strong>⚡ Windmill :58100</strong><small>Workflows</small></div>
 <div class="arch-node"><strong>🌐 Nginx-UI :9000</strong><small>Proxy</small></div>
@@ -65,15 +81,15 @@
 <summary>🔌 All Service Ports</summary>
 <div class="card" style="overflow-x:auto">
 <table style="width:100%;font-size:12px"><thead><tr><th>Port</th><th>Service</th><th>Protocol</th><th>Description</th></tr></thead><tbody>
-<tr><td>22</td><td>SSH (Host)</td><td>TCP</td><td>Ubuntu HostManage</td></tr>
-<tr><td>80</td><td>Nginx</td><td>HTTP</td><td>ReverseProxyEntry</td></tr>
-<tr><td>443</td><td>Nginx HTTPS</td><td>HTTPS</td><td>TLS TLS Entry</td></tr>
-<tr><td>5432</td><td>PostgreSQL</td><td>TCP</td><td>Coolify/Windmill SharedDatabase</td></tr>
-<tr><td>8000</td><td>Coolify</td><td>HTTP</td><td>AutomationDeployPlatform (Apache-2.0)</td></tr>
-<tr><td>9000</td><td>Nginx-UI</td><td>HTTP</td><td>Nginx ManageUI</td></tr>
+<tr><td>22</td><td>SSH (Host)</td><td>TCP</td><td>Ubuntu Host Management</td></tr>
+<tr><td>80</td><td>Nginx</td><td>HTTP</td><td>Reverse Proxy Entry</td></tr>
+<tr><td>443</td><td>Nginx HTTPS</td><td>HTTPS</td><td>TLS Entry</td></tr>
+<tr><td>5432</td><td>PostgreSQL</td><td>TCP</td><td>Coolify/Windmill Shared Database</td></tr>
+<tr><td>8000</td><td>Coolify</td><td>HTTP</td><td>Automation Deploy Platform (Apache-2.0)</td></tr>
+<tr><td>9000</td><td>Nginx-UI</td><td>HTTP</td><td>Nginx Management UI</td></tr>
 <tr><td>51433</td><td>MSSQL</td><td>TCP</td><td>Stack14 SQL Server 2022</td></tr>
 <tr><td>51521</td><td>Oracle</td><td>TCP</td><td>Stack16 Oracle 21c XE</td></tr>
-<tr><td>52200</td><td>SSH Docker</td><td>SSH</td><td>DevUse Docker Container SSH</td></tr>
+<tr><td>52200</td><td>SSH Docker</td><td>SSH</td><td>Dev Use Docker Container SSH</td></tr>
 <tr><td>52222</td><td>Forgejo SSH</td><td>SSH</td><td>Git SSH (git clone)</td></tr>
 <tr><td>53000</td><td>Forgejo</td><td>HTTP</td><td>Git Server (GPL-3.0)</td></tr>
 <tr><td>53306</td><td>MySQL</td><td>TCP</td><td>Stack15 MySQL 8.0</td></tr>
@@ -82,12 +98,12 @@
 <tr><td>58081</td><td>SSLH (Nginx+MySQL)</td><td>SSH/HTTP</td><td>Stack15 Multi-Protocol Router</td></tr>
 <tr><td>58082</td><td>SSLH (Oracle)</td><td>SSH/HTTP</td><td>Stack16 Multi-Protocol Router</td></tr>
 <tr><td>58090</td><td>Woodpecker</td><td>HTTP</td><td>CI/CD (Apache-2.0)</td></tr>
-<tr><td>58100</td><td>Windmill</td><td>HTTP</td><td>WorkflowAutomation (AGPL-3.0)</td></tr>
-<tr><td>58168</td><td>Webmin</td><td>HTTPS</td><td>SystemManage (BSD)</td></tr>
-<tr><td>58300</td><td>Test Deploy</td><td>HTTP</td><td>Coolify TestDeploy</td></tr>
+<tr><td>58100</td><td>Windmill</td><td>HTTP</td><td>Workflow Automation (AGPL-3.0)</td></tr>
+<tr><td>58168</td><td>Webmin</td><td>HTTPS</td><td>System Management (BSD)</td></tr>
+<tr><td>58300</td><td>Test Deploy</td><td>HTTP</td><td>Coolify Test Deploy</td></tr>
 <tr><td>59000</td><td>Integration Portal</td><td>HTTP</td><td>This Portal (Custom-built)</td></tr>
-<tr><td>59009</td><td>Portainer CE</td><td>HTTP</td><td>Docker Manage (Zlib)</td></tr>
-<tr><td>65500</td><td>Coolify Sentinel</td><td>HTTP</td><td>MonitorProxy</td></tr>
+<tr><td>59009</td><td>Portainer CE</td><td>HTTP</td><td>Docker Management (Zlib)</td></tr>
+<tr><td>65500</td><td>Coolify Sentinel</td><td>HTTP</td><td>Monitor Proxy</td></tr>
 </tbody></table>
 </div>
 </details>
@@ -107,23 +123,21 @@
 </details>
 
 <details open>
-<summary>📊 Local Services vs N8N vs Argo CD Comparison</summary>
+<summary>📊 N8N vs Argo CD Comparison (Why NOT Installed)</summary>
 <div class="card" style="overflow-x:auto">
 <table style="width:100%;font-size:12px"><thead>
-<tr><th>Item</th><th style="color:#22c55e">✅ Local (AlreadyInstall)</th><th style="color:#f59e0b">⚠ N8N</th><th style="color:#ef4444">❌ Argo CD</th></tr>
+<tr><th>Item</th><th style="color:#22c55e">✅ Local (Installed)</th><th style="color:#f59e0b">⚠ N8N</th><th style="color:#ef4444">❌ Argo CD</th></tr>
 </thead><tbody>
-<tr><td>License</td><td>Apache/AGPL/Zlib/MIT</td><td style="color:#ef4444">SULA (Non-DockerOpen Source)</td><td>Apache-2.0</td></tr>
-<tr><td>WorkflowAutomation</td><td>Windmill (Python/TS/Go)</td><td>VisualDrag-Drop 400+</td><td>❌ No</td></tr>
+<tr><td>License</td><td>Apache/AGPL/Zlib/MIT</td><td style="color:#ef4444">SULA (Not Open Source)</td><td>Apache-2.0</td></tr>
+<tr><td>Workflow Automation</td><td>Windmill (Python/TS/Go)</td><td>Visual Drag-Drop 400+</td><td>❌ No</td></tr>
 <tr><td>CI/CD</td><td>Woodpecker + Coolify</td><td>❌ No</td><td>GitOps (K8s only)</td></tr>
 <tr><td>Git Integration</td><td>Forgejo→GitHub Mirror</td><td>GitHub Node</td><td>K8s Manifest</td></tr>
-<tr><td>ContainerManage</td><td>Portainer 24/24</td><td>❌ No</td><td>K8s Pod (Non-Docker Docker)</td></tr>
-<tr><td>Needs Kubernetes</td><td style="color:#22c55e">❌ NotRequires</td><td>❌ NotRequires</td><td style="color:#ef4444">✅ Requires</td></tr>
-<tr><td>RAM Requirement</td><td>~3GB (AlreadyIncl.)</td><td>+500MB~1GB</td><td>+3~4GB (Incl. K8s)</td></tr>
-<tr><td>Learning Curve</td><td>Low~</td><td>Low</td><td>High (K8s Concept)</td></tr>
-<tr><td>CostUse</td><td style="color:#22c55e">100% Free</td><td>Enterprise Paid</td><td style="color:#22c55e">Free</td></tr>
-<tr><td>FeaturesCovers</td><td style="color:#22c55e">95%+ (6 ServiceComplementary)</td><td>70% Overlap Windmill</td><td>90% Overlap Coolify</td></tr>
+<tr><td>Container Mgmt</td><td>Portainer 24/24</td><td>❌ No</td><td>K8s Pod Only</td></tr>
+<tr><td>Needs Kubernetes</td><td style="color:#22c55e">❌ Not Required</td><td>❌ Not Required</td><td style="color:#ef4444">✅ Required</td></tr>
+<tr><td>RAM</td><td>~3GB (Already Included)</td><td>+500MB~1GB</td><td>+3~4GB (Incl. K8s)</td></tr>
+<tr><td>Feature Coverage</td><td style="color:#22c55e">95%+ (6 Services)</td><td>70% Overlap Windmill</td><td>90% Overlap Coolify</td></tr>
 </tbody></table>
-<p style="color:#ef4444;font-weight:700;margin-top:8px">🚫 Iron Rule: N8N (Non-DockerOpen SourceLicense) and Argo CD (Needs Kubernetes) Never Install. Existing Coolify+Woodpecker+Windmill AlreadyCovers 95%+ Features.</p>
+<p style="color:#ef4444;font-weight:700;margin-top:8px">🚫 Iron Rule: N8N and Argo CD NEVER to be installed. Coolify+Woodpecker+Windmill covers 95%+ features.</p>
 </div>
 </details>
 
@@ -131,4 +145,3 @@
 <summary>📦 Container Status</summary>
 <table><thead><tr><th>Container</th><th>Status</th><th>Image</th></tr></thead><tbody id="container-table"></tbody></table>
 </details>
-</div>
