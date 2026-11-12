@@ -275,7 +275,51 @@ function updateTime() {
 }
 updateTime();
 setInterval(updateTime, 1000);
-document.getElementById('container-badge').textContent = '24 containers';
+
+// Live Status API — fetch from /api/*.json (updated every 30s by cron)
+async function fetchLiveHealth() {
+  try {
+    const r = await fetch('/api/health.json?_=' + Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const h = d.health;
+    document.getElementById('container-badge').textContent = h.total + ' containers';
+    const el = id => document.getElementById(id);
+    if (el('h-total')) el('h-total').textContent = h.total;
+    if (el('h-running')) { el('h-running').textContent = h.running; el('h-running').style.color = h.running===h.total ? '#2ea043' : '#f85149'; }
+    if (el('h-time')) el('h-time').textContent = new Date(d.timestamp).toLocaleString('en-US');
+  } catch(e) { /* silent */ }
+  try {
+    const r2 = await fetch('/api/resources.json?_=' + Date.now());
+    if (!r2.ok) return;
+    const d2 = await r2.json();
+    const res = d2.resources;
+    const fmt = b => (b/1073741824).toFixed(1)+'GB';
+    const el = id => document.getElementById(id);
+    if (el('h-mem')) el('h-mem').textContent = fmt(res.memory.used)+'/'+fmt(res.memory.total);
+    if (el('h-swap')) el('h-swap').textContent = fmt(res.swap.used)+'/'+fmt(res.swap.total);
+    if (el('h-disk')) el('h-disk').textContent = res.disk.percent;
+    if (el('h-cpu')) el('h-cpu').textContent = res.cpu.cores;
+    if (el('h-load')) el('h-load').textContent = res.cpu.load;
+  } catch(e) { /* silent */ }
+}
+fetchLiveHealth();
+setInterval(fetchLiveHealth, 30000);
+
+// Container table on overview page
+async function fetchContainerTable() {
+  try {
+    const r = await fetch('/api/containers.json?_=' + Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const tb = document.getElementById('container-table');
+    if (!tb) return;
+    tb.innerHTML = d.containers.map(c => `<tr>
+      <td><span class="dot ${c.state==='running'?'dot-green':'dot-red'}"></span>${c.name}</td>
+      <td>${c.uptime||c.state}</td><td style="font-size:11px">${c.image}</td></tr>`).join('');
+  } catch(e) { /* silent */ }
+}
+fetchContainerTable();
 </script>
 </body>
 </html>
