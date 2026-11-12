@@ -1,0 +1,61 @@
+<!-- Page: 12. Forgejo -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🦊 Forgejo Git Server v10</h2>
+<details open><summary><span class="dot dot-green"></span>Forgejo — Self-hosted Git Server</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+<p>Port: <code>53000</code> (HTTP) / <code>52222</code> (SSH) | License: MIT | <a href="http://10.1.4.201:53000" target="_blank">Open Forgejo →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>📋 7  Repos + GitHub Mirror</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Forgejo Repo</th><th>GitHub Mirror</th><th>Sync</th></tr></thead><tbody>
+<tr><td>Official-Area-ApacheMYSQL</td><td>ms2546088/Official-Area-ApacheMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>Official-Area-IISmssql</td><td>ms2546088/Official-Area-IISmssql</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>Official-Area-NginxMYSQL</td><td>ms2546088/Official-Area-NginxMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>Official-Area-NginxOracle21cFree</td><td>ms2546088/Official-Area-NginxOracle21cFree</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>Official-Area-NginxPostgreSQL</td><td>ms2546088/Official-Area-NginxPostgreSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>Official-Area-TomcatMYSQL</td><td>ms2546088/Official-Area-TomcatMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
+<tr><td>test-deploy</td><td>ms2546088/test-deploy</td><td><span class="tag tag-ok">Auto</span></td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280">sync_on_commit: true + 8h Scheduled Backup Sync</p></div>
+<details open><summary>🔗 Git Access Methods</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># HTTP (Recommended)
+git clone http://10.1.4.201:53000/admin958168/&lt;repo&gt;.git
+
+# SSH
+git clone ssh://git@10.1.4.201:52222/admin958168/&lt;repo&gt;.git
+
+# API
+curl -s -u admin958168:PASSWORD \
+  http://10.1.4.201:53000/api/v1/repos/search</pre></div>
+<details open><summary>🔔 Webhook Integration</summary>
+<div class="card">
+</details>
+<ul style="padding-left:16px;font-size:12px">
+<li>Coolify: push event → auto deploy</li>
+<li>Woodpecker: push event → CI pipeline</li>
+<li>Push Mirror: commit → GitHub sync</li>
+</ul>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Settings: Repository > Settings > Webhooks</p></div>
+<details open><summary>⚙️ Config</summary>
+<div class="card">
+</details>
+<p>Container: <code>docker_forgejo</code> (host network)</p>
+<p>DB: PostgreSQL v18 → forgejo database</p>
+<p>Config: <code>/data/gitea/conf/app.ini</code> (ContainerInternal)</p>
+<p>Data: <code>/home/admin958168/_docker/ubuntu/forgejo_data/</code></p>
+<pre style="font-size:11px;background:#fef3e2;padding:6px;border-radius:4px;margin-top:4px"># View Forgejo Config
+docker exec docker_forgejo cat /data/gitea/conf/app.ini | head -30
+
+# Restart Forgejo
+docker restart docker_forgejo
+
+# Manage CLI
+docker exec -it docker_forgejo gitea admin user list</pre>
+</div>
+</div>

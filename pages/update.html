@@ -1,0 +1,64 @@
+<!-- Page: 05. Smart Update -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🚀 One-Click Smart Update</h2>
+<details open><summary>⚠️ Read Before Update</summary>
+<div class="card" style="border-left:4px solid #f85149;margin-bottom:12px">
+</details>
+<p style="font-size:12px">Updating may overwrite custom files. Must do before update:</p>
+<ol style="padding-left:20px;font-size:12px;margin:4px 0">
+<li>Backup all custom files (Portal HTML/config/compose)</li>
+<li>Record current version</li>
+<li>Check if custom files overwritten after update</li>
+<li>If overwritten, restore from backup</li>
+</ol>
+</div>
+<div class="grid">
+<details open><summary>📦 Step 1: Backup</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px">BACKUP=/tmp/backup-$(date +%Y%m%d-%H%M)
+mkdir -p $BACKUP
+
+# BackupCustom Files
+cp -r ~/docker/_portainer/www/Developer-ms202603jpc/ $BACKUP/
+cp ~/docker/ubuntu/port-registry.json $BACKUP/
+cp ~/docker/ubuntu/docker-compose.yml $BACKUP/
+
+# Backup Stack Config
+for s in 14 15 16; do
+  cp ~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/$s/.env $BACKUP/stack$s.env
+done</pre></div>
+<details open><summary>🔄 Step 2: UpdateService</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px">cd ~/docker/ubuntu
+
+# Core Services (Forgejo/Windmill/Woodpecker)
+docker compose pull && docker compose up -d
+
+# Portainer Stacks
+for s in 14 15 16; do
+  cd Official-Area_Portainer/data/portainer/compose/$s
+  docker compose pull && docker compose up -d
+  cd ~/docker/ubuntu
+done
+
+# Cleanup Old Images
+docker image prune -f</pre></div>
+<details open><summary>✅ Step 3: Verify</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># CheckAllContainerStatus
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Verify Services Reachable
+for p in 8000 9000 53000 58090 58100 59009; do
+  curl -so /dev/null -w "%{http_code} :$p\n" http://10.1.4.201:$p/
+done
+
+# Compare Custom Files
+diff $BACKUP/Developer-ms202603jpc/index.html ~/docker/_portainer/www/Developer-ms202603jpc/index.html</pre></div>
+</div></div>
+
+<!-- 06. Version Info -->

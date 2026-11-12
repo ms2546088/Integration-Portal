@@ -1,0 +1,65 @@
+<!-- Page: 11. Coolify -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>☁️ Coolify PaaS v4.7.5</h2>
+<details open><summary><span class="dot dot-green"></span>Coolify — Self-hosted PaaS</summary>
+<div class="card" style="border-left:4px solid #3fb950">
+<p>Port: <code>8000</code> | License: Apache-2.0 | <a href="http://10.1.4.201:8000" target="_blank">Open Coolify →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>📱 Registered Apps (12)</summary>
+<div class="card">
+</details>
+<p>From Forgejo and GitHub Import Repos</p>
+<p>Auto Build Support: Dockerfile / Nixpacks / Docker Compose</p>
+</div>
+<details open><summary>🔗 DeployFlow</summary>
+<div class="card">
+</details>
+<div style="display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap">
+<span style="background:#fef3e2;padding:4px 8px;border-radius:4px">git push</span>
+<span>→</span>
+<span style="background:#fef3e2;padding:4px 8px;border-radius:4px">Forgejo Webhook</span>
+<span>→</span>
+<span style="background:#fef3e2;padding:4px 8px;border-radius:4px">Coolify Build</span>
+<span>→</span>
+<span style="background:#fff5eb;padding:4px 8px;border-radius:4px;color:#f97316">Container Deploy</span>
+</div>
+</div>
+<details open><summary>🐳 Bridge Network</summary>
+<div class="card">
+</details>
+<p>Coolify ContainerGroup (coolify, coolify-db, coolify-redis, coolify-sentinel) Use Docker bridge 172.18.0.0/16</p>
+<p style="color:#f59e0b;font-size:11px">⚠ Design Limit: Coolify DeployofContainerUse bridge Mode</p>
+</div>
+<details open><summary>🔑 API</summary>
+<div class="card">
+</details>
+<p>Token: <code>1|29cb9949...d4d59</code></p>
+<pre style="font-size:11px;background:#fef3e2;padding:6px;border-radius:4px"># ListServer
+curl -s http://10.1.4.201:8000/api/v1/servers \
+  -H "Authorization: Bearer $TOKEN"
+
+# List Apps (12)
+curl -s http://10.1.4.201:8000/api/v1/applications \
+  -H "Authorization: Bearer $TOKEN"
+
+# TriggerDeploy
+curl -s -X POST http://10.1.4.201:8000/api/v1/applications/{uuid}/restart \
+  -H "Authorization: Bearer $TOKEN"</pre>
+</div>
+<details open><summary>📋 12 Registered Apps</summary>
+<div class="card">
+</details>
+<table style="font-size:11px"><thead><tr><th>App</th><th>Source</th><th>Status</th></tr></thead><tbody>
+<tr><td>Test-Deploy</td><td>Forgejo</td><td><span class="tag tag-ok">Running</span></td></tr>
+<tr><td>ApacheMYSQL</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>IISmssql</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>NginxMYSQL</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>NginxOracle21cFree</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>NginxPostgreSQL</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>TomcatMYSQL</td><td>Forgejo</td><td><span class="tag tag-info">Registered</span></td></tr>
+<tr><td>Portainer, Forgejo, etc.</td><td>External</td><td><span class="tag tag-info">Monitored</span></td></tr>
+</tbody></table></div>
+</div>

@@ -1,0 +1,65 @@
+<!-- Page: 14. Woodpecker -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🪵 Woodpecker CI v3</h2>
+<details open><summary><span class="dot dot-green"></span>Woodpecker — CI/CD Engine</summary>
+<div class="card" style="border-left:4px solid #3fb950">
+<p>Port: <code>58090</code> (UI) / <code>58091</code> (GRPC Agent) | License: Apache-2.0 | <a href="http://10.1.4.201:58090" target="_blank">Open Woodpecker →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>⚙️ Architecture</summary>
+<div class="card">
+</details>
+<p>Server: <code>docker_woodpecker_server</code></p>
+<p>Agent: <code>docker_woodpecker_agent</code></p>
+<p>DB: PostgreSQL v18 → woodpecker database</p>
+</div>
+<details open><summary>🔗 Integration</summary>
+<div class="card">
+</details>
+<p>Forgejo OAuth2 Login</p>
+<p><code>.woodpecker.yml</code> Define Pipeline</p>
+<p>Supports Docker pipeline steps</p>
+</div>
+<details open><summary>📝 Pipeline Example</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># .woodpecker.yml
+steps:
+  - name: build
+    image: node:18
+    commands:
+      - npm install
+      - npm run build
+  - name: test
+    image: node:18
+    commands:
+      - npm test</pre></div>
+<details open><summary>🆚 vs Argo CD</summary>
+<div class="card">
+</details>
+<p style="color:#22c55e">✅ Woodpecker+Coolify: Pure Docker, No K8s</p>
+<p style="color:#ef4444">❌ Argo CD: Requires Kubernetes (+3-4GB RAM)</p>
+<p>Woodpecker+Coolify Covers Argo CD 90%+ Features</p>
+</div>
+<details open><summary>📊 EnvironmentVariables</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Variables</th><th>Description</th></tr></thead><tbody>
+<tr><td>WOODPECKER_HOST</td><td>http://10.1.4.201:58090</td></tr>
+<tr><td>WOODPECKER_FORGEJO</td><td>true</td></tr>
+<tr><td>WOODPECKER_FORGEJO_URL</td><td>http://10.1.4.201:53000</td></tr>
+<tr><td>WOODPECKER_DATABASE_DRIVER</td><td>postgres</td></tr>
+<tr><td>WOODPECKER_DATABASE_DATASOURCE</td><td>postgres://...@localhost:5432/woodpecker</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Agent Via GRPC :58091 Connect Server</p></div>
+<details open><summary>💡 ManageCommands</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Restart Woodpecker
+cd ~/docker/ubuntu && docker compose restart woodpecker_server woodpecker_agent
+
+# View CI Logs
+docker logs --tail 100 docker_woodpecker_server</pre></div>
+</div>

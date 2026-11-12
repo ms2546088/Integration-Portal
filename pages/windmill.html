@@ -1,0 +1,70 @@
+<!-- Page: 13. Windmill -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>⚡ Windmill CE v1.868.0</h2>
+<details open><summary><span class="dot dot-green"></span>Windmill — WorkflowAutomationEngine</summary>
+<div class="card" style="border-left:4px solid #d29922">
+<p>Port: <code>58100</code> | License: AGPLv3 (True Open Source) | <a href="http://10.1.4.201:58100" target="_blank">Open Windmill →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>🧩 Features</summary>
+<div class="card">
+</details>
+<ul style="padding-left:16px;font-size:12px;margin:4px 0">
+<li>Python / TypeScript / Go / SQL Script</li>
+<li>VisualWorkflowDrag-Drop Editor</li>
+<li>ScheduleTask (Cron)</li>
+<li>Webhook Trigger</li>
+<li>REST API Expose Scripts</li>
+</ul></div>
+<details open><summary>🔧 AlreadyDeployScript</summary>
+<div class="card">
+</details>
+<p>Workspace: <code>devops</code></p>
+<p><strong>Port Detector</strong>: <code>f/devops/port_detector</code></p>
+<p style="font-size:11px;color:#6b7280">action: check|suggest|list|report</p>
+</div>
+<details open><summary>📊 Architecture</summary>
+<div class="card">
+</details>
+<p>Server: <code>docker_windmill_server</code> (host network)</p>
+<p>Worker: <code>docker_windmill_worker</code> (host network)</p>
+<p>DB: PostgreSQL v18 → windmill database</p>
+</div>
+<details open><summary>🔑 API Call</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># ListAllScript
+curl -s http://10.1.4.201:58100/api/w/devops/scripts/list \
+  -H "Authorization: Bearer TOKEN"
+
+# Execute Port Detector
+curl -s -X POST http://10.1.4.201:58100/api/w/devops/jobs/run/f/devops/port_detector \
+  -H "Authorization: Bearer TOKEN" \
+  -d '{"action":"report"}'</pre></div>
+<details open><summary>🆚 vs N8N</summary>
+<div class="card">
+</details>
+<p style="color:#22c55e">✅ Windmill: AGPLv3 True Open Source, code-first</p>
+<p style="color:#ef4444">❌ N8N: SULA Non-Docker OSI Open Source (🚫 Never Install)</p>
+<p>Windmill Supports code-first + visual，Covers N8N 70%+ Features</p>
+</div>
+<details open><summary>🗄️ Architecture Details</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Component</th><th>Container</th><th>Network</th></tr></thead><tbody>
+<tr><td>Server</td><td>docker_windmill_server</td><td>host</td></tr>
+<tr><td>Worker</td><td>docker_windmill_worker</td><td>host</td></tr>
+<tr><td>DB</td><td>System PostgreSQL</td><td>localhost:5432</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">LoginAccount: <code>admin958168@local.dev</code> (Windmill Requires email Format)</p></div>
+<details open><summary>💡 QuickManage</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Restart Windmill
+cd ~/docker/ubuntu && docker compose restart windmill_server windmill_worker
+
+# View Worker Logs
+docker logs --tail 50 docker_windmill_worker</pre></div>
+</div>

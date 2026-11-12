@@ -1,0 +1,62 @@
+<!-- Page: 02. Frontend Dev -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🎨 Frontend Development</h2>
+<details open><summary>🛠 DevEnvironment</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+</details>
+<p>BeginnerDeveronly need SSH Connectionto Docker ContainerStart Dev，no needaccess Host Ubuntu：</p>
+<div style="display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;padding:8px 0">
+<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #f97316">Win/Mac IDE</span>
+<span>→ SSH :52200</span>
+<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">Docker Container</span>
+<span>→ git push</span>
+<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">Forgejo</span>
+<span>→ mirror</span>
+<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #d1d5db">GitHub</span>
+<span>→ deploy</span>
+<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #3fb950">Coolify</span>
+</div>
+</div>
+<div class="grid">
+<details open><summary>🔗 SSH Connection (Beginner)</summary>
+<div class="card">
+</details>
+<pre style="font-size:12px;background:#fef3e2;padding:10px;border-radius:6px"># DevContainer (IsolationEnvironment)
+ssh admin958168@10.1.4.201 -p 52200
+
+# Stack14 (IIS+MSSQL)
+ssh root@10.1.4.201 -p 58080
+
+# Stack15 (Nginx+MySQL)
+ssh root@10.1.4.201 -p 58081
+
+# Stack16 (Nginx+Oracle)
+ssh root@10.1.4.201 -p 58082</pre></div>
+<details open><summary>📝 Git Workflow</summary>
+<div class="card">
+</details>
+<pre style="font-size:12px;background:#fef3e2;padding:10px;border-radius:6px"># Clone Repository
+git clone http://10.1.4.201:53000/admin958168/&lt;repo&gt;.git
+
+# Dev → Push
+git add -A
+git commit -m "feat: description"
+git push
+
+# Auto: Forgejo → GitHub mirror
+# Deploy: Coolify webhook Trigger</pre></div>
+<details open><summary>🖥 Supported IDE</summary>
+<div class="card">
+</details>
+<ul style="padding-left:16px;font-size:12px;margin:4px 0">
+<li><strong>VSCode</strong> — Remote-SSH Extension</li>
+<li><strong>Cursor</strong> — SSH Remote Development</li>
+<li><strong>JetBrains</strong> — Gateway + SSH</li>
+<li><strong>Terminal</strong> — Any SSH Terminal</li>
+</ul>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">SSH Config: <code>Host dev → HostName 10.1.4.201 → Port 52200 → User admin958168</code></p>
+</div>
+</div></div>
+
+<!-- 03. BackendSystem -->

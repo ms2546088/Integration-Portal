@@ -1,0 +1,67 @@
+<!-- Page: 09. Security -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🔒 Security Settings</h2>
+<details open><summary>⚠️ Security Principle</summary>
+<div class="card" style="border-left:4px solid #f85149;margin-bottom:12px">
+</details>
+<p style="font-size:12px">All services share unified credentials <code>admin958168</code> + UnifiedPassword (Account must not contain@text)。Intranet only (10.1.4.0/24) Access。</p>
+</div>
+<div class="grid">
+<details open><summary>🔑 Auth Method</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Service</th><th>Account</th><th>AuthMethod</th></tr></thead><tbody>
+<tr><td>SSH (Host :22)</td><td>admin958168</td><td>Password + Key</td></tr>
+<tr><td>SSH (Docker :52200)</td><td>admin958168</td><td>Password</td></tr>
+<tr><td>Portainer :59009</td><td>admin958168</td><td>Local Auth</td></tr>
+<tr><td>Coolify :8000</td><td>admin958168</td><td>Email+Password</td></tr>
+<tr><td>Forgejo :53000</td><td>admin958168</td><td>Local Auth</td></tr>
+<tr><td>Windmill :58100</td><td>admin958168@local.dev</td><td>Local Auth</td></tr>
+<tr><td>Woodpecker :58090</td><td>admin958168</td><td>Forgejo OAuth2</td></tr>
+<tr><td>Webmin :58168</td><td>admin958168</td><td>PAM</td></tr>
+<tr><td>Nginx-UI :9000</td><td>admin958168</td><td>bcrypt Auth</td></tr>
+<tr><td>MSSQL :51433</td><td>sa</td><td>SQL Auth</td></tr>
+</tbody></table></div>
+<details open><summary>🛡️ Defense Layers</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Mechanism</th><th>Status</th><th>Description</th></tr></thead><tbody>
+<tr><td>Fail2ban</td><td><span class="tag tag-ok">Active</span></td><td>SSH brute force block</td></tr>
+<tr><td>UFW Firewall</td><td><span class="tag tag-info">Configured</span></td><td>only open necessary ports</td></tr>
+<tr><td>Nginx TLS</td><td><span class="tag tag-ok">Active</span></td><td>Webmin :58168 HTTPS Proxy</td></tr>
+<tr><td>Docker Isolation</td><td><span class="tag tag-ok">Active</span></td><td>EveryContainerIndependent namespace</td></tr>
+<tr><td>AutoUpdate</td><td><span class="tag tag-ok">Active</span></td><td>unattended-upgrades</td></tr>
+<tr><td>Postfix</td><td><span class="tag tag-warn">Disabled</span></td><td>prevent mail.log bloat</td></tr>
+</tbody></table></div>
+<details open><summary>📋 SecurityAuditCommands</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Fail2ban Status
+sudo fail2ban-client status sshd
+
+# SSH Login Records
+last -20 | head -15
+grep "Failed password" /var/log/auth.log | tail -10
+
+# Open port scan
+ss -tlnp | grep -E "0\.0\.0\.0|LISTEN"
+
+# Docker Security
+docker ps --format '{{.Names}} {{.Status}}'</pre></div>
+<details open><summary>🔐 SSH Key Settings</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Host SSH
+~/.ssh/authorized_keys
+
+# Docker SSH (:52200)
+ContainerInternal /home/admin958168/.ssh/authorized_keys
+
+# Forgejo SSH (:52222)
+managed by Forgejo (Settings > SSH Keys)</pre>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Recommend: Use ED25519 Key <code>ssh-keygen -t ed25519</code></p></div>
+</div>
+</div>
+
+<!-- 10~20: IndividualServicePages -->

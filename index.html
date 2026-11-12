@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!--
+=============================================================================
+Development+Enterprise Integration Portal
+Developer: JoeLin+HongmingPan+jpc202505ms
+Architecture: Shell + 20 independent page files (pages/*.html)
+Theme: White background + Orange lines + Black text + English
+Auth: Credential prompt before access
+=============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development+Enterprise Integration | JoeLin+HongmingPan+jpc202505ms</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #fff8f0;
+  --border: #fed7aa;
+  --text: #1a1a1a;
+  --text2: #6b7280;
+  --accent: #f97316;
+  --success: #22c55e;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --tab-bg: #fff1e6;
+  --code-bg: #fef3e2;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+
+.header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 600; color: var(--text); } .header h1 span { color: var(--accent); }
+.header-right { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--text2); }
+.header-right .badge { background: var(--success); color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+
+.tab-bar { background: var(--surface); border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 12px; gap: 2px; position: sticky; top: 48px; z-index: 99; }
+.tab-bar button { background: none; border: none; color: var(--text2); padding: 10px 14px; font-size: 13px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .2s; }
+.tab-bar button:hover { color: var(--text); background: var(--tab-bg); }
+.tab-bar button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+.content { flex: 1; padding: 24px 28px; max-width: 1200px; width: 100%; margin: 0 auto; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 12px 0; }
+.card h3 { font-size: 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.card h3 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-green { background: var(--success); } .dot-red { background: var(--danger); } .dot-yellow { background: var(--warn); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+
+table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--text2); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-ok { background: rgba(34,197,94,.12); color: var(--success); }
+.tag-err { background: rgba(239,68,68,.12); color: var(--danger); }
+.tag-warn { background: rgba(245,158,11,.12); color: var(--warn); }
+.tag-info { background: rgba(249,115,22,.12); color: var(--accent); }
+
+code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'Fira Code', monospace; color: var(--text); }
+pre { background: var(--code-bg); padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 12px; margin: 8px 0; color: var(--text); border: 1px solid var(--border); }
+
+.svc-link { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; margin: 4px; transition: all .2s; }
+.svc-link:hover { border-color: var(--accent); background: var(--tab-bg); text-decoration: none; }
+
+.footer { background: var(--surface); border-top: 2px solid var(--accent); padding: 10px 20px; text-align: center; font-size: 12px; color: var(--text2); }
+.footer a { color: var(--accent); margin: 0 8px; }
+
+#status-time { font-size: 11px; color: var(--text2); }
+
+details { margin: 8px 0; }
+details summary { cursor: pointer; font-weight: 600; padding: 6px 0; color: var(--accent); }
+details summary:hover { text-decoration: underline; }
+
+#auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+#auth-box { background: #fff; border: 2px solid var(--accent); border-radius: 12px; padding: 32px; width: 380px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.2); }
+#auth-box h2 { color: var(--accent); margin-bottom: 16px; }
+#auth-box input { display: block; width: 100%; padding: 10px 14px; margin: 8px 0; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+#auth-box button { width: 100%; padding: 12px; margin-top: 12px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; }
+#auth-box button:hover { opacity: .9; }
+#auth-err { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
+
+.arch-flow { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; padding: 12px 0; }
+.arch-node { background: var(--surface); border: 2px solid var(--border); border-radius: 10px; padding: 10px 14px; text-align: center; min-width: 100px; transition: all .3s; cursor: default; }
+.arch-node:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(249,115,22,.2); }
+.arch-node strong { display: block; color: var(--accent); font-size: 13px; } .arch-node small { color: var(--text2); font-size: 11px; }
+.arch-arrow { font-size: 20px; color: var(--success); animation: pulse 2s infinite; }
+.arch-layer { border: 1px dashed var(--border); border-radius: 12px; padding: 10px; margin: 8px 0; width: 100%; }
+.arch-layer-title { color: var(--warn); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+.arch-flow .arch-node { animation: slideIn .5s ease-out backwards; }
+.arch-flow .arch-node:nth-child(2) { animation-delay: .1s; }
+.arch-flow .arch-node:nth-child(4) { animation-delay: .2s; }
+.arch-flow .arch-node:nth-child(6) { animation-delay: .3s; }
+.arch-flow .arch-node:nth-child(8) { animation-delay: .4s; }
+</style>
+</head>
+<body>
+
+<div id="auth-overlay">
+<div id="auth-box">
+  <h2>🔐 Portal Authentication</h2>
+  <p style="color:#6b7280;margin-bottom:12px">Development+Enterprise Integration</p>
+  <input type="text" id="auth-user" placeholder="Username" autocomplete="username">
+  <div style="position:relative">
+    <input type="password" id="auth-pass" placeholder="Password" autocomplete="current-password">
+    <span id="pass-toggle" onclick="togglePass()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;user-select:none" title="Show/Hide password">👁</span>
+  </div>
+  <button onclick="doAuth()">Sign In</button>
+  <div id="auth-err">Invalid credentials. Please try again.</div>
+</div>
+</div>
+
+<div id="portal" style="display:none">
+<div class="header">
+  <h1>🏢 Development+Enterprise <span>Integration</span></h1>
+  <div class="header-right">
+    <span id="status-time"></span>
+    <span class="badge" id="container-badge">-- containers</span>
+    <a href="sop.html" style="background:#f59e0b;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none" title="Beginner Tutorial">📘 SOP Guide</a>
+    <span>10.1.4.201</span>
+  </div>
+</div>
+
+<div class="tab-bar" id="tabs">
+  <button data-tab="overview" class="active">01. Overview</button>
+  <button data-tab="frontend" class="">02. Frontend Dev</button>
+  <button data-tab="backend" class="">03. Backend Systems</button>
+  <button data-tab="files" class="">04. File Structure</button>
+  <button data-tab="update" class="">05. Smart Update</button>
+  <button data-tab="versions" class="">06. Versions</button>
+  <button data-tab="logs" class="">07. All Logs</button>
+  <button data-tab="network" class="">08. Network/Ports</button>
+  <button data-tab="security" class="">09. Security</button>
+  <button data-tab="portainer" class="">10. Portainer</button>
+  <button data-tab="coolify" class="">11. Coolify</button>
+  <button data-tab="forgejo" class="">12. Forgejo</button>
+  <button data-tab="windmill" class="">13. Windmill</button>
+  <button data-tab="woodpecker" class="">14. Woodpecker</button>
+  <button data-tab="nginxui" class="">15. Nginx-UI</button>
+  <button data-tab="webmin" class="">16. Webmin</button>
+  <button data-tab="databases" class="">17. Databases</button>
+  <button data-tab="stacks" class="">18. Stacks</button>
+  <button data-tab="docker" class="">19. Docker SSH</button>
+  <button data-tab="github" class="">20. GitHub</button>
+</div>
+
+<div class="content" id="page-content">
+  <div style="text-align:center;padding:60px;color:#6b7280">
+    <div style="font-size:32px;margin-bottom:12px">⏳</div>
+    Loading page...
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Development+Enterprise Integration</strong>:
+  <a href="#">JoeLin</a> + <a href="#">HongmingPan</a> + <a href="#">jpc202505ms</a>
+  | Ubuntu 26.04 LTS | Docker 29.9.2 | IP: 10.1.4.201
+</div>
+</div>
+
+<script>
+const VALID_USER = 'admin958168';
+const VALID_PASS = '0982j;6t/6958';
+
+/* ponytail: normalize full-width chars from CJK IME (；→; ／→/ etc.) */
+function normalize(s) {
+  return s.replace(/[\uff01-\uff5e]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+}
+
+function togglePass() {
+  const f = document.getElementById('auth-pass');
+  f.type = f.type === 'password' ? 'text' : 'password';
+}
+
+function showPortal() {
+  const ov = document.getElementById('auth-overlay');
+  if (ov) ov.remove();
+  const portal = document.getElementById('portal');
+  portal.style.cssText = 'display:flex;flex-direction:column;min-height:100vh';
+}
+
+function doAuth() {
+  const u = normalize(document.getElementById('auth-user').value.trim());
+  const p = normalize(document.getElementById('auth-pass').value);
+  if (u === VALID_USER && p === VALID_PASS) {
+    sessionStorage.setItem('portal-auth', '1');
+    showPortal();
+    loadTab(location.hash ? location.hash.slice(1) : 'overview');
+  } else {
+    document.getElementById('auth-err').style.display = 'block';
+  }
+}
+
+if (sessionStorage.getItem('portal-auth') === '1') {
+  showPortal();
+}
+
+document.getElementById('auth-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doAuth();
+});
+document.getElementById('auth-user').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('auth-pass').focus();
+});
+
+const pageCache = {};
+async function loadTab(tabId) {
+  const content = document.getElementById('page-content');
+  document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+  location.hash = tabId;
+
+  if (pageCache[tabId]) {
+    content.innerHTML = pageCache[tabId];
+    runPageScripts(tabId);
+    return;
+  }
+
+  content.innerHTML = '<div style="text-align:center;padding:60px;color:#6b7280"><div style="font-size:32px;margin-bottom:12px">⏳</div>Loading...</div>';
+
+  try {
+    const resp = await fetch(`pages/${tabId}.html`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const html = await resp.text();
+    pageCache[tabId] = html;
+    content.innerHTML = html;
+    runPageScripts(tabId);
+  } catch (err) {
+    content.innerHTML = `<div class="card" style="border-left:4px solid #ef4444"><h3>⚠ Page Load Error</h3><p>Could not load <code>pages/${tabId}.html</code></p><p style="color:#6b7280;font-size:12px">${err.message}</p></div>`;
+  }
+}
+
+function runPageScripts(tabId) {
+  if (tabId === 'overview') renderOverview();
+}
+
+document.querySelectorAll('.tab-bar button').forEach(btn => {
+  btn.addEventListener('click', () => loadTab(btn.dataset.tab));
+});
+
+if (sessionStorage.getItem('portal-auth') === '1') {
+  loadTab(location.hash ? location.hash.slice(1) : 'overview');
+}
+
+const SERVICES = [
+  {name:'Portainer',port:59009,icon:'🔲'},
+  {name:'Coolify',port:8000,icon:'☁️'},
+  {name:'Forgejo',port:53000,icon:'🦊'},
+  {name:'Windmill',port:58100,icon:'⚡'},
+  {name:'Woodpecker',port:58090,icon:'🪵'},
+  {name:'Nginx-UI',port:9000,icon:'🌐'},
+  {name:'Webmin',port:58168,icon:'🛠️',https:true},
+  {name:'SSH Docker',port:52200,icon:'🐳',nohttp:true},
+  {name:'MSSQL',port:51433,icon:'🗄️',nohttp:true},
+  {name:'MySQL',port:53306,icon:'🗄️',nohttp:true},
+  {name:'Registry',port:55000,icon:'📦'},
+  {name:'Test Deploy',port:58300,icon:'🚀'},
+];
+
+function renderOverview() {
+  const cards = document.getElementById('overview-cards');
+  if (!cards) return;
+  cards.innerHTML = SERVICES.map(s => `
+    <div class="card"><h3><span class="dot dot-green"></span>${s.icon} ${s.name}</h3>
+    <p>Port: <code>${s.port}</code> ${s.nohttp ? '' : `| <a href="${s.https?'https':'http'}://10.1.4.201:${s.port}" target="_blank">Open →</a>`}</p>
+    </div>`).join('');
+}
+
+function updateTime() {
+  const el = document.getElementById('status-time');
+  if (el) el.textContent = new Date().toLocaleString('en-US');
+}
+updateTime();
+setInterval(updateTime, 1000);
+document.getElementById('container-badge').textContent = '24 containers';
+</script>
+</body>
+</html>

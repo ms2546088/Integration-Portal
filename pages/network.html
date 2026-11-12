@@ -1,0 +1,61 @@
+<!-- Page: 08. Network/Ports -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🌐 Port Registry — Port Allocation</h2>
+<details open><summary>🔍 Port Allocation Strategy</summary>
+<div class="card" style="border-left:4px solid #58a6ff;margin-bottom:12px">
+</details>
+<div class="grid" style="gap:8px">
+<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
+<div style="color:#f97316;font-weight:700">SSH</div>
+<div>52000-52999</div>
+</div>
+<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
+<div style="color:#22c55e;font-weight:700">DB</div>
+<div>51000-53999</div>
+</div>
+<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
+<div style="color:#f59e0b;font-weight:700">Web/App</div>
+<div>58000-59999</div>
+</div>
+<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
+<div style="color:#ef4444;font-weight:700">Ephemeral ⚠</div>
+<div>61000-65500 (Avoid)</div>
+</div>
+</div>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">Before adding container: <code>bash port-detector.sh check &lt;port&gt;</code></p>
+</div>
+<table style="font-size:12px">
+<thead><tr><th>Port</th><th>Service</th><th>Type</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr style="color:#6b7280"><td>22</td><td>SSH (Host)</td><td>System</td><td>Ubuntu SSH Login</td></tr>
+<tr style="color:#6b7280"><td>80/443</td><td>Nginx</td><td>System</td><td>HTTP/HTTPS ReverseProxy</td></tr>
+<tr><td>5432</td><td>PostgreSQL v18</td><td>DB</td><td>UnifiedDatabase (forgejo/windmill/woodpecker)</td></tr>
+<tr><td>8000</td><td>Coolify</td><td>WebUI</td><td>PaaS DeployManage</td></tr>
+<tr><td>9000</td><td>Nginx-UI</td><td>WebUI</td><td>Nginx ConfigManage</td></tr>
+<tr><td>10000</td><td>Webmin</td><td>WebUI</td><td>SystemManage (→ :58168 HTTPS)</td></tr>
+<tr><td>51433</td><td>MSSQL 2022</td><td>DB</td><td>Stack14 SQL Server</td></tr>
+<tr><td>51521</td><td>Oracle 21c XE</td><td>DB</td><td>Stack16 Oracle</td></tr>
+<tr><td>52200</td><td>SSH Docker</td><td>SSH</td><td>UserDevContainer</td></tr>
+<tr><td>52222</td><td>Forgejo SSH</td><td>SSH</td><td>Git SSH Push</td></tr>
+<tr><td>53000</td><td>Forgejo HTTP</td><td>WebUI</td><td>Git Server</td></tr>
+<tr><td>53306</td><td>MySQL 8.0</td><td>DB</td><td>Stack15 MySQL</td></tr>
+<tr><td>55000</td><td>Docker Registry</td><td>API</td><td>ImageRepo</td></tr>
+<tr><td>58080</td><td>SSLH (Stack14)</td><td>Multi</td><td>IIS+MSSQL SSH/HTTP</td></tr>
+<tr><td>58081</td><td>SSLH (Stack15)</td><td>Multi</td><td>Nginx+MySQL SSH/HTTP</td></tr>
+<tr><td>58082</td><td>SSLH (Stack16)</td><td>Multi</td><td>Nginx+Oracle SSH/HTTP</td></tr>
+<tr><td>58088</td><td>Nginx (Stack14)</td><td>Web</td><td>IIS Emulate HTTP</td></tr>
+<tr><td>58090</td><td>Woodpecker UI</td><td>WebUI</td><td>CI/CD Manage</td></tr>
+<tr><td>58091</td><td>Woodpecker GRPC</td><td>GRPC</td><td>Agent Communication</td></tr>
+<tr><td>58100</td><td>Windmill</td><td>WebUI</td><td>WorkflowAutomation</td></tr>
+<tr><td>58168</td><td>Webmin HTTPS</td><td>WebUI</td><td>Webmin (Nginx TLS Proxy)</td></tr>
+<tr><td>58200</td><td>Nginx-UI HTTPS</td><td>WebUI</td><td>Nginx-UI TLS</td></tr>
+<tr><td>58300</td><td>test-deploy</td><td>Web</td><td>Coolify TestDeploy</td></tr>
+<tr><td>59000</td><td>Integration Portal</td><td>WebUI</td><td>This Portal</td></tr>
+<tr><td>59009</td><td>Portainer CE</td><td>WebUI</td><td>ContainerManage</td></tr>
+<tr><td>65500</td><td>Coolify Sentinel</td><td>Agent</td><td>Coolify Monitor</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 09. Security -->

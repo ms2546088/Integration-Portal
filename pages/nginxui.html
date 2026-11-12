@@ -1,0 +1,64 @@
+<!-- Page: 15. Nginx-UI -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🌐 Nginx-UI v2.9.1</h2>
+<details open><summary><span class="dot dot-green"></span>Nginx-UI — Nginx ManageUI</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+<p>Port: <code>9000</code> (HTTP) / <code>58200</code> (HTTPS) | License: AGPLv3 | <a href="http://10.1.4.201:9000" target="_blank">Open Nginx-UI →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>🔧 ManageFeatures</summary>
+<div class="card">
+</details>
+<ul style="padding-left:16px;font-size:12px;margin:4px 0">
+<li>Nginx ConfigVisual Editor (syntax highlight)</li>
+<li>SSL CertificateManage (Let's Encrypt / Self-Signed)</li>
+<li>Upstream / ReverseProxySettings</li>
+<li>TrafficMonitor + AccessLogsi.e.atView</li>
+<li>One-Click Test + Reload Nginx</li>
+<li>Dark mode / Multi-Language</li>
+</ul></div>
+<details open><summary>📋 Architecture</summary>
+<div class="card">
+</details>
+<p>Go binary (Non-Docker Docker, host native)</p>
+<p>Database: SQLite (Built-in)</p>
+<p>Nginx Config: <code>/etc/nginx/</code></p>
+<p>Logs: <code>/usr/local/etc/nginx-ui/</code></p>
+</div>
+<details open><summary>🔀 AlreadyConfigReverseProxy</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>External</th><th>Internal Target</th><th>Description</th></tr></thead><tbody>
+<tr><td>:58168</td><td>:10000</td><td>Webmin HTTPS Proxy</td></tr>
+<tr><td>:59000</td><td>/www/Developer-ms202603jpc/</td><td>Portal Static Site</td></tr>
+<tr><td>:58200</td><td>:9000</td><td>Nginx-UI HTTPS</td></tr>
+</tbody></table></div>
+<details open><summary>🐙 GitHub</summary>
+<div class="card">
+</details>
+<p><a href="https://github.com/0xJacky/nginx-ui" target="_blank">0xJacky/nginx-ui</a> (16K+ ⭐)</p>
+<p>Install: <code>curl -sSL https://nginxui.com/install.sh | bash</code></p>
+<p>Restart: <code>systemctl restart nginx-ui</code></p></div>
+<details open><summary>📝 Common Operations</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Test Nginx Config
+nginx -t
+
+# Reload Nginx (No Downtime)
+nginx -s reload
+
+# View Nginx ErrorLogs
+tail -50 /var/log/nginx/error.log
+
+# View Nginx-UI ServiceStatus
+systemctl status nginx-ui
+
+# Nginx-UI Config
+cat /usr/local/etc/nginx-ui/app.ini
+
+# Nginx-UI Update
+curl -sSL https://nginxui.com/install.sh | bash</pre></div>
+</div>

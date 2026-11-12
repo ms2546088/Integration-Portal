@@ -1,0 +1,66 @@
+<!-- Page: 16. Webmin -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🛠️ Webmin</h2>
+<details open><summary><span class="dot dot-green"></span>Webmin — SystemManage Web UI</summary>
+<div class="card" style="border-left:4px solid #d29922">
+<p>Port: <code>10000</code> (HTTP) / <code>58168</code> (HTTPS via Nginx) | License: BSD | <a href="https://10.1.4.201:58168" target="_blank">Open Webmin →</a></p>
+</div>
+</details>
+<div class="grid">
+<details open><summary>🔧 Important Modules</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Module</th><th>Path</th><th>Purpose</th></tr></thead><tbody>
+<tr><td>PostgreSQL</td><td><a href="https://10.1.4.201:58168/postgresql/" target="_blank">/postgresql/</a></td><td>DB Manage、Backup、User</td></tr>
+<tr><td>PG Strengthen</td><td><a href="https://10.1.4.201:58168/postgresql-strengthen/" target="_blank">/postgresql-strengthen/</a></td><td>Security& Performance Tuning</td></tr>
+<tr><td>UserManage</td><td>/useradmin/</td><td>SystemUser CRUD</td></tr>
+<tr><td>Package Update</td><td>/package-updates/</td><td>APT PackageManage</td></tr>
+<tr><td>ScheduleTask</td><td>/cron/</td><td>Cron job Manage</td></tr>
+<tr><td>SystemMonitor</td><td>/proc/</td><td>CPU/RAM/Disk Monitor</td></tr>
+<tr><td>Firewall</td><td>/firewall/</td><td>iptables/UFW Settings</td></tr>
+<tr><td>System Logs</td><td>/syslog/</td><td>View syslog</td></tr>
+</tbody></table></div>
+<details open><summary>🔒 WebSocket + ReverseProxy</summary>
+<div class="card">
+</details>
+<p>Nginx TLS Proxy: <code>:58168 → :10000</code></p>
+<p>WebSocket: <code>wss://10.1.4.201:58168</code></p>
+<p>xterm Terminal: <code>redirect_ssl=1</code> (miniserv.conf)</p>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># miniserv.conf KeySettings
+redirect_ssl=1
+redirect_host=10.1.4.201
+redirect_port=58168
+trust_real_ip=1
+websocket_host=wss://10.1.4.201:58168</pre></div>
+<details open><summary>⚙️ ConfigPath</summary>
+<div class="card">
+</details>
+<p>MainConfig: <code>/etc/webmin/miniserv.conf</code></p>
+<p>ModuleConfig: <code>/etc/webmin/&lt;module&gt;/config</code></p>
+<p>3rd-Party Modules: <code>/usr/share/webmin/</code></p>
+<p>Restart: <code>systemctl restart webmin</code></p></div>
+<details open><summary>📊 PostgreSQL Manage (via Webmin)</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Operations</th><th>Webmin Path</th></tr></thead><tbody>
+<tr><td>View DB List</td><td>/postgresql/ → Database List</td></tr>
+<tr><td>CreateDatabase</td><td>/postgresql/ → Create New Database</td></tr>
+<tr><td>UserManage</td><td>/postgresql/ → PostgreSQL Users</td></tr>
+<tr><td>Backup</td><td>/postgresql/ → Backup Database</td></tr>
+<tr><td>Performance Tuning</td><td>/postgresql-strengthen/ → Tuning</td></tr>
+<tr><td>pg_hba.conf</td><td>/postgresql/ → Host Authentication</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Webmin DirectlyManageSystem-level PostgreSQL v18</p></div>
+<details open><summary>💡 QuickManage</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Webmin Status
+systemctl status webmin
+
+# Restart Webmin
+systemctl restart webmin
+
+# Webmin Logs
+tail -20 /var/webmin/miniserv.log</pre></div>
+</div>

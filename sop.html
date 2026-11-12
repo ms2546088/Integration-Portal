@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP 新手教學 | Development+Enterprise Integration</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --border: #30363d;
+  --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff;
+  --green: #3fb950; --yellow: #d29922; --red: #f85149;
+  --code-bg: #1c2128;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 960px; margin: 0 auto; padding: 20px; }
+h1 { color: var(--accent); font-size: 2em; margin: 20px 0; text-align: center; }
+h2 { color: var(--green); font-size: 1.4em; margin: 30px 0 12px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--border); }
+h3 { color: var(--yellow); font-size: 1.15em; margin: 20px 0 8px; }
+p { margin: 8px 0; color: var(--text2); }
+.header-bar { background: linear-gradient(135deg, #1a1e2e, #161b22); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center; }
+.header-bar .badge { display: inline-block; background: var(--accent); color: #000;
+  padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 700; margin: 4px; }
+.nav-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; }
+.nav-bar a { color: var(--accent); text-decoration: none; margin: 0 8px; font-size: 0.9em; }
+.nav-bar a:hover { text-decoration: underline; }
+.step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; margin: 16px 0; }
+.step-num { display: inline-block; background: var(--accent); color: #000; font-weight: 900;
+  width: 32px; height: 32px; line-height: 32px; text-align: center; border-radius: 50%;
+  margin-right: 8px; font-size: 0.95em; }
+code { background: var(--code-bg); color: #e6edf3; padding: 2px 6px; border-radius: 4px;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.9em; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; overflow-x: auto; margin: 12px 0; font-size: 0.85em; line-height: 1.6; }
+pre code { padding: 0; }
+.screenshot { border: 2px solid var(--border); border-radius: 8px; max-width: 100%;
+  margin: 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+.tip { background: #0d2339; border-left: 4px solid var(--accent); padding: 12px 16px;
+  margin: 12px 0; border-radius: 0 8px 8px 0; }
+.tip::before { content: "💡 提示 "; font-weight: 700; color: var(--accent); }
+.warn { background: #2d1b00; border-left: 4px solid var(--yellow); padding: 12px 16px;
+  margin: 12px 0; border-radius: 0 8px 8px 0; }
+.warn::before { content: "⚠️ 注意 "; font-weight: 700; color: var(--yellow); }
+.danger { background: #2d0000; border-left: 4px solid var(--red); padding: 12px 16px;
+  margin: 12px 0; border-radius: 0 8px 8px 0; }
+.danger::before { content: "🚫 禁止 "; font-weight: 700; color: var(--red); }
+.cred-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.cred-table th { background: var(--accent); color: #000; padding: 8px 12px; text-align: left; }
+.cred-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.cred-table tr:hover { background: rgba(88,166,255,0.05); }
+.port-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88em; }
+.port-table th { background: var(--green); color: #000; padding: 6px 10px; text-align: left; }
+.port-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.flow-box { display: flex; align-items: center; justify-content: center; gap: 12px;
+  flex-wrap: wrap; margin: 20px 0; }
+.flow-item { background: var(--surface); border: 2px solid var(--border); border-radius: 10px;
+  padding: 12px 18px; text-align: center; min-width: 120px; }
+.flow-item strong { color: var(--accent); display: block; font-size: 1.1em; }
+.flow-item small { color: var(--text2); }
+.flow-arrow { font-size: 1.6em; color: var(--green); }
+.footer { text-align: center; padding: 20px; margin-top: 40px; border-top: 1px solid var(--border);
+  color: var(--text2); font-size: 0.85em; }
+.footer a { color: var(--accent); text-decoration: none; }
+a { color: var(--accent); }
+.back-link { display: inline-block; margin: 10px 0; padding: 8px 16px; background: var(--accent);
+  color: #000; text-decoration: none; border-radius: 6px; font-weight: 600; }
+.back-link:hover { opacity: 0.9; }
+@media (max-width: 700px) {
+  .container { padding: 10px; }
+  .flow-box { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<a href="/" class="back-link">← 返回 Integration Portal</a>
+
+<div class="header-bar">
+  <h1>📘 SOP 新手教學指南</h1>
+  <p style="color:var(--text)">從零開始：如何使用 Development+Enterprise Integration 系統</p>
+  <div>
+    <span class="badge">Ubuntu 26.04</span>
+    <span class="badge">Docker 29.9.2</span>
+    <span class="badge">IP: 10.1.4.201</span>
+    <span class="badge">24 容器</span>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  📑 <a href="#prereq">前置條件</a> |
+  <a href="#creds">帳號密碼</a> |
+  <a href="#ports">Port 對照</a> |
+  <a href="#ssh">SSH 連線</a> |
+  <a href="#portal">整合門戶</a> |
+  <a href="#portainer">Portainer</a> |
+  <a href="#forgejo">Forgejo</a> |
+  <a href="#coolify">Coolify 部署</a> |
+  <a href="#git-flow">Git 工作流</a> |
+  <a href="#windmill">Windmill</a> |
+  <a href="#woodpecker">Woodpecker</a> |
+  <a href="#webmin">Webmin</a> |
+  <a href="#trouble">故障排除</a>
+</nav>
+
+<!-- ====================== 前置條件 ====================== -->
+<h2 id="prereq">📋 Step 0: 前置條件</h2>
+
+<div class="step">
+<p><span class="step-num">0</span> <strong>需要什麼工具？</strong></p>
+<ul style="margin-left:20px; color: var(--text2)">
+  <li><strong>SSH 客戶端</strong>：PuTTY (Windows) / Terminal (Mac/Linux)</li>
+  <li><strong>瀏覽器</strong>：Chrome / Firefox / Edge</li>
+  <li><strong>Git</strong>：<code>git --version</code> (需 2.30+)</li>
+  <li><strong>網路</strong>：能連到 <code>10.1.4.201</code></li>
+</ul>
+</div>
+
+<div class="tip">你不需要在本機安裝 Docker。所有 Docker 操作在遠端伺服器 (10.1.4.201) 上執行。</div>
+
+<!-- ====================== 統一帳密 ====================== -->
+<h2 id="creds">🔑 Step 1: 統一帳號密碼</h2>
+
+<div class="step">
+<p>所有服務使用<strong>同一組帳號密碼</strong>：</p>
+<table class="cred-table">
+  <tr><th>欄位</th><th>值</th></tr>
+  <tr><td>帳號 (Username)</td><td><code>admin958168</code></td></tr>
+  <tr><td>密碼 (Password)</td><td><code>0982j;6t/6958</code></td></tr>
+  <tr><td>Email (部分服務)</td><td><code>jpc202505ms@gmail.com</code></td></tr>
+</table>
+</div>
+
+<div class="danger">密碼含分號 <code>;</code> 和斜線 <code>/</code> — 在 URL 或腳本中使用時需要 URL encode！</div>
+<div class="warn">這是開發環境帳號。正式環境 (production) 請更換為安全密碼。</div>
+
+<!-- ====================== Port 對照表 ====================== -->
+<h2 id="ports">🔌 Step 2: Port 對照表</h2>
+
+<div class="step">
+<p>所有服務使用 IP <code>10.1.4.201</code>，只靠 Port 區分：</p>
+<table class="port-table">
+  <tr><th>Port</th><th>服務</th><th>網址</th><th>用途</th></tr>
+  <tr><td>22</td><td>SSH (主機)</td><td><code>ssh admin958168@10.1.4.201</code></td><td>連線主機</td></tr>
+  <tr><td>52200</td><td>SSH (Docker)</td><td><code>ssh admin958168@10.1.4.201 -p 52200</code></td><td>連線 Docker 容器</td></tr>
+  <tr><td>59000</td><td>Integration Portal</td><td><a href="http://10.1.4.201:59000" target="_blank">http://10.1.4.201:59000</a></td><td>This Portal</td></tr>
+  <tr><td>59009</td><td>Portainer</td><td><a href="http://10.1.4.201:59009" target="_blank">http://10.1.4.201:59009</a></td><td>Docker Manage</td></tr>
+  <tr><td>8000</td><td>Coolify</td><td><a href="http://10.1.4.201:8000" target="_blank">http://10.1.4.201:8000</a></td><td>自動部署</td></tr>
+  <tr><td>53000</td><td>Forgejo</td><td><a href="http://10.1.4.201:53000" target="_blank">http://10.1.4.201:53000</a></td><td>Git 倉庫</td></tr>
+  <tr><td>58100</td><td>Windmill</td><td><a href="http://10.1.4.201:58100" target="_blank">http://10.1.4.201:58100</a></td><td>工作流自動化</td></tr>
+  <tr><td>58090</td><td>Woodpecker</td><td><a href="http://10.1.4.201:58090" target="_blank">http://10.1.4.201:58090</a></td><td>CI/CD</td></tr>
+  <tr><td>9000</td><td>Nginx-UI</td><td><a href="http://10.1.4.201:9000" target="_blank">http://10.1.4.201:9000</a></td><td>Nginx 管理</td></tr>
+  <tr><td>55000</td><td>Registry</td><td><a href="http://10.1.4.201:55000" target="_blank">http://10.1.4.201:55000</a></td><td>Docker Registry</td></tr>
+  <tr><td>58168</td><td>Webmin</td><td><a href="https://10.1.4.201:58168" target="_blank">https://10.1.4.201:58168</a></td><td>系統管理</td></tr>
+  <tr><td>58300</td><td>Test Deploy</td><td><a href="http://10.1.4.201:58300" target="_blank">http://10.1.4.201:58300</a></td><td>測試部署</td></tr>
+</table>
+</div>
+
+<div class="tip">所有服務都綁定 <code>0.0.0.0</code>（對外開放），從同網段任何機器皆可存取。</div>
+
+<!-- ====================== SSH 連線 ====================== -->
+<h2 id="ssh">🖥️ Step 3: SSH 連線</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> <strong>連線到主機 (Ubuntu)</strong></p>
+<pre><code># Windows (PuTTY): Host=10.1.4.201, Port=22, Username=admin958168
+# Mac/Linux Terminal:
+ssh admin958168@10.1.4.201</code></pre>
+<p>密碼：<code>0982j;6t/6958</code></p>
+</div>
+
+<div class="step">
+<p><span class="step-num">2</span> <strong>連線到 Docker 容器 (直接 SSH)</strong></p>
+<pre><code># 連線到隔離的 Docker 開發容器
+ssh admin958168@10.1.4.201 -p 52200</code></pre>
+<p>這個容器有獨立的開發環境，適合安全測試。</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> <strong>連線後檢查 Docker</strong></p>
+<pre><code># 查看所有容器
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# 查看容器日誌
+docker logs &lt;容器名&gt; --tail 50
+
+# 進入容器 shell
+docker exec -it &lt;容器名&gt; /bin/bash</code></pre>
+</div>
+
+<!-- ====================== Integration Portal ====================== -->
+<h2 id="portal">🏢 Step 4: Integration Portal</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> <strong>Open Browser</strong>, go to <a href="http://10.1.4.201:59000/" target="_blank">http://10.1.4.201:59000/</a></p>
+<img src="sop-images/01-portal-overview.png" alt="Integration Portal 總覽" class="screenshot">
+<p>這是系統的<strong>中央控制台</strong>，包含 20 個標籤頁：</p>
+<ul style="margin-left:20px; color: var(--text2)">
+  <li><strong>01.總攬</strong> — 服務快速連結 + 狀態</li>
+  <li><strong>02~05</strong> — 前端/後端/檔案/一鍵更新</li>
+  <li><strong>06~09</strong> — 版本/LOG/網路/安全</li>
+  <li><strong>10~20</strong> — 個別服務管理頁</li>
+</ul>
+</div>
+
+<!-- ====================== Portainer ====================== -->
+<h2 id="portainer">📦 Step 5: Portainer — Docker 管理</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> Open <a href="http://10.1.4.201:59009/" target="_blank">http://10.1.4.201:59009/</a></p>
+<p><span class="step-num">2</span> 輸入帳號 <code>admin958168</code> 和密碼登入</p>
+<img src="sop-images/02-portainer-login.png" alt="Portainer 登入" class="screenshot">
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> 登入後看到 Dashboard</p>
+<img src="sop-images/03-portainer-dashboard.png" alt="Portainer Dashboard" class="screenshot">
+<p>在這裡你可以：</p>
+<ul style="margin-left:20px; color: var(--text2)">
+  <li>📊 查看所有容器狀態（綠色 = 運行中）</li>
+  <li>🔄 重啟/停止/刪除容器</li>
+  <li>📝 查看容器日誌</li>
+  <li>🖥️ 開啟容器 Console（網頁版 terminal）</li>
+  <li>📈 監控 CPU/記憶體使用率</li>
+</ul>
+</div>
+
+<div class="tip">Portainer 左側邊欄底部有 <strong>Development+Enterprise Integration</strong> 連結，點擊可回到門戶。</div>
+
+<!-- ====================== Forgejo ====================== -->
+<h2 id="forgejo">🐙 Step 6: Forgejo — Git 倉庫</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> 打開 <a href="http://10.1.4.201:53000/" target="_blank">http://10.1.4.201:53000/</a></p>
+<img src="sop-images/04-forgejo-home.png" alt="Forgejo 首頁" class="screenshot">
+<p><span class="step-num">2</span> 登入後可以看到所有倉庫</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> <strong>Clone 倉庫到本機</strong></p>
+<pre><code># Clone 方式 (HTTP)
+git clone http://10.1.4.201:53000/admin958168/test-deploy.git
+
+# Clone 方式 (SSH) — 需先設定 SSH key
+git clone ssh://git@10.1.4.201:50022/admin958168/test-deploy.git</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">4</span> <strong>目前倉庫清單</strong></p>
+<table class="port-table">
+  <tr><th>倉庫名</th><th>說明</th><th>GitHub Mirror</th></tr>
+  <tr><td>test-deploy</td><td>測試部署用</td><td>✅</td></tr>
+  <tr><td>Official-Area-ApacheMYSQL</td><td>Apache + MySQL</td><td>✅</td></tr>
+  <tr><td>Official-Area-NginxMYSQL</td><td>Nginx + MySQL</td><td>✅</td></tr>
+  <tr><td>Official-Area-NginxPostgreSQL</td><td>Nginx + PostgreSQL</td><td>✅</td></tr>
+  <tr><td>Official-Area-NginxOracle21cFree</td><td>Nginx + Oracle</td><td>✅</td></tr>
+  <tr><td>Official-Area-IISmssql</td><td>IIS + MSSQL</td><td>✅</td></tr>
+  <tr><td>Official-Area-TomcatMYSQL</td><td>Tomcat + MySQL</td><td>✅</td></tr>
+</table>
+</div>
+
+<!-- ====================== Coolify 部署 ====================== -->
+<h2 id="coolify">🚀 Step 7: Coolify — 自動部署</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> 打開 <a href="http://10.1.4.201:8000/" target="_blank">http://10.1.4.201:8000/</a></p>
+<img src="sop-images/05-coolify-login.png" alt="Coolify 登入" class="screenshot">
+<p><span class="step-num">2</span> 用 Email <code>jpc202505ms@gmail.com</code> + 密碼 登入</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> <strong>部署流程概覽</strong></p>
+<div class="flow-box">
+  <div class="flow-item"><strong>📝 編寫代碼</strong><small>本機 IDE</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-item"><strong>⬆️ git push</strong><small>推到 Forgejo</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-item"><strong>🔄 Mirror</strong><small>自動同步 GitHub</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-item"><strong>🚀 Coolify</strong><small>自動建置部署</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-item"><strong>🌐 上線</strong><small>容器運行中</small></div>
+</div>
+</div>
+
+<!-- ====================== Git 工作流 ====================== -->
+<h2 id="git-flow">🔀 Step 8: Git 開發工作流</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> <strong>Clone 專案</strong></p>
+<pre><code>git clone http://10.1.4.201:53000/admin958168/test-deploy.git
+cd test-deploy</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">2</span> <strong>建立分支</strong></p>
+<pre><code># 建立新功能分支
+git checkout -b feature/my-new-feature</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> <strong>修改代碼</strong> — 用你喜歡的編輯器 (VS Code, Vim 等)</p>
+<pre><code># 修改檔案
+echo "&lt;h1&gt;My New Feature&lt;/h1&gt;" &gt; index.html</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">4</span> <strong>提交並推送</strong></p>
+<pre><code># 加入暫存區
+git add .
+
+# 提交
+git commit -m "feat: add new feature"
+
+# 推送
+git push origin feature/my-new-feature</code></pre>
+</div>
+
+<div class="step">
+<p><span class="step-num">5</span> <strong>合併到主分支</strong></p>
+<pre><code># 切回主分支
+git checkout main
+
+# 合併
+git merge feature/my-new-feature
+
+# 推送主分支 → Forgejo 自動 mirror 到 GitHub → Coolify 自動部署
+git push origin main</code></pre>
+</div>
+
+<div class="tip">推送到 <code>main</code> 分支後，Forgejo 會自動 mirror 到 GitHub，Coolify 偵測到變更後自動重新部署。</div>
+
+<!-- ====================== Windmill ====================== -->
+<h2 id="windmill">🌀 Step 9: Windmill — 工作流自動化</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> 打開 <a href="http://10.1.4.201:58100/" target="_blank">http://10.1.4.201:58100/</a></p>
+<img src="sop-images/06-windmill.png" alt="Windmill 登入" class="screenshot">
+<p><span class="step-num">2</span> 帳號 <code>admin958168</code> + 密碼登入</p>
+<p>Windmill 用途：排程腳本 (Python/TypeScript/Go/SQL)、工作流、Webhook、API 整合</p>
+</div>
+
+<!-- ====================== Woodpecker ====================== -->
+<h2 id="woodpecker">🪵 Step 10: Woodpecker — CI/CD</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> 打開 <a href="http://10.1.4.201:58090/" target="_blank">http://10.1.4.201:58090/</a></p>
+<img src="sop-images/07-woodpecker.png" alt="Woodpecker 登入" class="screenshot">
+<p><span class="step-num">2</span> 點選 <strong>Login</strong>（透過 Forgejo OAuth 登入）</p>
+<p>Woodpecker 用途：自動測試、建置、部署 pipeline。在 repo 新增 <code>.woodpecker.yml</code> 即可。</p>
+</div>
+
+<div class="step">
+<p><span class="step-num">3</span> <strong>範例 .woodpecker.yml</strong></p>
+<pre><code>steps:
+  - name: test
+    image: node:20
+    commands:
+      - npm install
+      - npm test
+
+  - name: build
+    image: node:20
+    commands:
+      - npm run build</code></pre>
+</div>
+
+<!-- ====================== Webmin ====================== -->
+<h2 id="webmin">⚙️ Step 11: Webmin — 系統管理</h2>
+
+<div class="step">
+<p><span class="step-num">1</span> 打開 <a href="https://10.1.4.201:58168/" target="_blank">https://10.1.4.201:58168/</a></p>
+<p><span class="step-num">2</span> 瀏覽器會顯示 SSL 警告 — 點擊「進階」→「繼續前往」</p>
+<p><span class="step-num">3</span> 帳號 <code>admin958168</code> + 密碼登入</p>
+<p>Webmin 用途：管理 Ubuntu 系統（磁碟、使用者、防火牆、排程、MySQL、PostgreSQL 等）</p>
+</div>
+
+<div class="warn">Webmin 使用 HTTPS (自簽 SSL)，瀏覽器會顯示安全警告，這是正常的。</div>
+
+<!-- ====================== 故障排除 ====================== -->
+<h2 id="trouble">🔧 Step 12: 故障排除</h2>
+
+<div class="step">
+<h3>❓ 容器停了怎麼辦？</h3>
+<pre><code># 查看停止的容器
+docker ps -a --filter status=exited
+
+# 重啟容器
+docker start &lt;容器名&gt;
+
+# 或用 Portainer 網頁介面點擊 ▶️ Start</code></pre>
+</div>
+
+<div class="step">
+<h3>❓ 服務連不上？</h3>
+<pre><code># 檢查容器是否在運行
+docker ps | grep &lt;服務名&gt;
+
+# 檢查 port 是否有監聽
+ss -tlnp | grep &lt;port&gt;
+
+# 查看容器日誌找錯誤
+docker logs &lt;容器名&gt; --tail 100</code></pre>
+</div>
+
+<div class="step">
+<h3>❓ 磁碟滿了？</h3>
+<pre><code># 查看磁碟使用
+df -h /
+
+# 清理 Docker
+docker system prune -f
+docker builder prune --all -f
+
+# 查看大檔案
+du -sh /var/log/*
+docker system df</code></pre>
+</div>
+
+<div class="step">
+<h3>❓ Git push 失敗？</h3>
+<pre><code># 確認 remote URL
+git remote -v
+
+# 重設帳密 (HTTP)
+git config credential.helper store
+git push  # 輸入帳密
+
+# 確認 SSH key (SSH 方式)
+ssh -T git@10.1.4.201 -p 50022</code></pre>
+</div>
+
+<div class="step">
+<h3>❓ 密碼忘了？</h3>
+<p>所有服務統一密碼：帳號 <code>admin958168</code> / 密碼 <code>0982j;6t/6958</code></p>
+</div>
+
+<!-- ====================== Footer ====================== -->
+<div class="footer">
+  <strong style="color: var(--accent)">Development+Enterprise Integration</strong>: JoeLin + HongmingPan + jpc202505ms<br>
+  Ubuntu 26.04 LTS | Docker 29.9.2 | IP: 10.1.4.201<br>
+  <a href="/">← 返回 Integration Portal</a> |
+  最後更新: 2026-11-12
+</div>
+
+</div>
+</body>
+</html>

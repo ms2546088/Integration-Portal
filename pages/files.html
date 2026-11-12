@@ -1,0 +1,60 @@
+<!-- Page: 04. File Structure -->
+<!-- Independent file - DO NOT merge into index.html -->
+<h2>📁 File Structure &amp; Paths</h2>
+<div class="grid">
+<details open><summary>📂 Main Directory Structure</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;line-height:1.5">
+/home/admin958168/
+├── _docker/
+│   ├── ubuntu/                              # Docker Main Dir
+│   │   ├── docker-compose.yml               # Core Services compose
+│   │   ├── port-detector.sh                 # PORT Conflict Detection Tool
+│   │   ├── port-registry.json               # PortRegistry
+│   │   ├── PROGRESS.md                      # Progress Tracking
+│   │   ├── forgejo_data/                    # Forgejo Data
+│   │   ├── windmill_worker_data/            # Windmill worker Data
+│   │   ├── Official-Area_Portainer/         # Portainer CE
+│   │   │   └── data/portainer/compose/
+│   │   │       ├── 14/ (.env + stack.env)   # Stack14: IIS+MSSQL
+│   │   │       ├── 15/ (.env + stack.env)   # Stack15: Nginx+MySQL
+│   │   │       └── 16/ (.env + stack.env)   # Stack16: Nginx+Oracle
+│   │   ├── Official-Area_NginxOracle21cFree/# Oracle Data
+│   │   └── Official-Area_SSHDocker/         # SSH Docker
+│   └── _portainer/www/Developer-ms202603jpc/# Portal Web Page
+│       ├── index.html                       # This Portal (20 tabs)
+│       ├── sop.html                         # SOP TutorialPage
+│       └── sop-images/                      # Screenshots (7 )
+├── _ms/                                     # TaskManage
+│   └── docker&amp;GIT/_Taskdocker&amp;GIT.md        # Main Task File (Iron Rule)
+└── .cursor/                                 # Cursor IDE Config
+</pre></div>
+<details open><summary>⚙️ Important Config Files</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>docker-compose.yml</code></td><td>Core Services (Forgejo/Windmill/Woodpecker/Registry)</td></tr>
+<tr><td><code>compose/14/.env</code></td><td>Stack14 EnvironmentVariables (Passwordetc.)</td></tr>
+<tr><td><code>compose/14/stack.env</code></td><td>Stack14 Portainer Use env</td></tr>
+<tr><td><code>port-registry.json</code></td><td>32 reserved + 5 deferred ports</td></tr>
+<tr><td><code>/etc/nginx/</code></td><td>Nginx Config (ReverseProxy)</td></tr>
+<tr><td><code>/etc/webmin/</code></td><td>Webmin Config</td></tr>
+<tr><td><code>/etc/postgresql/18/</code></td><td>PostgreSQL Config</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#ef4444;margin-top:4px">⚠ Must Before ModifyBackup: <code>cp file file.bak.$(date +%Y%m%d-%H%M)</code></p></div>
+<details open><summary>🔍 Quick File Location</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Docker compose File
+find ~/docker/ubuntu -name "docker-compose.yml" -o -name ".env"
+
+# Nginx Config
+ls /etc/nginx/sites-enabled/
+
+# AllServiceConfig
+cat /etc/webmin/miniserv.conf | head -20
+cat /etc/postgresql/18/main/postgresql.conf | grep listen</pre></div>
+</div></div>
+
+<!-- 05. One-ClickUpdate -->

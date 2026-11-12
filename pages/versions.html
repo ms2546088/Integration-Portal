@@ -1,0 +1,68 @@
+<!-- Page: 06. Versions -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>📋 Versions + Update Date</h2>
+<details open><summary>📦 SystemEnvironment</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+</details>
+<table style="font-size:12px"><thead><tr><th>Component</th><th>Version</th></tr></thead><tbody>
+<tr><td>Ubuntu</td><td>26.04 LTS (Noble)</td></tr>
+<tr><td>Kernel</td><td>7.0.0-42-generic</td></tr>
+<tr><td>Docker</td><td>29.9.2</td></tr>
+<tr><td>Docker Compose</td><td>v2.x (plugin)</td></tr>
+<tr><td>PostgreSQL</td><td>18.6 (System-level)</td></tr>
+<tr><td>Node.js</td><td>18.x+</td></tr>
+<tr><td>Python</td><td>3.12+</td></tr>
+</tbody></table></div>
+<details open><summary>🐳 Docker ServiceVersion</summary>
+<div class="card">
+</details>
+<table style="font-size:12px">
+<thead><tr><th>Service</th><th>Version</th><th>Docker Image</th><th>License</th><th>Homepage</th></tr></thead>
+<tbody>
+<tr><td>Portainer CE</td><td>LTS</td><td>portainer/portainer-ce:lts</td><td>Zlib</td><td><a href="https://github.com/portainer/portainer" target="_blank">GitHub</a></td></tr>
+<tr><td>Coolify</td><td>4.7.5</td><td>coollabsio/coolify:4.7.5</td><td>Apache-2.0</td><td><a href="https://github.com/coollabsio/coolify" target="_blank">GitHub</a></td></tr>
+<tr><td>Forgejo</td><td>10</td><td>codeberg.org/forgejo/forgejo:10</td><td>MIT</td><td><a href="https://forgejo.org" target="_blank">Official</a></td></tr>
+<tr><td>Windmill CE</td><td>v1.868.0</td><td>ghcr.io/windmill-labs/windmill:main</td><td>AGPLv3</td><td><a href="https://github.com/windmill-labs/windmill" target="_blank">GitHub</a></td></tr>
+<tr><td>Woodpecker CI</td><td>v3</td><td>woodpeckerci/woodpecker-server:v3</td><td>Apache-2.0</td><td><a href="https://github.com/woodpecker-ci/woodpecker" target="_blank">GitHub</a></td></tr>
+<tr><td>MSSQL</td><td>2022</td><td>mcr.microsoft.com/mssql/server:2022-latest</td><td>Commercial</td><td><a href="https://hub.docker.com/_/microsoft-mssql-server" target="_blank">Docker Hub</a></td></tr>
+<tr><td>MySQL</td><td>8.0</td><td>mysql:8.0</td><td>GPLv2</td><td><a href="https://hub.docker.com/_/mysql" target="_blank">Docker Hub</a></td></tr>
+<tr><td>Oracle XE</td><td>21c</td><td>oracle-xe-51521:21-slim (custom)</td><td>OTN</td><td><a href="https://www.oracle.com/database/technologies/xe-downloads.html" target="_blank">Oracle</a></td></tr>
+<tr><td>Coolify-DB</td><td>15</td><td>postgres:15-alpine</td><td>PostgreSQL</td><td><a href="https://hub.docker.com/_/postgres" target="_blank">Docker Hub</a></td></tr>
+<tr><td>Registry</td><td>2</td><td>registry:2</td><td>Apache-2.0</td><td><a href="https://hub.docker.com/_/registry" target="_blank">Docker Hub</a></td></tr>
+</tbody>
+</table></div>
+<details open><summary>🖥 NativeServiceVersion</summary>
+<div class="card">
+</details>
+<table style="font-size:12px"><thead><tr><th>Service</th><th>Version</th><th>Install</th><th>License</th></tr></thead><tbody>
+<tr><td>Nginx-UI</td><td>2.9.1</td><td>Go binary (host)</td><td>AGPLv3</td></tr>
+<tr><td>Webmin</td><td>Latest</td><td>APT native (host)</td><td>BSD</td></tr>
+<tr><td>PostgreSQL</td><td>18.6</td><td>APT native (host)</td><td>PostgreSQL</td></tr>
+<tr><td>Nginx</td><td>1.x</td><td>APT native (host)</td><td>BSD-2</td></tr>
+</tbody></table></div>
+<details open><summary>🔄 VersionCheckCommands</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Docker Image Update Check
+docker compose pull --dry-run 2>&1
+
+# SystemServiceVersion
+psql --version && nginx -v 2>&1 && webmin --version 2>/dev/null
+
+# Docker Version
+docker version --format '{{.Server.Version}}'</pre></div>
+<details open><summary>⚠️ UpdateNotes</summary>
+<div class="card">
+</details>
+<ul style="padding-left:16px;font-size:12px">
+<li>Docker ImageUpdate (<code>docker compose pull</code>) won't clear data volumes</li>
+<li>PostgreSQL major version upgrade (18→19) Requires <code>pg_upgrade</code></li>
+<li>Forgejo cross major version (10→11) check release notes</li>
+<li>Portainer Check after update SPA hash if changed</li>
+<li>Must do before update: <code>docker compose pull --dry-run</code> confirm</li>
+</ul></div>
+<p style="margin-top:12px;color:var(--text2)">Last Update: <span id="last-update">2026-11-12</span></p>
+</div>
+
+<!-- 07. All LOG -->

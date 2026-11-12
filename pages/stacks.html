@@ -1,0 +1,67 @@
+<!-- Page: 18. Stacks -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>📦 Portainer Stacks</h2>
+<div class="grid">
+<details open><summary>Stack14: IIS + MSSQL 2022</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+<table style="width:100%;font-size:12px"><thead><tr><th>Service</th><th>Port</th><th>Description</th></tr></thead><tbody>
+<tr><td>SSLH</td><td>58080</td><td>Multi-Protocol Router (SSH+HTTP)</td></tr>
+<tr><td>Nginx</td><td>58088/58181</td><td>Web Server</td></tr>
+<tr><td>MSSQL</td><td>51433</td><td>SQL Server 2022</td></tr>
+<tr><td>SSH</td><td>52223 (internal)</td><td>ContainerInternal SSH</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">Access: <code>ssh root@10.1.4.201 -p 58080</code></p>
+</div>
+</details>
+<details open><summary>Stack15: Nginx + MySQL 8.0</summary>
+<div class="card" style="border-left:4px solid #3fb950">
+<table style="width:100%;font-size:12px"><thead><tr><th>Service</th><th>Port</th><th>Description</th></tr></thead><tbody>
+<tr><td>SSLH</td><td>58081</td><td>Multi-Protocol Router</td></tr>
+<tr><td>Nginx</td><td>(internal)</td><td>Web Server</td></tr>
+<tr><td>MySQL</td><td>53306</td><td>MySQL 8.0</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">Access: <code>ssh root@10.1.4.201 -p 58081</code></p>
+</div>
+</details>
+<details open><summary>Stack16: Nginx + Oracle 21c XE</summary>
+<div class="card" style="border-left:4px solid #d29922">
+<table style="width:100%;font-size:12px"><thead><tr><th>Service</th><th>Port</th><th>Description</th></tr></thead><tbody>
+<tr><td>SSLH</td><td>58082</td><td>Multi-Protocol Router</td></tr>
+<tr><td>Nginx</td><td>(internal)</td><td>Web Server</td></tr>
+<tr><td>Oracle</td><td>51521</td><td>Oracle 21c XE (1.95GB)</td></tr>
+<tr><td>PHP-FPM</td><td>9002 (internal)</td><td>PHP Processing</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:6px">Access: <code>ssh root@10.1.4.201 -p 58082</code></p>
+</div>
+</details>
+</div>
+<details open><summary>⚙️ Stack OperationsCommands</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Start Stack14
+cd ~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/14
+docker compose --env-file .env up -d
+
+# View Stack Logs
+docker compose --env-file .env logs --tail 50
+
+# Stop Stack
+docker compose --env-file .env down
+
+# Backup .env (Must Before Modify)
+cp .env .env.bak.$(date +%Y%m%d-%H%M)</pre></div>
+<details open><summary>🔀 SSLH Multi-Protocol RouterArchitecture</summary>
+<div class="card" style="margin-top:12px">
+</details>
+<div style="display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;padding:8px 0">
+<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #f97316">Client</span>
+<span>→ :58080/81/82</span>
+<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">SSLH</span>
+<span>→</span>
+<span style="display:flex;flex-direction:column;gap:2px">
+<span style="background:#fff5eb;padding:3px 8px;border-radius:4px;font-size:11px">SSH → Container shell</span>
+<span style="background:#fff5eb;padding:3px 8px;border-radius:4px;font-size:11px">HTTP → Nginx → App</span>
+</span>
+</div>
+</div>

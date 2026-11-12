@@ -1,0 +1,65 @@
+<!-- Page: 19. Docker SSH -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🐳 Docker Container Management</h2>
+<details open><summary><span class="dot dot-green"></span>SSH Docker Container</summary>
+<div class="card">
+</details>
+<p>Port: <code>52200</code> | <code>ssh admin958168@10.1.4.201 -p 52200</code></p>
+<p>Ubuntu 24.04 | IsolationEnvironment (No Docker CLI, No Host Directory Access)</p>
+<p>Purpose: UserCan Directly SSH Connectionto Docker andNon-Docker Host Ubuntu</p>
+<p>network_mode: host | UnifiedPassword</p>
+</div>
+<details open><summary>🔍 Smart PORT Conflict Detection Tool</summary>
+<div class="card" style="background:#fff5eb;border-left:4px solid #d29922">
+<p>Build New Docker ContainerBefore，UseThisToolAvoid Port Conflict：</p>
+<pre style="background:#fef3e2;padding:12px;border-radius:6px;font-size:12px;margin:8px 0">
+# Check Port Available?
+bash /home/admin958168/_docker/ubuntu/port-detector.sh check 58500
+
+# ByTypeSuggest Available Port
+bash port-detector.sh suggest ssh   # SSH: 52000-52999
+bash port-detector.sh suggest web   # Web: 58000-58999
+bash port-detector.sh suggest db    # DB:  53000-53999
+bash port-detector.sh suggest app   # App: 58200-59999
+
+# List All Used Port
+bash port-detector.sh list
+
+# Full Report
+bash port-detector.sh report
+</pre>
+<p style="font-size:11px;color:#6b7280">Path: <code>/home/admin958168/_docker/ubuntu/port-detector.sh</code> | Valid Range: 10000-60999 | Ephemeral Avoid: 61000-65500</p>
+</div>
+</details>
+<details open><summary>🐳 ContainerRules</summary>
+<div class="card">
+</details>
+<ul style="padding-left:20px;font-size:13px;color:#374151">
+<li>AllContainer IP All Are <code>10.1.4.201</code>，Only Port Differs</li>
+<li>Valid Port Range: <code>10000 ~ 60999</code></li>
+<li>Ephemeral Range <code>61000-65500</code> AvoidUse</li>
+<li>EachContainerIsolated，network_mode: host</li>
+<li>Unified Credentials: <code>admin958168</code> / UnifiedPassword</li>
+<li>Must Use Before Building <code>port-detector.sh check</code> Verify</li>
+</ul></div>
+<details open><summary>📋 ContainerLifecycleManage</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Core Services (Forgejo/Windmill/Woodpecker/Registry)
+cd ~/docker/ubuntu
+docker compose up -d        # Start
+docker compose restart      # Restart
+docker compose pull && docker compose up -d  # Update
+
+# Stacks (Stack14/15/16)
+cd Official-Area_Portainer/data/portainer/compose/14
+docker compose --env-file .env up -d
+
+# NewContainerCreation Flow
+# 1. port-detector.sh suggest &lt;type&gt;  → Get Available port
+# 2. Create docker-compose.yml          → network_mode: host
+# 3. SettingsUnified Credentials                     → .env
+# 4. docker compose up -d             → Start
+# 5. Verify curl http://10.1.4.201:PORT → HTTP 200</pre></div>
+</div>

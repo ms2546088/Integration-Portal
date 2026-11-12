@@ -1,0 +1,62 @@
+<!-- Page: 07. All Logs -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>📝 All Logs</h2>
+<div class="grid">
+<details open><summary>🐳 Docker Container Logs</summary>
+<div class="card">
+</details>
+<table style="width:100%;font-size:12px"><thead><tr><th>Container</th><th>Commands</th></tr></thead><tbody>
+<tr><td>Coolify</td><td><code>docker logs --tail 100 coolify</code></td></tr>
+<tr><td>Forgejo</td><td><code>docker logs --tail 100 docker_forgejo</code></td></tr>
+<tr><td>Windmill</td><td><code>docker logs --tail 100 docker_windmill_server</code></td></tr>
+<tr><td>Woodpecker</td><td><code>docker logs --tail 100 docker_woodpecker_server</code></td></tr>
+<tr><td>Portainer</td><td><code>docker logs --tail 100 docker_portainer</code></td></tr>
+<tr><td>MSSQL</td><td><code>docker logs --tail 100 docker_iismssql_mssql</code></td></tr>
+<tr><td>MySQL</td><td><code>docker logs --tail 100 docker_nginxmysql_mysql</code></td></tr>
+<tr><td>Oracle</td><td><code>docker logs --tail 100 docker_nginxoracle_oracle</code></td></tr>
+</tbody></table></div>
+<details open><summary>🖥 System Logs</summary>
+<div class="card">
+</details>
+<table style="width:100%;font-size:12px"><thead><tr><th>Type</th><th>Path/Commands</th></tr></thead><tbody>
+<tr><td>System</td><td><code>journalctl -xe --no-pager</code></td></tr>
+<tr><td>SSH Auth</td><td><code>/var/log/auth.log</code></td></tr>
+<tr><td>Fail2ban</td><td><code>/var/log/fail2ban.log</code></td></tr>
+<tr><td>Nginx</td><td><code>/var/log/nginx/access.log</code></td></tr>
+<tr><td>PostgreSQL</td><td><code>/var/log/postgresql/postgresql-18-main.log</code></td></tr>
+<tr><td>Nginx-UI</td><td><code>/usr/local/etc/nginx-ui/</code></td></tr>
+<tr><td>PROGRESS</td><td><code>~/docker/ubuntu/PROGRESS.md</code></td></tr>
+</tbody></table></div>
+<details open><summary>🔍 Quick Debug</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># AllContainerStatus
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Container Real-time Logs
+docker logs -f --tail 50 &lt;container_name&gt;
+
+# System Resources
+free -h && df -h / && uptime
+
+# Check Port Conflicts
+bash ~/docker/ubuntu/port-detector.sh report
+
+# Restart Specific Service
+docker restart docker_forgejo
+cd ~/docker/ubuntu && docker compose restart windmill_server</pre></div>
+<details open><summary>📊 MonitorCommands</summary>
+<div class="card">
+</details>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Container Resource Usage
+docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
+
+# Disk Usage TOP 10
+du -sh /var/lib/docker/volumes/* 2>/dev/null | sort -rh | head -10
+
+# Network Connections (process)
+ss -tlnp | grep -v "127.0.0"</pre></div>
+</div></div>
+
+<!-- 08. Network/Port -->
