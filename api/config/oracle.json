@@ -1,0 +1,11 @@
+{
+  "source": "docker_nginxoracle_oracle env",
+  "timestamp": "2026-11-12T18:09:10.686126",
+  "settings": {
+    "ORACLE_SID": "XE",
+    "ORACLE_PDB": "",
+    "ORACLE_PWD": "***hidden***",
+    "ORACLE_CHARACTERSET": "",
+    "TZ": "Asia/Taipei"
+  }
+}

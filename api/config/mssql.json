@@ -1,0 +1,11 @@
+{
+  "source": "docker_iismssql_mssql env",
+  "timestamp": "2026-11-12T18:09:10.686126",
+  "settings": {
+    "ACCEPT_EULA": "Y",
+    "MSSQL_SA_PASSWORD": "***hidden***",
+    "MSSQL_PID": "Developer",
+    "MSSQL_TCP_PORT": "51433",
+    "TZ": "Asia/Taipei"
+  }
+}

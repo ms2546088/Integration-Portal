@@ -15,6 +15,33 @@
 <p style="margin-top:8px;font-size:12px;color:#6b7280">Connection: <code>psql -h 10.1.4.201 -U admin958168 -d postgres</code></p>
 </div>
 </details>
+<details open>
+<summary>⚙️ Live Database Configurations</summary>
+<div class="card" id="db-live-config">
+<div id="db-configs-container" style="font-size:12px">Loading...</div>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: container env | Auto-refreshed every 2 min | Passwords hidden</p>
+</div>
+<script>
+(async function(){
+  const dbs = ["mssql","mysql","oracle"];
+  const container = document.getElementById("db-configs-container");
+  let html = "";
+  for (const db of dbs) {
+    try {
+      const r = await fetch("/api/config/"+db+".json?_="+Date.now());
+      if (!r.ok) continue;
+      const d = await r.json();
+      html += "<h4 style="color:var(--accent);margin:8px 0 4px">"+db.toUpperCase()+"</h4><table style="width:100%"><tbody>";
+      for (const [k,v] of Object.entries(d.settings)) {
+        html += "<tr><td><code>"+k+"</code></td><td><code>"+v+"</code></td></tr>";
+      }
+      html += "</tbody></table>";
+    } catch(e){}
+  }
+  container.innerHTML = html || "No data available";
+})();
+</script>
+</details>
 <div class="grid">
 <details open><summary><span class="dot dot-green"></span>PostgreSQL 15 (Coolify Docker)</summary>
 <div class="card">

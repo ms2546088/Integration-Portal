@@ -1,0 +1,8 @@
+{
+  "source": "nginx-ui (host-installed)",
+  "timestamp": "2026-11-12T18:09:10.686126",
+  "settings": {
+    "port": "9000",
+    "config": "/etc/nginx-ui/app.ini"
+  }
+}

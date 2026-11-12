@@ -1,0 +1,10 @@
+{
+  "source": "docker_nginxmysql_mysql env",
+  "timestamp": "2026-11-12T18:09:10.686126",
+  "settings": {
+    "MYSQL_ROOT_PASSWORD": "***hidden***",
+    "MYSQL_DATABASE": "testdb",
+    "MYSQL_TCP_PORT": "53306",
+    "TZ": "Asia/Taipei"
+  }
+}
