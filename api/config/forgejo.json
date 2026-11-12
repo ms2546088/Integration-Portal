@@ -1,0 +1,10 @@
+{
+  "source": "forgejo:/data/gitea/conf/app.ini",
+  "timestamp": "2026-11-12T18:01:02+08:00",
+  "settings": {
+    "APP_NAME": "Forgejo Git",
+    "ROOT_URL": "http://10.1.4.201:53000/",
+    "SSH_PORT": "53022",
+    "HTTP_PORT": "53000"
+  }
+}

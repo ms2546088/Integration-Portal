@@ -1,0 +1,20 @@
+{
+  "source": "/home/admin958168/_docker/_portainer/.env",
+  "timestamp": "2026-11-12T18:01:02+08:00",
+  "values": {
+    "HOST_IP": "10.1.4.201",
+    "HOST_OS": "auto",
+    "TZ": "Asia/Taipei",
+    "PORTAINER_HTTP_PORT": "59009",
+    "PORTAINER_HTTPS_PORT": "59008",
+    "PORTAINER_TUNNEL_PORT": "59007",
+    "DOCKER_SOCKET": "/var/run/docker.sock",
+    "PROJECT_NAME": "_portainer",
+    "CONTAINER_PREFIX": "docker_portainer",
+    "DATA_PATH": "./data",
+    "PORTAINER_IMAGE": "portainer/portainer-ce:lts",
+    "PORTAINER_CONTAINER_NAME": "docker_portainer",
+    "DOCS_PORT": "59000",
+    "DOCS_CONTAINER_NAME": "docker_portainer_docs"
+  }
+}

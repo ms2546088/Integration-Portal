@@ -2,68 +2,109 @@
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
 <h2>🔲 Portainer CE</h2>
-<details open><summary><span class="dot dot-green"></span>Portainer Container Manager</summary>
+
+<details open>
+<summary><span class="dot dot-green"></span> Portainer Container Manager</summary>
 <div class="card" style="border-left:4px solid #58a6ff">
 <p>Port: <code>59009</code> (HTTP) / <code>59007</code> (TCP tunnel) / <code>59008</code> (HTTPS) | License: Zlib | <a href="http://10.1.4.201:59009" target="_blank">Open Portainer →</a></p>
 <p>Manage: Container (24+) / Image / Network / Volumes / Stacks / Logs</p>
 </div>
 </details>
-<div class="grid">
-<details open><summary>📦 Stacks (Docker Compose)</summary>
-<div class="card">
+
+<details open>
+<summary>⚙️ Live Configuration (from .env)</summary>
+<div class="card" id="portainer-live-config">
+<table style="width:100%;font-size:12px" id="portainer-config-table">
+<thead><tr><th>Key</th><th>Value</th></tr></thead>
+<tbody><tr><td colspan="2" style="color:#6b7280">Loading from /api/config/portainer.json...</td></tr></tbody>
+</table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: <code>/home/admin958168/_docker/_portainer/.env</code> | Auto-refreshed every 2 minutes</p>
+</div>
+<script>
+(async function(){
+  try {
+    const r = await fetch('/api/config/portainer.json?_='+Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const tb = document.getElementById('portainer-config-table').querySelector('tbody');
+    tb.innerHTML = Object.entries(d.values).map(([k,v]) => 
+      `<tr><td><code>${k}</code></td><td><code>${v}</code></td></tr>`).join('');
+  } catch(e){}
+})();
+</script>
 </details>
+
+<div class="grid">
+<details open>
+<summary>📦 Stacks (Docker Compose)</summary>
+<div class="card">
 <table style="width:100%;font-size:12px"><thead><tr><th>Stack</th><th>Service</th><th>Port</th><th>Status</th></tr></thead><tbody>
 <tr><td>14</td><td>IIS + MSSQL 2022</td><td>58080 (SSLH), 51433</td><td><span class="tag tag-ok">Running</span></td></tr>
 <tr><td>15</td><td>Nginx + MySQL 8.0</td><td>58081 (SSLH), 53306</td><td><span class="tag tag-ok">Running</span></td></tr>
 <tr><td>16</td><td>Nginx + Oracle 21c</td><td>58082 (SSLH), 51521</td><td><span class="tag tag-ok">Running</span></td></tr>
 </tbody></table>
 <p style="font-size:11px;color:#6b7280;margin-top:4px">Stack Path: <code>~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/{14,15,16}/</code></p>
-<p style="font-size:11px;color:#6b7280">Stack Deploy: <code>cd compose/14 && docker compose --env-file .env up -d</code></p></div>
-<details open><summary>🔧 Custom UI + Portal</summary>
-<div class="card">
+</div>
 </details>
+
+<details open>
+<summary>🔧 Custom UI + Portal</summary>
+<div class="card">
 <p>Custom Homepage: <code>/www/Developer-ms202603jpc/</code></p>
 <p>Portal Address: <code>http://10.1.4.201:59000/</code></p>
 <p style="color:#f59e0b;font-size:11px">⚠ Portainer is SPA (webpack content hashing), Custom index.html needs match runtime.*.js hash</p>
 </div>
-<details open><summary>🐳 ContainerManage</summary>
-<div class="card">
 </details>
+
+<details open>
+<summary>🐳 Container Management</summary>
+<div class="card">
 <ul style="padding-left:16px;font-size:12px">
-<li>24 Container (20 healthy + 4 running)</li>
-<li>2 Network: host + coolify bridge</li>
-<li>ImageCleanup: <code>docker image prune -f</code></li>
-<li>Logs: EachContainerCan Directlyin Portainer UI View</li>
-</ul></div>
-<details open><summary>📝 API Operations</summary>
-<div class="card">
+<li>24 Containers (all healthy/running)</li>
+<li>2 Networks: host + coolify bridge</li>
+<li>Image Cleanup: <code>docker image prune -f</code></li>
+<li>Logs: each container viewable in Portainer UI directly</li>
+</ul>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Login Get JWT
+
+<details>
+<summary>📝 API Operations</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Login to get JWT
 curl -s -X POST http://10.1.4.201:59009/api/auth \
   -d '{"username":"admin958168","password":"PASSWORD"}'
 
-# GetAllContainer
+# Get all containers
 curl -s -H "Authorization: Bearer $JWT" \
   http://10.1.4.201:59009/api/endpoints/2/docker/containers/json
 
-# GetImageList
+# Get image list
 curl -s -H "Authorization: Bearer $JWT" \
-  http://10.1.4.201:59009/api/endpoints/2/docker/images/json</pre></div>
-<details open><summary>📊 Portainer Endpoints</summary>
-<div class="card">
+  http://10.1.4.201:59009/api/endpoints/2/docker/images/json</pre>
+</div>
 </details>
-<table style="font-size:12px"><thead><tr><th>Endpoints</th><th>Port</th><th>Description</th></tr></thead><tbody>
-<tr><td>HTTP UI</td><td>59009</td><td>Web ManageUI</td></tr>
+
+<details>
+<summary>📊 Portainer Endpoints</summary>
+<div class="card">
+<table style="font-size:12px"><thead><tr><th>Endpoint</th><th>Port</th><th>Description</th></tr></thead><tbody>
+<tr><td>HTTP UI</td><td>59009</td><td>Web Management UI</td></tr>
 <tr><td>TCP tunnel</td><td>59007</td><td>Agent Communication</td></tr>
 <tr><td>HTTPS</td><td>59008</td><td>TLS Encrypted UI</td></tr>
 </tbody></table>
-<p style="font-size:11px;color:#6b7280;margin-top:4px">Container: <code>docker_portainer</code> (host network) | Docs AdditionalContainer: <code>docker_portainer_docs</code></p></div>
-<details open><summary>💡 Quick Operations</summary>
-<div class="card">
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Container: <code>docker_portainer</code> (host network) | Docs container: <code>docker_portainer_docs</code></p>
+</div>
 </details>
+
+<details>
+<summary>💡 Quick Operations</summary>
+<div class="card">
 <pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Restart Portainer
 docker restart docker_portainer
 
 # Check Version
-docker exec docker_portainer /portainer --version 2>/dev/null || echo "LTS"</pre></div>
+docker exec docker_portainer /portainer --version 2>/dev/null || echo "LTS"</pre>
+</div>
+</details>
 </div>

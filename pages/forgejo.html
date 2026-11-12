@@ -8,10 +8,10 @@
 </div>
 </details>
 <div class="grid">
-<details open><summary>📋 7  Repos + GitHub Mirror</summary>
+<details open><summary>📋 8 Repos + GitHub Mirror</summary>
 <div class="card">
-</details>
 <table style="font-size:12px"><thead><tr><th>Forgejo Repo</th><th>GitHub Mirror</th><th>Sync</th></tr></thead><tbody>
+<tr><td>Integration-Portal</td><td>ms2546088/Integration-Portal</td><td><span class="tag tag-ok">Auto</span></td></tr>
 <tr><td>Official-Area-ApacheMYSQL</td><td>ms2546088/Official-Area-ApacheMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
 <tr><td>Official-Area-IISmssql</td><td>ms2546088/Official-Area-IISmssql</td><td><span class="tag tag-ok">Auto</span></td></tr>
 <tr><td>Official-Area-NginxMYSQL</td><td>ms2546088/Official-Area-NginxMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
@@ -20,7 +20,30 @@
 <tr><td>Official-Area-TomcatMYSQL</td><td>ms2546088/Official-Area-TomcatMYSQL</td><td><span class="tag tag-ok">Auto</span></td></tr>
 <tr><td>test-deploy</td><td>ms2546088/test-deploy</td><td><span class="tag tag-ok">Auto</span></td></tr>
 </tbody></table>
-<p style="font-size:11px;color:#6b7280">sync_on_commit: true + 8h Scheduled Backup Sync</p></div>
+<p style="font-size:11px;color:#6b7280">sync_on_commit: true + 8h Scheduled Backup Sync</p>
+</div>
+</details>
+
+<details open><summary>⚙️ Live Config (from app.ini)</summary>
+<div class="card" id="forgejo-live-config">
+<table style="width:100%;font-size:12px" id="forgejo-config-table">
+<thead><tr><th>Key</th><th>Value</th></tr></thead>
+<tbody><tr><td colspan="2" style="color:#6b7280">Loading from /api/config/forgejo.json...</td></tr></tbody>
+</table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: <code>forgejo:/data/gitea/conf/app.ini</code> | Auto-refreshed every 2 min</p>
+</div>
+<script>
+(async function(){
+  try {
+    const r = await fetch('/api/config/forgejo.json?_='+Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const tb = document.getElementById('forgejo-config-table').querySelector('tbody');
+    tb.innerHTML = Object.entries(d.settings).map(([k,v]) =>
+      `<tr><td><code>${k}</code></td><td><code>${v||'(empty)'}</code></td></tr>`).join('');
+  } catch(e){}
+})();
+</script>
 <details open><summary>🔗 Git Access Methods</summary>
 <div class="card">
 </details>

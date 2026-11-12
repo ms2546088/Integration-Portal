@@ -1,0 +1,7 @@
+{
+  "source": "/home/admin958168/_docker/_portainer/docker-compose.yml",
+  "timestamp": "2026-11-12T18:01:02+08:00",
+  "services": [
+    "services",    "portainer",    "environment",    "volumes",    "healthcheck",    "docs",    "environment",    "volumes",    "healthcheck"
+  ]
+}
