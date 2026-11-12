@@ -1,0 +1,84 @@
+<!-- Page: 21. Remote Docker Mount -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🌐 Remote Docker Mount (Same Network)</h2>
+
+<details open>
+<summary>📋 Overview</summary>
+<div class="card" style="border-left:4px solid #58a6ff">
+<p>Mount and manage Docker containers from other machines on the same network (10.1.4.x) through this portal.</p>
+<p>Method: <strong>Portainer Agent</strong> (recommended) — install a lightweight agent on the remote host, then add it as an endpoint in Portainer.</p>
+</div>
+</details>
+
+<details open>
+<summary>🔧 Step 1: Install Portainer Agent on Remote Host</summary>
+<div class="card">
+<pre style="font-size:12px;background:#fef3e2;padding:12px;border-radius:6px"># On the REMOTE machine (e.g., 10.1.4.x), run:
+docker run -d -p 9001:9001 --name portainer_agent \
+  --restart=always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+  portainer/agent:latest
+
+# Verify agent is running:
+curl -s http://localhost:9001/ping
+# Expected: {"status":"OK"}</pre>
+<p style="font-size:11px;color:#6b7280">Port 9001 must be accessible from 10.1.4.201</p>
+</div>
+</details>
+
+<details open>
+<summary>🔗 Step 2: Add Remote Host in Portainer</summary>
+<div class="card">
+<ol style="padding-left:20px;font-size:13px">
+<li>Open <a href="http://10.1.4.201:59009" target="_blank">Portainer :59009</a></li>
+<li>Go to <strong>Environments</strong> → <strong>Add environment</strong></li>
+<li>Select <strong>Agent</strong></li>
+<li>Enter: <code>Name</code> = descriptive name, <code>Environment URL</code> = <code>10.1.4.X:9001</code></li>
+<li>Click <strong>Connect</strong></li>
+</ol>
+<p style="color:#2ea043;font-weight:600">After connecting, the remote host's containers appear in Portainer alongside local containers.</p>
+</div>
+</details>
+
+<details open>
+<summary>🔌 Alternative: Docker TCP API (No Agent)</summary>
+<div class="card" style="border-left:4px solid #f59e0b">
+<pre style="font-size:12px;background:#fef3e2;padding:12px;border-radius:6px"># On the REMOTE machine, expose Docker API:
+# Edit /etc/docker/daemon.json:
+{
+  "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"]
+}
+
+# Restart Docker:
+sudo systemctl restart docker
+
+# ⚠️ WARNING: TCP 2375 is UNENCRYPTED. Only use on trusted networks.
+# For TLS, use port 2376 with certificates.</pre>
+<p>In Portainer: <strong>Environments</strong> → <strong>Add</strong> → <strong>Docker</strong> → <code>tcp://10.1.4.X:2375</code></p>
+</div>
+</details>
+
+<details>
+<summary>📊 Currently Connected Environments</summary>
+<div class="card">
+<table style="width:100%;font-size:12px"><thead><tr><th>Name</th><th>URL</th><th>Type</th><th>Status</th></tr></thead><tbody>
+<tr><td>local</td><td>unix:///var/run/docker.sock</td><td>Docker (Local)</td><td><span class="tag tag-ok">Connected</span></td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Manage: <a href="http://10.1.4.201:59009/#!/endpoints" target="_blank">Portainer → Environments</a></p>
+</div>
+</details>
+
+<details>
+<summary>🔒 Security Considerations</summary>
+<div class="card">
+<ul style="padding-left:20px;font-size:12px">
+<li><strong>Portainer Agent</strong>: Encrypted communication, recommended for production</li>
+<li><strong>TCP 2375</strong>: Unencrypted, only for trusted LAN (10.1.4.x subnet)</li>
+<li><strong>TCP 2376 + TLS</strong>: Encrypted, requires certificate setup on both sides</li>
+<li><strong>Firewall</strong>: Only allow agent/API ports from 10.1.4.0/24 subnet</li>
+<li><strong>Unified credentials</strong>: All remote hosts should use same admin958168 credentials</li>
+</ul>
+</div>
+</details>
