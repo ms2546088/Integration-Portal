@@ -1,0 +1,10 @@
+{
+  "source": "docker_woodpecker_server env",
+  "timestamp": "2026-11-12T18:04:45.331584",
+  "settings": {
+    "WOODPECKER_HOST": "http://10.1.4.201:58090",
+    "WOODPECKER_FORGEJO": "true",
+    "WOODPECKER_FORGEJO_URL": "http://127.0.0.1:53000",
+    "WOODPECKER_GRPC_ADDR": ":58091"
+  }
+}

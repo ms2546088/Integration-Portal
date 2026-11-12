@@ -1,6 +1,6 @@
 {
   "source": "forgejo:/data/gitea/conf/app.ini",
-  "timestamp": "2026-11-12T18:01:02+08:00",
+  "timestamp": "2026-11-12T18:04:06+08:00",
   "settings": {
     "APP_NAME": "Forgejo Git",
     "ROOT_URL": "http://10.1.4.201:53000/",

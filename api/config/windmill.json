@@ -1,0 +1,12 @@
+{
+  "source": "docker_windmill_server env",
+  "timestamp": "2026-11-12T18:04:45.331584",
+  "settings": {
+    "DATABASE_URL": "127.0.0.1:5432/windmill?sslmode=disable",
+    "BASE_URL": "http://10.1.4.201:58100",
+    "NUM_WORKERS": "0",
+    "RUST_LOG": "info",
+    "PORT": "58100",
+    "TZ": "Asia/Taipei"
+  }
+}

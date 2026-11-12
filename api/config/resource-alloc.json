@@ -1,4 +1,4 @@
-{"timestamp":"2026-11-12T18:01:02+08:00","containers":{
+{"timestamp":"2026-11-12T18:04:06+08:00","containers":{
 "coolify":{"cpus":500000000,"memory":536870912,"memory_swap":1073741824},
 "coolify-db":{"cpus":250000000,"memory":268435456,"memory_swap":536870912},
 "coolify-redis":{"cpus":250000000,"memory":134217728,"memory_swap":268435456},

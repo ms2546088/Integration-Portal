@@ -7,6 +7,28 @@
 <p>Port: <code>58100</code> | License: AGPLv3 (True Open Source) | <a href="http://10.1.4.201:58100" target="_blank">Open Windmill →</a></p>
 </div>
 </details>
+<details open>
+<summary>⚙️ Live Configuration (from container env)</summary>
+<div class="card" id="windmill-live-config">
+<table style="width:100%;font-size:12px" id="windmill-config-table">
+<thead><tr><th>Key</th><th>Value</th></tr></thead>
+<tbody><tr><td colspan="2" style="color:#6b7280">Loading from /api/config/windmill.json...</td></tr></tbody>
+</table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: container env | Auto-refreshed every 2 min</p>
+</div>
+<script>
+(async function(){
+  try {
+    const r = await fetch('/api/config/windmill.json?_='+Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const tb = document.getElementById('windmill-config-table').querySelector('tbody');
+    tb.innerHTML = Object.entries(d.settings).map(([k,v]) =>
+      `<tr><td><code>${k}</code></td><td><code>${v||'(empty)'}</code></td></tr>`).join('');
+  } catch(e){}
+})();
+</script>
+</details>
 <div class="grid">
 <details open><summary>🧩 Features</summary>
 <div class="card">

@@ -1,0 +1,11 @@
+{
+  "source": "coolify container env",
+  "timestamp": "2026-11-12T18:04:45.331584",
+  "settings": {
+    "APP_NAME": "Coolify",
+    "APP_ENV": "production",
+    "APP_BASE_DIR": "/var/www/html",
+    "DB_USERNAME": "coolify",
+    "SELF_HOSTED": "true"
+  }
+}

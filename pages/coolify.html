@@ -7,6 +7,28 @@
 <p>Port: <code>8000</code> | License: Apache-2.0 | <a href="http://10.1.4.201:8000" target="_blank">Open Coolify →</a></p>
 </div>
 </details>
+<details open>
+<summary>⚙️ Live Configuration (from container env)</summary>
+<div class="card" id="coolify-live-config">
+<table style="width:100%;font-size:12px" id="coolify-config-table">
+<thead><tr><th>Key</th><th>Value</th></tr></thead>
+<tbody><tr><td colspan="2" style="color:#6b7280">Loading from /api/config/coolify.json...</td></tr></tbody>
+</table>
+<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: container env | Auto-refreshed every 2 min</p>
+</div>
+<script>
+(async function(){
+  try {
+    const r = await fetch('/api/config/coolify.json?_='+Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    const tb = document.getElementById('coolify-config-table').querySelector('tbody');
+    tb.innerHTML = Object.entries(d.settings).map(([k,v]) =>
+      `<tr><td><code>${k}</code></td><td><code>${v||'(empty)'}</code></td></tr>`).join('');
+  } catch(e){}
+})();
+</script>
+</details>
 <div class="grid">
 <details open><summary>📱 Registered Apps (12)</summary>
 <div class="card">
