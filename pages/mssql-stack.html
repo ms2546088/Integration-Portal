@@ -1,0 +1,64 @@
+<div class="section">
+<h2>🟦 MSSQL Server Stack (iismssql)</h2>
+<p style="color:var(--text2)">Microsoft SQL Server 2022 + Nginx + SSLH tunnel</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="mssql-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Stack Components</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Port</th><th>Purpose</th></tr>
+<tr><td>docker_iismssql_mssql</td><td>mcr.microsoft.com/mssql/server:2022-latest</td><td>:51433</td><td>MSSQL Server (SA login)</td></tr>
+<tr><td>docker_iismssql_nginx</td><td>nginx:alpine</td><td>:58080 (HTTP) / :58443 (HTTPS)</td><td>Web frontend + reverse proxy</td></tr>
+<tr><td>docker_iismssql_sslh</td><td>sslh-ssh:1.0</td><td>:52223 (SSH)</td><td>Protocol multiplexer (HTTP+SSH on same port)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Connection Details</h2>
+<table class="tbl">
+<tr><th>Protocol</th><th>Address</th><th>Credentials</th></tr>
+<tr><td>MSSQL (T-SQL)</td><td><code>10.1.4.201:51433</code></td><td>SA / 0982j;6t/6958</td></tr>
+<tr><td>HTTP Frontend</td><td><code>http://10.1.4.201:58080</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>HTTPS Frontend</td><td><code>https://10.1.4.201:58443</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>SSH Tunnel</td><td><code>ssh admin958168@10.1.4.201 -p 52223</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Common Commands</h2>
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">MSSQL CLI (sqlcmd)</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Connect via sqlcmd
+sqlcmd -S 10.1.4.201,51433 -U SA -P '0982j;6t/6958'
+
+# List databases
+SELECT name FROM sys.databases;
+GO
+
+# Check version
+SELECT @@VERSION;
+GO
+
+# Docker logs
+docker logs docker_iismssql_mssql --tail 50
+</pre>
+</details>
+</div>
+
+<div class="section">
+<h2>Network & RPC</h2>
+<table class="tbl">
+<tr><th>Port</th><th>Protocol</th><th>Purpose</th></tr>
+<tr><td>:51433</td><td>TDS</td><td>SQL Server client connections</td></tr>
+<tr><td>:135</td><td>RPC</td><td>SQL Server RPC endpoint mapper</td></tr>
+<tr><td>:58080</td><td>HTTP</td><td>Nginx web frontend</td></tr>
+<tr><td>:58443</td><td>HTTPS</td><td>Nginx TLS frontend</td></tr>
+<tr><td>:52223</td><td>SSH</td><td>SSLH tunnel (SSH through MSSQL stack)</td></tr>
+</table>
+</div>

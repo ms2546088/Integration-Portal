@@ -147,6 +147,11 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="github" class="">20. GitHub</button>
   <button data-tab="remote-docker" class="">21. Remote Docker</button>
   <button data-tab="deploy" class="" style="background:#2ea043;color:#fff;font-weight:600">22. Deploy</button>
+  <button data-tab="mssql-stack" class="">23. MSSQL Stack</button>
+  <button data-tab="mysql-stack" class="">24. MySQL Stack</button>
+  <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
+  <button data-tab="ssh-dev" class="">26. SSH Dev</button>
+  <button data-tab="smart-update" class="" style="background:#8b5cf6;color:#fff;font-weight:600">27. Smart Update</button>
   <button data-tab="sop" class="" style="background:#f97316;color:#fff;font-weight:700">99. USER-SOP</button>
 </div>
 
@@ -261,6 +266,11 @@ function runPageScripts(tabId) {
   if (tabId === 'nginxui') { loadNginxUIData(); }
   if (tabId === 'sop') { /* health check loaded on button click */ }
   if (tabId === 'frontend') { loadFrontendData(); }
+  if (tabId === 'mssql-stack') { loadStackStatus('mssql', 'mssql-status'); }
+  if (tabId === 'mysql-stack') { loadStackStatus('mysql', 'mysql-status'); }
+  if (tabId === 'oracle-stack') { loadStackStatus('oracle', 'oracle-status'); }
+  if (tabId === 'ssh-dev') { loadSSHDevData(); }
+  if (tabId === 'smart-update') { loadSmartUpdateData(); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -952,6 +962,55 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// Stack status + SSH Dev + Smart Update loaders
+// ══════════════════════════════════════════════════════
+async function loadStackStatus(dbKey, elId) {
+  try {
+    const [svc, con] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/containers').then(r => r.json())
+    ]);
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const stackContainers = con.containers.filter(c => c.name.includes(dbKey === 'mssql' ? 'iismssql' : dbKey === 'mysql' ? 'nginxmysql' : 'nginxoracle'));
+    const svcInfo = svc.services[dbKey] || {};
+    const html = '<table class="tbl"><tr><th>Component</th><th>Status</th><th>Uptime</th><th>Image</th></tr>' +
+      stackContainers.map(c => '<tr><td>' + c.name + '</td><td>' + (c.health === 'healthy' ? '🟢 Healthy' : c.state === 'running' ? '🟡 Running' : '🔴 Down') + '</td><td>' + (c.uptime || '-') + '</td><td style="font-size:11px">' + c.image + '</td></tr>').join('') +
+      '</table><p style="margin-top:8px;color:var(--text2)">Database port: <strong>' + (svcInfo.status === 'up' ? '🟢' : '🔴') + ' :' + (svcInfo.port || '?') + '</strong> ' + (svcInfo.description || '') + '</p>';
+    el.innerHTML = html;
+  } catch (e) { document.getElementById(elId).textContent = 'Error loading status'; }
+}
+
+async function loadSSHDevData() {
+  try {
+    const svc = await fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json());
+    const el = document.getElementById('ssh-dev-status');
+    if (!el) return;
+    const sshPorts = ['ssh_container', 'nginx_iismssql', 'nginx_nginxmysql', 'nginx_nginxoracle'].map(k => svc.services[k]).filter(Boolean);
+    el.innerHTML = '<p>SSH endpoints for developer access (same subnet, container-only — not host):</p>' +
+      '<table class="tbl"><tr><th>Port</th><th>Service</th><th>Status</th></tr>' +
+      [['52200','SSH Container (general)'],['52222','SSLH→MySQL Stack'],['52223','SSLH→MSSQL Stack'],['52224','SSLH→Oracle Stack']].map(([p,d]) => {
+        const s = svc.services[Object.keys(svc.services).find(k => svc.services[k].port == parseInt(p))] || {};
+        return '<tr><td>:' + p + '</td><td>' + d + '</td><td>' + (s.status === 'up' ? '🟢 UP' : '🔴 DOWN') + '</td></tr>';
+      }).join('') + '</table>';
+  } catch(e) {}
+}
+
+async function loadSmartUpdateData() {
+  try {
+    const [ver, sys] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/versions').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/system').then(r => r.json())
+    ]);
+    const el = document.getElementById('smart-update-status');
+    if (!el) return;
+    el.innerHTML = '<table class="tbl"><tr><th>Component</th><th>Current Version</th></tr>' +
+      Object.entries(ver.versions || {}).map(([k,v]) => '<tr><td>' + k + '</td><td><code>' + v + '</code></td></tr>').join('') +
+      '</table><p style="margin-top:8px;color:var(--text2)">Disk: ' + sys.disk_pct + ' used | Uptime: ' + (sys.uptime || '-') + '</p>';
+  } catch(e) {}
+}
 
 // ══════════════════════════════════════════════════════
 // AUTO-REFRESH: Dashboard + active page every 30 seconds

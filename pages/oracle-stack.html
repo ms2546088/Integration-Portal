@@ -1,0 +1,52 @@
+<div class="section">
+<h2>🔶 Oracle XE Stack (nginxoracle)</h2>
+<p style="color:var(--text2)">Oracle XE 21c + PHP-FPM + Nginx + SSLH tunnel</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="oracle-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Stack Components</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Port</th><th>Purpose</th></tr>
+<tr><td>docker_nginxoracle_oracle</td><td>oracle-xe-51521:21-slim</td><td>:51521 (TNS) / :55000 (Listener)</td><td>Oracle XE 21c Database</td></tr>
+<tr><td>docker_nginxoracle_php</td><td>php-fpm-oracle:8.3</td><td>(internal)</td><td>PHP-FPM with OCI8 extension</td></tr>
+<tr><td>docker_nginxoracle_nginx</td><td>nginx:alpine</td><td>:58082 (HTTP) / :58445 (HTTPS)</td><td>Web frontend + reverse proxy</td></tr>
+<tr><td>docker_nginxoracle_sslh</td><td>sslh-nginxoracle:1.0</td><td>:52224 (SSH)</td><td>Protocol multiplexer</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Connection Details</h2>
+<table class="tbl">
+<tr><th>Protocol</th><th>Address</th><th>Credentials</th></tr>
+<tr><td>Oracle SQL*Plus</td><td><code>10.1.4.201:51521/XEPDB1</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>Oracle Listener</td><td><code>10.1.4.201:55000</code></td><td>-</td></tr>
+<tr><td>HTTP Frontend</td><td><code>http://10.1.4.201:58082</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>HTTPS Frontend</td><td><code>https://10.1.4.201:58445</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>SSH Tunnel</td><td><code>ssh admin958168@10.1.4.201 -p 52224</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Common Commands</h2>
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Oracle CLI (sqlplus)</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Connect via sqlplus (inside container)
+docker exec -it docker_nginxoracle_oracle sqlplus admin958168/0982j@XEPDB1
+
+# List tablespaces
+SELECT tablespace_name FROM dba_tablespaces;
+
+# Check version
+SELECT * FROM v$version;
+
+# Docker logs
+docker logs docker_nginxoracle_oracle --tail 50
+</pre>
+</details>
+</div>

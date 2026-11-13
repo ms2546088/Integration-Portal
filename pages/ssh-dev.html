@@ -1,0 +1,97 @@
+<div class="section">
+<h2>🔑 SSH Developer Access</h2>
+<p style="color:var(--text2)">Connect directly to Docker containers via SSH (same subnet, container-only — NOT host)</p>
+</div>
+
+<div class="section">
+<h2>SSH Endpoints</h2>
+<div id="ssh-dev-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Quick Start Guide</h2>
+<details open>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 1: Connect via SSH</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# General development container (Ubuntu 24.04)
+ssh admin958168@10.1.4.201 -p 52200
+
+# MySQL stack (Debian 12)
+ssh admin958168@10.1.4.201 -p 52222
+
+# MSSQL stack (Debian 12)
+ssh admin958168@10.1.4.201 -p 52223
+
+# Oracle stack (Debian 12)
+ssh admin958168@10.1.4.201 -p 52224
+
+# Password: 0982j;6t/6958
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 2: Clone and develop</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Inside the SSH container:
+git clone http://admin958168:PASSWORD@10.1.4.201:53000/admin958168/YOUR-REPO.git
+cd YOUR-REPO
+
+# Edit files, then commit and push
+git add -A
+git commit -m "feat: my changes"
+git push origin main
+
+# Auto-deploy triggers within 3 seconds!
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 3: VSCode / Cursor Remote SSH</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# In VSCode/Cursor: Remote-SSH extension
+# Add to ~/.ssh/config:
+
+Host dev-container
+  HostName 10.1.4.201
+  Port 52200
+  User admin958168
+
+Host mysql-stack
+  HostName 10.1.4.201
+  Port 52222
+  User admin958168
+
+# Then: Ctrl+Shift+P → Remote-SSH: Connect to Host → dev-container
+</pre>
+</details>
+</div>
+
+<div class="section">
+<h2>Network Architecture</h2>
+<div style="background:#0f172a;border-radius:10px;padding:16px;color:#e2e8f0;font-family:monospace;font-size:12px;line-height:1.8">
+<pre>
+Developer (Win/Mac/Linux)
+    │
+    ├── SSH :52200 ──→ docker_ssh_container (General Dev)
+    │                    ├── git, curl, python3, nano, vim
+    │                    └── Network: host (same subnet)
+    │
+    ├── SSH :52222 ──→ docker_nginxmysql_sslh ──→ MySQL Stack
+    ├── SSH :52223 ──→ docker_iismssql_sslh  ──→ MSSQL Stack
+    └── SSH :52224 ──→ docker_nginxoracle_sslh──→ Oracle Stack
+</pre>
+</div>
+</div>
+
+<div class="section">
+<h2>Verified Workflow</h2>
+<table class="tbl">
+<tr><th>Step</th><th>Action</th><th>Result</th></tr>
+<tr><td>1</td><td>SSH into :52200</td><td>✅ Login as admin958168</td></tr>
+<tr><td>2</td><td>git clone from Forgejo</td><td>✅ Repository cloned</td></tr>
+<tr><td>3</td><td>Edit files + git commit</td><td>✅ Changes committed</td></tr>
+<tr><td>4</td><td>git push origin main</td><td>✅ Pushed to Forgejo</td></tr>
+<tr><td>5</td><td>Webhook auto-deploy</td><td>✅ Portal updated in &lt;5s</td></tr>
+<tr><td>6</td><td>GitHub mirror sync</td><td>✅ Mirrored automatically</td></tr>
+</table>
+</div>

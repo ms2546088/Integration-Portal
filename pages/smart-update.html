@@ -1,0 +1,124 @@
+<div class="section">
+<h2>🔄 Smart Update All Services</h2>
+<p style="color:var(--text2)">One-click intelligent update with backup protection</p>
+<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:12px;margin-top:12px">
+  <strong style="color:#991b1b">⚠️ IMPORTANT:</strong> Updates may overwrite custom files. The smart update system automatically backs up custom files before updating and restores them afterward.
+</div>
+</div>
+
+<div class="section">
+<h2>Current Versions</h2>
+<div id="smart-update-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Update Procedure</h2>
+<details open>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 1: Pre-Update Backup (MANDATORY)</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Backup all custom configs and portal files
+BACKUP_DIR="/home/admin958168/_docker/backups/$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+
+# Portal files
+cp -r /home/admin958168/_docker/_portainer/www/Developer-ms202603jpc "$BACKUP_DIR/portal/"
+
+# Custom API services
+cp /home/admin958168/_docker/ubuntu/docker-mgmt-api.py "$BACKUP_DIR/"
+cp /home/admin958168/_docker/ubuntu/deploy-api.py "$BACKUP_DIR/"
+cp /home/admin958168/_docker/ubuntu/webhook-receiver.py "$BACKUP_DIR/"
+cp /home/admin958168/_docker/ubuntu/webhook-deploy.sh "$BACKUP_DIR/"
+
+# Docker compose files
+cp -r /home/admin958168/_docker/ubuntu/compose* "$BACKUP_DIR/" 2>/dev/null
+
+# Systemd services
+cp ~/.config/systemd/user/*api*.service "$BACKUP_DIR/" 2>/dev/null
+cp ~/.config/systemd/user/webhook*.service "$BACKUP_DIR/" 2>/dev/null
+
+echo "Backup created: $BACKUP_DIR"
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 2: Update Docker Images</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Pull latest images for all containers
+docker pull nginx:alpine
+docker pull mysql:8.0
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+docker pull gitea/gitea:latest    # Forgejo
+
+# Recreate containers (compose stacks)
+cd /home/admin958168/_docker/ubuntu
+docker compose -f compose-forgejo.yml up -d
+docker compose -f compose-windmill.yml up -d
+docker compose -f compose-woodpecker.yml up -d
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 3: System Updates</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Ubuntu system
+sudo apt update && sudo apt upgrade -y
+
+# Docker Engine
+sudo apt install --only-upgrade docker-ce docker-ce-cli
+
+# PostgreSQL
+sudo apt install --only-upgrade postgresql-18
+
+# Node.js
+sudo npm install -g n && sudo n lts
+
+# Python packages
+pip3 install --upgrade pip
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 4: Post-Update Restore (if needed)</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# If custom files were overwritten, restore from backup:
+BACKUP_DIR="/home/admin958168/_docker/backups/YYYYMMDD_HHMMSS"  # Use actual backup dir
+
+# Restore portal
+cp -r "$BACKUP_DIR/portal/"* /home/admin958168/_docker/_portainer/www/Developer-ms202603jpc/
+
+# Restore API services
+cp "$BACKUP_DIR/docker-mgmt-api.py" /home/admin958168/_docker/ubuntu/
+cp "$BACKUP_DIR/deploy-api.py" /home/admin958168/_docker/ubuntu/
+cp "$BACKUP_DIR/webhook-receiver.py" /home/admin958168/_docker/ubuntu/
+
+# Restart services
+systemctl --user restart docker-mgmt-api deploy-api webhook-receiver
+</pre>
+</details>
+
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Step 5: Verification</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Check all services
+curl -s http://127.0.0.1:58192/api/docker/service-status | python3 -m json.tool
+
+# Check all containers healthy
+docker ps --format 'table {{.Names}}\t{{.Status}}'
+
+# Check versions updated
+curl -s http://127.0.0.1:58192/api/docker/versions | python3 -m json.tool
+
+# Run full portal test
+for page in overview deploy docker logs network versions; do
+  curl -s -o /dev/null -w "%{http_code} " http://127.0.0.1:59000/pages/$page.html
+done
+echo ""
+</pre>
+</details>
+</div>
+
+<div class="section">
+<h2>Backup History</h2>
+<p style="color:var(--text2)">Backup location: <code>/home/admin958168/_docker/backups/</code></p>
+<p style="color:var(--text2)">Rule: Minimum 1 copy, Maximum 3 copies. 4th backup replaces oldest.</p>
+</div>

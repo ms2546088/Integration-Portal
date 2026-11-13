@@ -1,0 +1,51 @@
+<div class="section">
+<h2>🐬 MySQL Stack (nginxmysql)</h2>
+<p style="color:var(--text2)">MySQL 8.0 + Nginx + SSLH tunnel</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="mysql-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Stack Components</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Port</th><th>Purpose</th></tr>
+<tr><td>docker_nginxmysql_mysql</td><td>mysql:8.0</td><td>:53306 (MySQL) / :33060 (X Protocol)</td><td>MySQL Server</td></tr>
+<tr><td>docker_nginxmysql_nginx</td><td>nginx:alpine</td><td>:58081 (HTTP) / :58444 (HTTPS)</td><td>Web frontend + reverse proxy</td></tr>
+<tr><td>docker_nginxmysql_sslh</td><td>sslh-nginxmysql:1.0</td><td>:52222 (SSH)</td><td>Protocol multiplexer</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Connection Details</h2>
+<table class="tbl">
+<tr><th>Protocol</th><th>Address</th><th>Credentials</th></tr>
+<tr><td>MySQL Client</td><td><code>10.1.4.201:53306</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>MySQL X Protocol</td><td><code>10.1.4.201:33060</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>HTTP Frontend</td><td><code>http://10.1.4.201:58081</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>HTTPS Frontend</td><td><code>https://10.1.4.201:58444</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+<tr><td>SSH Tunnel</td><td><code>ssh admin958168@10.1.4.201 -p 52222</code></td><td>admin958168 / 0982j;6t/6958</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Common Commands</h2>
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">MySQL CLI</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Connect via mysql client
+mysql -h 10.1.4.201 -P 53306 -u admin958168 -p'0982j;6t/6958'
+
+# Show databases
+SHOW DATABASES;
+
+# Check version
+SELECT VERSION();
+
+# Docker logs
+docker logs docker_nginxmysql_mysql --tail 50
+</pre>
+</details>
+</div>
