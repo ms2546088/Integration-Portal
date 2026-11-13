@@ -312,6 +312,27 @@ async function scanSubnet() {
   }
 }
 
+async function updateContainerResource() {
+  const ct = document.getElementById('res-container')?.value;
+  const cpu = parseFloat(document.getElementById('res-cpu')?.value);
+  const mem = parseInt(document.getElementById('res-mem')?.value);
+  const swap = parseInt(document.getElementById('res-swap')?.value);
+  const el = document.getElementById('res-result');
+  if (!ct) { if(el) el.innerHTML='<span style="color:#f85149">Select a container</span>'; return; }
+  if(el) el.innerHTML='<span style="color:#58a6ff">Updating...</span>';
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/resource', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({container:ct, cpu:cpu, memory:mem, swap:swap})
+    }).then(r=>r.json());
+    if(d.ok) {
+      if(el) el.innerHTML='<span style="color:#2ea043">✅ Updated ' + ct + ': CPU=' + cpu + ' MEM=' + mem + 'MB SWAP=' + swap + 'MB</span>';
+    } else {
+      if(el) el.innerHTML='<span style="color:#f85149">❌ ' + (d.output||'Failed') + '</span>';
+    }
+  } catch(e) { if(el) el.innerHTML='<span style="color:#f85149">❌ ' + e.message + '</span>'; }
+}
+
 async function loadLiveStats() {
   const tbody = document.getElementById('stats-body');
   if (!tbody) return;
@@ -353,6 +374,11 @@ async function loadDockerData() {
           + '<td>' + cpu + '</td><td>' + mem + '</td>'
           + '<td style="font-size:10px">' + c.image.substring(0, 30) + '</td></tr>';
       }).join('');
+    }
+    // Populate resource dropdown
+    const sel = document.getElementById('res-container');
+    if (sel) {
+      sel.innerHTML = d.containers.map(c => '<option value="' + c.name + '">' + c.name + '</option>').join('');
     }
   } catch (e) {}
 

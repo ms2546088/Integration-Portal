@@ -54,7 +54,23 @@
 </div>
 </details>
 
-<!-- Section 5: Resource Allocation Guide -->
+<!-- Section 5: Update Container Resources -->
+<details>
+<summary>🔧 Update Container Resources</summary>
+<div class="card">
+<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin-bottom:12px">
+  <div><label>Container:</label><br><select id="res-container" style="padding:4px;width:200px"></select></div>
+  <div><label>CPU Limit:</label><br><input type="number" id="res-cpu" step="0.1" min="0.1" max="4" value="0.5" style="padding:4px;width:80px"></div>
+  <div><label>Memory (MB):</label><br><input type="number" id="res-mem" step="64" min="32" max="8192" value="256" style="padding:4px;width:80px"></div>
+  <div><label>Swap (MB):</label><br><input type="number" id="res-swap" step="64" min="64" max="16384" value="512" style="padding:4px;width:80px"></div>
+  <div style="align-self:end"><button onclick="updateContainerResource()" style="padding:6px 16px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">⚙️ Update</button></div>
+</div>
+<div id="res-result" style="font-size:12px;color:#6b7280"></div>
+<p style="font-size:10px;color:#6b7280;margin-top:8px">Uses <code>docker update --cpus --memory --memory-swap</code> via API. Takes effect immediately (no restart needed).</p>
+</div>
+</details>
+
+<!-- Section 6: Resource Allocation Guide -->
 <details>
 <summary>⚙️ Resource Allocation (CPU / Memory)</summary>
 <div class="card" style="overflow-x:auto;font-size:12px">
