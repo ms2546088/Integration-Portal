@@ -1,8 +1,142 @@
-<!-- SOP Guide — embedded in portal tab 99 -->
-<div class="card" style="border-left:4px solid #f97316">
-  <h3>📘 Beginner SOP Guide</h3>
-  <p>Complete step-by-step tutorial for new users. Opens the full standalone SOP page below.</p>
-  <p><a href="sop.html" target="_blank" style="color:#f97316;font-weight:700">🔗 Open SOP in new tab →</a></p>
-</div>
+<!-- Page: SOP Beginner Guide -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>📘 Beginner SOP Guide — Start Here</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Complete step-by-step guide for users with zero experience. From VS Code/Cursor to production deployment.</p>
 
-<iframe src="sop.html" style="width:100%;height:calc(100vh - 200px);border:2px solid #f97316;border-radius:8px;margin-top:12px" loading="lazy"></iframe>
+<!-- Step 1: Environment Setup -->
+<details open>
+<summary>Step 1: Install VS Code or Cursor on Your Windows PC</summary>
+<div class="card">
+<ol style="padding-left:20px;font-size:13px">
+<li>Download <a href="https://code.visualstudio.com/" target="_blank">VS Code</a> or <a href="https://cursor.com/" target="_blank">Cursor</a></li>
+<li>Install the <strong>Remote - SSH</strong> extension (Microsoft)</li>
+<li>Press <code>Ctrl+Shift+P</code> → type <strong>"Remote-SSH: Connect to Host"</strong></li>
+<li>Enter: <code>admin958168@10.1.4.201 -p 52200</code> (SSH Docker)</li>
+<li>Password: unified password → You are now inside the isolated Docker container</li>
+</ol>
+<p style="background:#dcfce7;padding:8px;border-radius:6px;margin-top:8px;font-size:12px">💡 <strong>Port 52200</strong> connects to the SSH Docker container (not the host). This is your isolated development environment.</p>
+</div>
+</details>
+
+<!-- Step 2: Create Your First Project -->
+<details open>
+<summary>Step 2: Create Your First Project</summary>
+<div class="card">
+<pre style="font-size:12px;background:#fef3e2;padding:12px;border-radius:6px"># Inside VS Code terminal (connected to SSH Docker):
+
+# Create a project directory
+mkdir -p ~/my-project && cd ~/my-project
+
+# Initialize a git repository
+git init
+
+# Create your first file
+echo '&lt;h1&gt;Hello World!&lt;/h1&gt;' > index.html
+
+# Stage and commit
+git add .
+git commit -m "Initial commit: Hello World"</pre>
+</div>
+</details>
+
+<!-- Step 3: Push to Forgejo (Git Server) -->
+<details open>
+<summary>Step 3: Push to Forgejo (Local Git Server)</summary>
+<div class="card">
+<pre style="font-size:12px;background:#fef3e2;padding:12px;border-radius:6px"># Add Forgejo as remote origin
+git remote add origin http://10.1.4.201:53000/admin958168/my-project.git
+
+# Push your code (use unified credentials when prompted)
+git push -u origin main
+
+# Username: admin958168
+# Password: (unified password)</pre>
+<p style="font-size:12px;margin-top:8px">Your code is now on <a href="http://10.1.4.201:53000" target="_blank">Forgejo :53000</a> — the local Git server.</p>
+</div>
+</details>
+
+<!-- Step 4: Automatic GitHub Mirror -->
+<details>
+<summary>Step 4: Automatic GitHub Mirror (Setup by Admin)</summary>
+<div class="card">
+<p style="font-size:13px">When admin sets up push mirror for your repo, every push to Forgejo automatically mirrors to GitHub:</p>
+<pre style="font-size:12px;background:#f6f8fa;padding:8px;border-radius:6px">Forgejo (:53000) ──push mirror──→ GitHub (jpc202505ms organization)
+                 (automatic, within seconds)</pre>
+<p style="font-size:12px;margin-top:8px">Verify on <a href="https://github.com/jpc202505ms" target="_blank">GitHub: jpc202505ms</a></p>
+</div>
+</details>
+
+<!-- Step 5: Review & Deploy -->
+<details>
+<summary>Step 5: Review and Deploy from Portal</summary>
+<div class="card">
+<ol style="padding-left:20px;font-size:13px">
+<li>Open <a href="http://10.1.4.201:59000/" target="_blank">Integration Portal :59000</a></li>
+<li>Navigate to <strong>Tab 22: Deploy Management</strong></li>
+<li>Your push appears in the <strong>"Review & Approve"</strong> section</li>
+<li>Click <strong>"Review"</strong> → see your changes → select target container</li>
+<li>Click <strong>"Approve & Deploy"</strong> → your code deploys to the selected Docker container</li>
+</ol>
+<pre style="font-size:11px;background:#dcfce7;padding:8px;border-radius:6px;margin-top:8px">Flow: Your Code → Git Push → Forgejo → Webhook → Auto-deploy
+                                              ↓
+                               Portal Review → Manual Approve → Target Docker</pre>
+</div>
+</details>
+
+<!-- Step 6: Verify Deployment -->
+<details>
+<summary>Step 6: Verify Your Deployment</summary>
+<div class="card">
+<pre style="font-size:12px;background:#fef3e2;padding:12px;border-radius:6px"># Check your deployed service
+curl http://10.1.4.201:YOUR_PORT/
+
+# Check deployment logs
+# Portal → Deploy Management → Deploy History
+
+# Check container status
+# Portal → Docker Management → Live Container Status</pre>
+</div>
+</details>
+
+<!-- Quick Reference -->
+<details open>
+<summary>📋 Quick Reference: All Service URLs</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:12px">
+<thead><tr><th>Service</th><th>URL</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>Integration Portal</td><td><code>http://10.1.4.201:59000</code></td><td>Main management dashboard</td></tr>
+<tr><td>Forgejo (Git)</td><td><code>http://10.1.4.201:53000</code></td><td>Local Git server</td></tr>
+<tr><td>Portainer</td><td><code>http://10.1.4.201:59009</code></td><td>Docker container management</td></tr>
+<tr><td>Coolify</td><td><code>http://10.1.4.201:58000</code></td><td>PaaS deployment platform</td></tr>
+<tr><td>Windmill</td><td><code>http://10.1.4.201:58100</code></td><td>Workflow automation</td></tr>
+<tr><td>Woodpecker CI</td><td><code>http://10.1.4.201:58200</code></td><td>CI/CD pipeline</td></tr>
+<tr><td>SSH Docker</td><td><code>ssh admin958168@10.1.4.201 -p 52200</code></td><td>Isolated dev environment</td></tr>
+<tr><td>Stack14 (IIS+MSSQL)</td><td><code>http://10.1.4.201:58080</code></td><td>.NET + MSSQL development</td></tr>
+<tr><td>Stack15 (Nginx+MySQL)</td><td><code>http://10.1.4.201:58081</code></td><td>PHP + MySQL development</td></tr>
+<tr><td>Stack16 (Nginx+Oracle)</td><td><code>http://10.1.4.201:58082</code></td><td>PHP + Oracle development</td></tr>
+<tr><td>Registry</td><td><code>http://10.1.4.201:55000</code></td><td>Private Docker image registry</td></tr>
+<tr><td>Webmin</td><td><code>https://10.1.4.201:58168</code></td><td>System administration panel</td></tr>
+</tbody>
+</table>
+<p style="font-size:10px;color:#6b7280;margin-top:4px">All services: IP 10.1.4.201, unified credentials: admin958168 / unified password</p>
+</div>
+</details>
+
+<!-- Troubleshooting -->
+<details>
+<summary>🔧 Troubleshooting Common Issues</summary>
+<div class="card">
+<table style="width:100%;font-size:12px">
+<thead><tr><th>Problem</th><th>Solution</th></tr></thead>
+<tbody>
+<tr><td>SSH connection refused</td><td>Check port 52200 is open: <code>ss -tlnp | grep 52200</code></td></tr>
+<tr><td>Git push rejected</td><td>Check credentials. Create repo first on Forgejo :53000</td></tr>
+<tr><td>Deploy not triggered</td><td>Webhook must be configured on Forgejo repo → Settings → Webhooks</td></tr>
+<tr><td>Service unreachable</td><td>Check container: <code>docker ps | grep CONTAINER_NAME</code></td></tr>
+<tr><td>Port conflict</td><td>Check ports: <code>curl http://10.1.4.201:58192/api/docker/ports</code></td></tr>
+</tbody>
+</table>
+</div>
+</details>
