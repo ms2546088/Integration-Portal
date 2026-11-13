@@ -1,62 +1,111 @@
-<!-- Page: 02. Frontend Dev -->
+<!-- Page: 12. Frontend -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🎨 Frontend Development</h2>
-<details open><summary>🛠 DevEnvironment</summary>
-<div class="card" style="border-left:4px solid #58a6ff">
-</details>
-<p>BeginnerDeveronly need SSH Connectionto Docker ContainerStart Dev，no needaccess Host Ubuntu：</p>
-<div style="display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;padding:8px 0">
-<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #f97316">Win/Mac IDE</span>
-<span>→ SSH :52200</span>
-<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">Docker Container</span>
-<span>→ git push</span>
-<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">Forgejo</span>
-<span>→ mirror</span>
-<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #d1d5db">GitHub</span>
-<span>→ deploy</span>
-<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #3fb950">Coolify</span>
+<h2>🎨 Frontend Architecture</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Integration Portal UI structure and page system</p>
+
+<!-- Section 1: Portal Architecture -->
+<details open>
+<summary>🏗️ Portal Architecture</summary>
+<div class="card" style="background:#1a1a2e;color:#d4d4d4;padding:16px;border-radius:8px;font-size:11px;font-family:monospace;line-height:1.6">
+<pre style="margin:0;white-space:pre-wrap">
+┌─ Integration Portal (:59000) ─────────────────────┐
+│                                                     │
+│  index.html (Shell Framework)                       │
+│  ├── Auth: Basic Auth → session cookie              │
+│  ├── Tab navigation → fetch(pages/TAB.html)         │
+│  ├── runPageScripts(tabId) → load live API data     │
+│  └── Global functions: loadDockerData(),            │
+│      loadDeployData(), loadLogs(), loadVersions(),  │
+│      loadNetworkData(), loadGitHubData(),           │
+│      loadSecurityData(), loadServiceConfig(),       │
+│      loadLiveStats(), etc.                          │
+│                                                     │
+│  pages/ (24 independent HTML files)                 │
+│  ├── overview.html   — 5-layer architecture         │
+│  ├── deploy.html     — Review-Then-Deploy workflow  │
+│  ├── docker.html     — Container management         │
+│  ├── logs.html       — Log files viewer             │
+│  ├── network.html    — Network topology + ports     │
+│  ├── versions.html   — System versions              │
+│  ├── security.html   — Health + access control      │
+│  ├── github.html     — Mirror status                │
+│  ├── sop.html        — 6-step beginner guide        │
+│  ├── remote-docker.html — Subnet scan               │
+│  ├── forgejo.html    — Git server + config          │
+│  ├── windmill.html   — Workflow + config            │
+│  ├── woodpecker.html — CI/CD + config               │
+│  ├── portainer.html  — Container mgmt + config      │
+│  ├── coolify.html    — PaaS deploy                  │
+│  ├── stacks.html     — Docker stacks + config       │
+│  ├── databases.html  — PostgreSQL management        │
+│  ├── files.html      — File management              │
+│  ├── backend.html    — Backend services             │
+│  ├── frontend.html   — This page                    │
+│  ├── update.html     — System updates               │
+│  ├── webmin.html     — System admin                 │
+│  └── nginxui.html    — Nginx proxy config           │
+│                                                     │
+│  /api/ (cron-generated JSON, updated every 30s)     │
+│  ├── health.json     — Container health data        │
+│  └── resources.json  — CPU/memory/disk usage        │
+└─────────────────────────────────────────────────────┘
+</pre>
 </div>
+</details>
+
+<!-- Section 2: Live Page Count -->
+<details>
+<summary>📊 Page Status (<span id="fe-page-count">24</span> pages)</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:11px" id="fe-page-table">
+<thead><tr><th>Page</th><th>Data Source</th><th>Live API</th></tr></thead>
+<tbody>
+<tr><td>overview</td><td>/api/health.json + /api/resources.json</td><td>🟢 Yes</td></tr>
+<tr><td>deploy</td><td>Deploy API :58191</td><td>🟢 Yes</td></tr>
+<tr><td>docker</td><td>Docker Mgmt API :58192</td><td>🟢 Yes</td></tr>
+<tr><td>logs</td><td>Docker Mgmt API :58192 /logs</td><td>🟢 Yes</td></tr>
+<tr><td>network</td><td>Docker Mgmt API :58192 /networks + /ports</td><td>🟢 Yes</td></tr>
+<tr><td>versions</td><td>Docker Mgmt API :58192 /versions</td><td>🟢 Yes</td></tr>
+<tr><td>security</td><td>Docker Mgmt API :58192 /containers</td><td>🟢 Yes</td></tr>
+<tr><td>github</td><td>Forgejo API :53000</td><td>🟢 Yes</td></tr>
+<tr><td>forgejo</td><td>Docker Mgmt API :58192 /config/forgejo</td><td>🟢 Yes</td></tr>
+<tr><td>windmill</td><td>Docker Mgmt API :58192 /config/windmill</td><td>🟢 Yes</td></tr>
+<tr><td>woodpecker</td><td>Docker Mgmt API :58192 /config/woodpecker</td><td>🟢 Yes</td></tr>
+<tr><td>portainer</td><td>Docker Mgmt API :58192 /config/portainer</td><td>🟢 Yes</td></tr>
+<tr><td>stacks</td><td>Docker Mgmt API :58192 /config/stack15</td><td>🟢 Yes</td></tr>
+<tr><td>backend</td><td>systemd status (reference)</td><td>🟢 Yes</td></tr>
+<tr><td>remote-docker</td><td>Docker Mgmt API :58192 /scan-subnet</td><td>🟢 Yes (on click)</td></tr>
+<tr><td>sop</td><td>Static guide</td><td>⚪ Static</td></tr>
+<tr><td>databases</td><td>Forgejo API (Coolify link)</td><td>⚪ Static</td></tr>
+<tr><td>files</td><td>Static reference</td><td>⚪ Static</td></tr>
+<tr><td>coolify</td><td>Coolify API (link)</td><td>⚪ Static</td></tr>
+<tr><td>update</td><td>Static commands</td><td>⚪ Static</td></tr>
+<tr><td>webmin</td><td>Webmin link</td><td>⚪ Static</td></tr>
+<tr><td>nginxui</td><td>NPM link</td><td>⚪ Static</td></tr>
+<tr><td>frontend</td><td>This page (reference)</td><td>⚪ Static</td></tr>
+</tbody>
+</table>
 </div>
-<div class="grid">
-<details open><summary>🔗 SSH Connection (Beginner)</summary>
-<div class="card">
 </details>
-<pre style="font-size:12px;background:#fef3e2;padding:10px;border-radius:6px"># DevContainer (IsolationEnvironment)
-ssh admin958168@10.1.4.201 -p 52200
 
-# Stack14 (IIS+MSSQL)
-ssh root@10.1.4.201 -p 58080
-
-# Stack15 (Nginx+MySQL)
-ssh root@10.1.4.201 -p 58081
-
-# Stack16 (Nginx+Oracle)
-ssh root@10.1.4.201 -p 58082</pre></div>
-<details open><summary>📝 Git Workflow</summary>
-<div class="card">
-</details>
-<pre style="font-size:12px;background:#fef3e2;padding:10px;border-radius:6px"># Clone Repository
-git clone http://10.1.4.201:53000/admin958168/&lt;repo&gt;.git
-
-# Dev → Push
-git add -A
-git commit -m "feat: description"
-git push
-
-# Auto: Forgejo → GitHub mirror
-# Deploy: Coolify webhook Trigger</pre></div>
-<details open><summary>🖥 Supported IDE</summary>
-<div class="card">
-</details>
-<ul style="padding-left:16px;font-size:12px;margin:4px 0">
-<li><strong>VSCode</strong> — Remote-SSH Extension</li>
-<li><strong>Cursor</strong> — SSH Remote Development</li>
-<li><strong>JetBrains</strong> — Gateway + SSH</li>
-<li><strong>Terminal</strong> — Any SSH Terminal</li>
-</ul>
-<p style="font-size:11px;color:#6b7280;margin-top:6px">SSH Config: <code>Host dev → HostName 10.1.4.201 → Port 52200 → User admin958168</code></p>
+<!-- Section 3: Design System -->
+<details>
+<summary>🎨 Design System</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Element</th><th>Style</th></tr></thead>
+<tbody>
+<tr><td>Background</td><td><code>#0d1117</code> (GitHub dark)</td></tr>
+<tr><td>Card background</td><td><code>#161b22</code></td></tr>
+<tr><td>Primary text</td><td><code>#c9d1d9</code></td></tr>
+<tr><td>Accent</td><td><code>#58a6ff</code> (blue links)</td></tr>
+<tr><td>Success</td><td><code>#2ea043</code> (green)</td></tr>
+<tr><td>Error</td><td><code>#f85149</code> (red)</td></tr>
+<tr><td>Warning</td><td><code>#d29922</code> (yellow)</td></tr>
+<tr><td>Font</td><td>system-ui, -apple-system, sans-serif</td></tr>
+<tr><td>Code</td><td>monospace</td></tr>
+</tbody>
+</table>
 </div>
-</div></div>
-
-<!-- 03. BackendSystem -->
+</details>

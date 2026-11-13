@@ -247,6 +247,12 @@ function runPageScripts(tabId) {
   if (tabId === 'deploy') { loadDeployData(); }
   if (tabId === 'docker') { loadDockerData(); }
   if (tabId === 'remote-docker') { /* static page, scan on button click */ }
+  if (tabId === 'logs') { loadLogs(); }
+  if (tabId === 'network') { loadNetworkData(); }
+  if (tabId === 'versions') { loadVersions(); }
+  if (tabId === 'github') { loadGitHubData(); }
+  if (tabId === 'security') { loadSecurityData(); }
+  if (tabId === 'backend') { loadBackendData(); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -309,6 +315,145 @@ async function scanSubnet() {
     }
   } catch (e) {
     el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
+  }
+}
+
+async function loadBackendData() {
+  const pre = document.getElementById('systemd-status');
+  if (pre) {
+    try {
+      const ver = await fetch(DOCKER_API + '/api/docker/versions').then(r => r.json());
+      pre.textContent = 'Python: ' + ver.versions.python + '\nNode: ' + ver.versions.node
+        + '\n\nSystemd services:\n  webhook-receiver.service  → :58190\n  deploy-api.service        → :58191\n  docker-mgmt-api.service   → :58192'
+        + '\n\nAll services: Restart=always, Linger=yes';
+    } catch (e) { pre.textContent = 'Could not load data'; }
+  }
+}
+
+async function loadSecurityData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/containers').then(r => r.json());
+    const sb = document.getElementById('sec-health-body');
+    if (sb) {
+      sb.innerHTML = d.containers.map(c => {
+        const st = c.health === 'healthy' ? '🟢' : c.health === 'none' ? '⚪' : '🔴';
+        const net = c.ports && c.ports.length > 0 ? 'host (ports: ' + c.ports.slice(0,3).join(',') + ')' : 'host';
+        return '<tr><td><strong>' + c.name + '</strong></td><td>' + st + ' ' + c.health + '</td><td>' + net + '</td><td>always</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
+}
+
+async function loadGitHubData() {
+  try {
+    const repos = await fetch('http://10.1.4.201:53000/api/v1/repos/search?limit=50',
+      {headers:{'Authorization':'Basic ' + btoa('admin958168:0982j;6t/6958')}}).then(r => r.json());
+    const list = repos.data || repos;
+    const mc = document.getElementById('mirror-count');
+    const mb = document.getElementById('mirror-body');
+    const gl = document.getElementById('gh-link-list');
+    if (mc) mc.textContent = list.length;
+    let rows = [];
+    let links = [];
+    for (const repo of list) {
+      try {
+        const mirrors = await fetch('http://10.1.4.201:53000/api/v1/repos/admin958168/' + repo.name + '/push_mirrors',
+          {headers:{'Authorization':'Basic ' + btoa('admin958168:0982j;6t/6958')}}).then(r => r.json());
+        if (Array.isArray(mirrors) && mirrors.length > 0) {
+          for (const m of mirrors) {
+            rows.push('<tr><td><strong>' + repo.name + '</strong></td>'
+              + '<td style="font-size:10px"><a href="' + m.remote_address.replace('.git','') + '" target="_blank" style="color:#58a6ff">' + m.remote_address + '</a></td>'
+              + '<td>' + (m.sync_on_commit ? '🟢 Yes' : '⚪ No') + '</td>'
+              + '<td style="font-size:10px">' + (m.last_update || '-').substring(0,16) + '</td></tr>');
+            links.push('<li style="padding:4px 0">📦 <a href="' + m.remote_address.replace('.git','') + '" target="_blank" style="color:#58a6ff">' + repo.name + '</a></li>');
+          }
+        } else {
+          rows.push('<tr><td><strong>' + repo.name + '</strong></td><td style="color:#6b7280">No push mirror</td><td>-</td><td>-</td></tr>');
+        }
+      } catch (e) {
+        rows.push('<tr><td><strong>' + repo.name + '</strong></td><td style="color:#f85149">Error</td><td>-</td><td>-</td></tr>');
+      }
+    }
+    if (mb) mb.innerHTML = rows.join('');
+    if (gl && links.length) gl.innerHTML = links.join('');
+  } catch (e) {}
+}
+
+async function loadVersions() {
+  try {
+    const [ver, con] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/versions').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/containers').then(r => r.json())
+    ]);
+    const vb = document.getElementById('ver-body');
+    if (vb) {
+      const entries = Object.entries(ver.versions);
+      vb.innerHTML = entries.map(([k, v]) => {
+        const ok = v !== 'N/A';
+        return '<tr><td><strong>' + k + '</strong></td><td>' + v + '</td><td>' + (ok ? '🟢 OK' : '⚪ N/A') + '</td></tr>';
+      }).join('');
+    }
+    const ib = document.getElementById('img-body');
+    if (ib && con.containers) {
+      ib.innerHTML = con.containers.map(c => {
+        const st = c.health === 'healthy' ? '🟢' : c.health === 'none' ? '⚪' : '🔴';
+        return '<tr><td><strong>' + c.name + '</strong></td><td style="font-size:10px">' + c.image + '</td><td>' + st + ' ' + c.health + '</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
+}
+
+async function loadNetworkData() {
+  try {
+    const [nets, ports] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/networks').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/ports').then(r => r.json())
+    ]);
+    const ncEl = document.getElementById('net-count');
+    const nb = document.getElementById('net-body');
+    if (ncEl) ncEl.textContent = nets.networks.length;
+    if (nb) {
+      nb.innerHTML = nets.networks.map(n => '<tr><td><strong>' + n.Name + '</strong></td><td>' + n.Driver + '</td><td>' + n.Scope + '</td><td>' + (n.Subnet || '-') + '</td></tr>').join('');
+    }
+    const pcEl = document.getElementById('port-count');
+    const pb = document.getElementById('port-body');
+    if (pcEl) pcEl.textContent = ports.ports.length;
+    if (pb) {
+      pb.innerHTML = ports.ports.map(p => '<tr><td><strong>' + p.port + '</strong></td><td>' + p.service + '</td></tr>').join('');
+    }
+  } catch (e) {}
+}
+
+async function loadLogs() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/logs').then(r => r.json());
+    const tbody = document.getElementById('log-body');
+    const countEl = document.getElementById('log-count');
+    const sel = document.getElementById('log-select');
+    if (countEl) countEl.textContent = d.count;
+    if (tbody) {
+      tbody.innerHTML = d.logs.map(l => {
+        const preview = l.tail ? l.tail.substring(l.tail.length - 200).replace(/</g,'&lt;') : '(empty)';
+        return '<tr><td><strong>' + l.name + '</strong></td><td>' + l.size + 'B</td>'
+          + '<td style="font-size:10px">' + l.modified.substring(0,16) + '</td>'
+          + '<td style="font-size:10px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + preview + '</td></tr>';
+      }).join('');
+    }
+    if (sel) {
+      sel.innerHTML = d.logs.map(l => '<option value="' + l.name + '">' + l.name + ' (' + l.size + 'B)</option>').join('');
+    }
+  } catch (e) {}
+}
+
+async function viewLog() {
+  const sel = document.getElementById('log-select');
+  const pre = document.getElementById('log-content');
+  if (!sel || !pre) return;
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/log/' + sel.value).then(r => r.json());
+    pre.textContent = d.content || 'No content';
+  } catch (e) {
+    pre.textContent = 'Error: ' + e.message;
   }
 }
 

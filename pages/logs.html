@@ -1,62 +1,80 @@
 <!-- Page: 07. All Logs -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>📝 All Logs</h2>
-<div class="grid">
-<details open><summary>🐳 Docker Container Logs</summary>
-<div class="card">
+<h2>📋 All Logs</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Live log files from Docker Management API (:58192) — deploy logs, service logs, webhook logs</p>
+
+<!-- Section 1: Recent Logs -->
+<details open>
+<summary>📄 Recent Log Files (<span id="log-count">--</span> files)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadLogs()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:11px" id="log-table">
+<thead><tr><th>Log File</th><th>Size</th><th>Last Modified</th><th>Preview (last 200 chars)</th></tr></thead>
+<tbody id="log-body"><tr><td colspan="4" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
+</div>
 </details>
-<table style="width:100%;font-size:12px"><thead><tr><th>Container</th><th>Commands</th></tr></thead><tbody>
-<tr><td>Coolify</td><td><code>docker logs --tail 100 coolify</code></td></tr>
-<tr><td>Forgejo</td><td><code>docker logs --tail 100 docker_forgejo</code></td></tr>
-<tr><td>Windmill</td><td><code>docker logs --tail 100 docker_windmill_server</code></td></tr>
-<tr><td>Woodpecker</td><td><code>docker logs --tail 100 docker_woodpecker_server</code></td></tr>
-<tr><td>Portainer</td><td><code>docker logs --tail 100 docker_portainer</code></td></tr>
-<tr><td>MSSQL</td><td><code>docker logs --tail 100 docker_iismssql_mssql</code></td></tr>
-<tr><td>MySQL</td><td><code>docker logs --tail 100 docker_nginxmysql_mysql</code></td></tr>
-<tr><td>Oracle</td><td><code>docker logs --tail 100 docker_nginxoracle_oracle</code></td></tr>
-</tbody></table></div>
-<details open><summary>🖥 System Logs</summary>
+
+<!-- Section 2: Log Viewer -->
+<details>
+<summary>🔍 Log Viewer</summary>
 <div class="card">
+<div style="display:flex;gap:8px;margin-bottom:8px">
+  <select id="log-select" style="padding:4px;flex:1;font-size:12px"></select>
+  <button onclick="viewLog()" style="padding:4px 12px;background:#2ea043;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">📖 View Full</button>
+</div>
+<pre id="log-content" style="font-size:10px;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;max-height:400px;overflow:auto;white-space:pre-wrap">Select a log file and click "View Full"</pre>
+</div>
 </details>
-<table style="width:100%;font-size:12px"><thead><tr><th>Type</th><th>Path/Commands</th></tr></thead><tbody>
-<tr><td>System</td><td><code>journalctl -xe --no-pager</code></td></tr>
-<tr><td>SSH Auth</td><td><code>/var/log/auth.log</code></td></tr>
-<tr><td>Fail2ban</td><td><code>/var/log/fail2ban.log</code></td></tr>
-<tr><td>Nginx</td><td><code>/var/log/nginx/access.log</code></td></tr>
-<tr><td>PostgreSQL</td><td><code>/var/log/postgresql/postgresql-18-main.log</code></td></tr>
-<tr><td>Nginx-UI</td><td><code>/usr/local/etc/nginx-ui/</code></td></tr>
-<tr><td>PROGRESS</td><td><code>~/docker/ubuntu/PROGRESS.md</code></td></tr>
-</tbody></table></div>
-<details open><summary>🔍 Quick Debug</summary>
+
+<!-- Section 3: Docker Container Logs -->
+<details>
+<summary>🐳 Docker Container Logs</summary>
 <div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># View container logs (run on host):
+docker logs --tail 50 CONTAINER_NAME
+docker logs -f CONTAINER_NAME        # follow (stream)
+docker logs --since 1h CONTAINER_NAME # last 1 hour
+
+# Common containers:
+docker logs --tail 20 docker_forgejo
+docker logs --tail 20 docker_portainer_docs
+docker logs --tail 20 coolify</pre>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># AllContainerStatus
-docker ps --format 'table {{.Names}}\t{{.Status}}'
 
-# Container Real-time Logs
-docker logs -f --tail 50 &lt;container_name&gt;
-
-# System Resources
-free -h && df -h / && uptime
-
-# Check Port Conflicts
-bash ~/docker/ubuntu/port-detector.sh report
-
-# Restart Specific Service
-docker restart docker_forgejo
-cd ~/docker/ubuntu && docker compose restart windmill_server</pre></div>
-<details open><summary>📊 MonitorCommands</summary>
+<!-- Section 4: System Logs -->
+<details>
+<summary>🖥️ System Logs</summary>
 <div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Systemd service logs:
+journalctl --user -u webhook-receiver -n 50
+journalctl --user -u deploy-api -n 50
+journalctl --user -u docker-mgmt-api -n 50
+
+# System logs:
+sudo journalctl -u docker --since "1 hour ago"
+sudo journalctl -u nginx --since "1 hour ago"
+sudo journalctl -u postgresql@18-main -n 50</pre>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Container Resource Usage
-docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'
 
-# Disk Usage TOP 10
-du -sh /var/lib/docker/volumes/* 2>/dev/null | sort -rh | head -10
-
-# Network Connections (process)
-ss -tlnp | grep -v "127.0.0"</pre></div>
-</div></div>
-
-<!-- 08. Network/Port -->
+<!-- Section 5: Log Paths -->
+<details>
+<summary>📁 Log File Locations</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:12px">
+<thead><tr><th>Service</th><th>Log Path</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td>Deploy logs</td><td><code>/home/admin958168/_docker/ubuntu/logs/deploy-*.log</code></td><td>Per-deployment</td></tr>
+<tr><td>Webhook receiver</td><td><code>/home/admin958168/_docker/ubuntu/logs/webhook-receiver.log</code></td><td>Service</td></tr>
+<tr><td>Deploy API</td><td><code>/home/admin958168/_docker/ubuntu/logs/svc-deploy-api.log</code></td><td>Service</td></tr>
+<tr><td>Docker Mgmt API</td><td><code>/home/admin958168/_docker/ubuntu/logs/svc-docker-mgmt.log</code></td><td>Service</td></tr>
+<tr><td>Docker containers</td><td><code>docker logs CONTAINER</code></td><td>Container stdout</td></tr>
+<tr><td>Nginx</td><td><code>/var/log/nginx/</code></td><td>System</td></tr>
+<tr><td>PostgreSQL</td><td><code>/var/log/postgresql/</code></td><td>System</td></tr>
+</tbody>
+</table>
+</div>
+</details>

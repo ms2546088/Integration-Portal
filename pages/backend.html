@@ -1,66 +1,90 @@
-<!-- Page: 03. Backend Systems -->
+<!-- Page: 11. Backend Services -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>⚙️ Backend Systems</h2>
-<details open><summary>🏗 BackendServiceArchitecture</summary>
-<div class="card" style="border-left:4px solid #3fb950;margin-bottom:12px">
-</details>
-<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 0">
-<div style="text-align:center;min-width:100px">
-<div style="background:#fff5eb;border:2px solid #f97316;border-radius:8px;padding:8px;font-size:12px">🦊 Forgejo<br><small>:53000</small></div>
-<div style="color:#f97316;font-size:10px">↕ Git</div>
-</div>
-<div style="text-align:center;min-width:100px">
-<div style="background:#fff5eb;border:2px solid #22c55e;border-radius:8px;padding:8px;font-size:12px">☁️ Coolify<br><small>:8000</small></div>
-<div style="color:#22c55e;font-size:10px">↕ Deploy</div>
-</div>
-<div style="text-align:center;min-width:100px">
-<div style="background:#fff5eb;border:2px solid #f59e0b;border-radius:8px;padding:8px;font-size:12px">⚡ Windmill<br><small>:58100</small></div>
-<div style="color:#f59e0b;font-size:10px">↕ Automation</div>
-</div>
-<div style="text-align:center;min-width:100px">
-<div style="background:#fff5eb;border:2px solid #9ca3af;border-radius:8px;padding:8px;font-size:12px">🪵 Woodpecker<br><small>:58090</small></div>
-<div style="color:#6b7280;font-size:10px">↕ CI/CD</div>
-</div>
-</div>
-</div>
-<div class="grid">
-<details open><summary>🦊 Forgejo (Git Server)</summary>
-<div class="card">
-</details>
-<p>Port: <code>53000</code> (HTTP) / <code>52222</code> (SSH)</p>
-<p>Features: Git Repo / PR / Issues / Webhooks / Push mirror</p>
-<p>License: MIT | 7 Repo | <a href="http://10.1.4.201:53000" target="_blank">Open →</a></p></div>
-<details open><summary>☁️ Coolify (PaaS)</summary>
-<div class="card">
-</details>
-<p>Port: <code>8000</code> | 12 App</p>
-<p>Features: AppDeploy / Auto Build / ContainerManage</p>
-<p>License: Apache-2.0 | <a href="http://10.1.4.201:8000" target="_blank">Open →</a></p></div>
-<details open><summary>⚡ Windmill (Automation)</summary>
-<div class="card">
-</details>
-<p>Port: <code>58100</code> | devops workspace</p>
-<p>Features: Workflow / Script (Py/TS/Go) / Cron / Webhook</p>
-<p>License: AGPLv3 | <a href="http://10.1.4.201:58100" target="_blank">Open →</a></p></div>
-<details open><summary>🪵 Woodpecker (CI/CD)</summary>
-<div class="card">
-</details>
-<p>Port: <code>58090</code> (UI) / <code>58091</code> (GRPC)</p>
-<p>Features: Pipeline / Docker steps / Forgejo OAuth</p>
-<p>License: Apache-2.0 | <a href="http://10.1.4.201:58090" target="_blank">Open →</a></p></div>
-</div>
-<details open><summary>🔌 ServiceIntegrationTopology</summary>
-<div class="card" style="border-left:4px solid #d29922">
-</details>
-<table style="font-size:12px"><thead><tr><th>Event</th><th>Trigger</th><th>Action</th></tr></thead><tbody>
-<tr><td>git push</td><td>Forgejo webhook</td><td>Woodpecker CI pipeline</td></tr>
-<tr><td>CI pass</td><td>Woodpecker webhook</td><td>Coolify auto deploy</td></tr>
-<tr><td>commit</td><td>Forgejo push mirror</td><td>GitHub sync</td></tr>
-<tr><td>Schedule</td><td>Windmill cron</td><td>AutomationScript (Port Detector etc.)</td></tr>
-<tr><td>ContainerAbnormal</td><td>Coolify Sentinel</td><td>HealthMonitor + Alert</td></tr>
-</tbody></table>
-<p style="font-size:11px;color:#6b7280;margin-top:4px">AllService API CanFrom Windmill workflow Combined Call</p>
-</div></div>
+<h2>⚙️ Backend Services</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Backend API services and systemd-managed processes — live from Docker Mgmt API (:58192)</p>
 
-<!-- 04. File Structure -->
+<!-- Section 1: Custom API Services (live) -->
+<details open>
+<summary>🔧 Custom API Services (<span id="api-svc-count">3</span>)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadBackendData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:12px" id="api-svc-table">
+<thead><tr><th>Service</th><th>Port</th><th>File</th><th>Description</th></tr></thead>
+<tbody id="api-svc-body">
+<tr><td>🔗 Webhook Receiver</td><td>58190</td><td>webhook-receiver.py</td><td>Receives Forgejo webhook push events</td></tr>
+<tr><td>🚀 Deploy API</td><td>58191</td><td>deploy-api.py</td><td>Repo/target listing + approval workflow</td></tr>
+<tr><td>🐳 Docker Mgmt API</td><td>58192</td><td>docker-mgmt-api.py</td><td>Container/port/network/config/stats CRUD</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+<!-- Section 2: Systemd Services -->
+<details>
+<summary>🖥️ Systemd User Services</summary>
+<div class="card" style="font-size:12px">
+<pre style="background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;font-size:11px" id="systemd-status">Loading...</pre>
+</div>
+</details>
+
+<!-- Section 3: Database -->
+<details>
+<summary>🗄️ PostgreSQL Backend</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Setting</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Version</td><td>PostgreSQL 18</td></tr>
+<tr><td>Port</td><td>5432</td></tr>
+<tr><td>Listen Address</td><td>0.0.0.0 (all interfaces)</td></tr>
+<tr><td>Max Connections</td><td>100</td></tr>
+<tr><td>Databases</td><td>forgejo, windmill, woodpecker, postgres</td></tr>
+<tr><td>Users</td><td>admin958168, windmill_user, woodpecker_user, forgejo_user</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+<!-- Section 4: Cron Jobs -->
+<details>
+<summary>⏰ Cron Jobs (API Data Generation)</summary>
+<div class="card" style="font-size:12px">
+<pre style="background:#fef3e2;padding:8px;border-radius:6px;font-size:11px"># Portal API data (runs every 30 seconds):
+* * * * * bash ~/docker/ubuntu/update-portal-api.sh
+* * * * * sleep 30 && bash ~/docker/ubuntu/update-portal-api.sh
+
+# Generated files:
+# /api/health.json   — container health status
+# /api/resources.json — CPU/memory/disk usage
+
+# Verify cron is running:
+crontab -l | grep update-portal-api</pre>
+</div>
+</details>
+
+<!-- Section 5: File Structure -->
+<details>
+<summary>📁 Backend File Structure</summary>
+<div class="card" style="font-size:11px;font-family:monospace">
+<pre style="margin:0;background:#1a1a2e;color:#d4d4d4;padding:12px;border-radius:6px">_docker/ubuntu/
+├── webhook-receiver.py      # :58190 webhook handler
+├── deploy-api.py            # :58191 deploy workflow
+├── docker-mgmt-api.py       # :58192 docker management
+├── webhook-deploy.sh         # Multi-target deploy script
+├── update-portal-api.sh      # Cron: generate /api/*.json
+├── logs/                     # Deploy + service logs
+│   ├── deploy-*.log
+│   ├── webhook-receiver.log
+│   ├── svc-deploy-api.log
+│   └── svc-docker-mgmt.log
+├── Official-Area_Forgejo/    # docker-compose.yml
+├── Official-Area_Windmill/   # docker-compose.yml
+├── Official-Area_WoodpeckerCI/ # docker-compose.yml
+├── Official-Area_Portainer/  # docker-compose.yml
+├── Official-Area_Registry/   # docker-compose.yml
+├── Official-Area_SSHDocker/  # docker-compose.yml
+├── Official-Area_NginxMYSQL/ # docker-compose.yml
+└── Official-Area_NginxOracle21cFree/ # docker-compose.yml</pre>
+</div>
+</details>

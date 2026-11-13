@@ -1,61 +1,95 @@
-<!-- Page: 08. Network/Ports -->
+<!-- Page: 10. Network -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🌐 Port Registry — Port Allocation</h2>
-<details open><summary>🔍 Port Allocation Strategy</summary>
-<div class="card" style="border-left:4px solid #58a6ff;margin-bottom:12px">
+<h2>🌐 Network Architecture</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Docker networks, port allocation, and routing — live data from Docker Management API (:58192)</p>
+
+<!-- Section 1: Network Policy -->
+<details open>
+<summary>📋 Network Policy</summary>
+<div class="card" style="background:#1a1a2e;color:#d4d4d4;padding:16px;border-radius:8px;font-size:12px">
+<div style="font-weight:600;color:#58a6ff;margin-bottom:8px">🔒 Iron Rules (要求20261111PM0450)</div>
+<ul style="margin:0;padding-left:20px;line-height:1.8">
+<li>All services bind to <strong>0.0.0.0</strong> — accessible from LAN (10.1.4.0/24)</li>
+<li>Docker containers use <strong>host</strong> network mode — same IP as host (10.1.4.201)</li>
+<li>Exception: Coolify uses <strong>bridge</strong> network (coolify network, maps 8000→8080)</li>
+<li>Port range: <strong>10000–65534</strong> per docker container</li>
+<li>All other Docker bridge networks are <strong>removed</strong></li>
+</ul>
+</div>
 </details>
-<div class="grid" style="gap:8px">
-<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
-<div style="color:#f97316;font-weight:700">SSH</div>
-<div>52000-52999</div>
-</div>
-<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
-<div style="color:#22c55e;font-weight:700">DB</div>
-<div>51000-53999</div>
-</div>
-<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
-<div style="color:#f59e0b;font-weight:700">Web/App</div>
-<div>58000-59999</div>
-</div>
-<div style="background:#fef3e2;padding:8px;border-radius:6px;text-align:center;font-size:12px">
-<div style="color:#ef4444;font-weight:700">Ephemeral ⚠</div>
-<div>61000-65500 (Avoid)</div>
-</div>
-</div>
-<p style="font-size:11px;color:#6b7280;margin-top:6px">Before adding container: <code>bash port-detector.sh check &lt;port&gt;</code></p>
-</div>
-<table style="font-size:12px">
-<thead><tr><th>Port</th><th>Service</th><th>Type</th><th>Purpose</th></tr></thead>
-<tbody>
-<tr style="color:#6b7280"><td>22</td><td>SSH (Host)</td><td>System</td><td>Ubuntu SSH Login</td></tr>
-<tr style="color:#6b7280"><td>80/443</td><td>Nginx</td><td>System</td><td>HTTP/HTTPS ReverseProxy</td></tr>
-<tr><td>5432</td><td>PostgreSQL v18</td><td>DB</td><td>UnifiedDatabase (forgejo/windmill/woodpecker)</td></tr>
-<tr><td>8000</td><td>Coolify</td><td>WebUI</td><td>PaaS DeployManage</td></tr>
-<tr><td>9000</td><td>Nginx-UI</td><td>WebUI</td><td>Nginx ConfigManage</td></tr>
-<tr><td>10000</td><td>Webmin</td><td>WebUI</td><td>SystemManage (→ :58168 HTTPS)</td></tr>
-<tr><td>51433</td><td>MSSQL 2022</td><td>DB</td><td>Stack14 SQL Server</td></tr>
-<tr><td>51521</td><td>Oracle 21c XE</td><td>DB</td><td>Stack16 Oracle</td></tr>
-<tr><td>52200</td><td>SSH Docker</td><td>SSH</td><td>UserDevContainer</td></tr>
-<tr><td>52222</td><td>Forgejo SSH</td><td>SSH</td><td>Git SSH Push</td></tr>
-<tr><td>53000</td><td>Forgejo HTTP</td><td>WebUI</td><td>Git Server</td></tr>
-<tr><td>53306</td><td>MySQL 8.0</td><td>DB</td><td>Stack15 MySQL</td></tr>
-<tr><td>55000</td><td>Docker Registry</td><td>API</td><td>ImageRepo</td></tr>
-<tr><td>58080</td><td>SSLH (Stack14)</td><td>Multi</td><td>IIS+MSSQL SSH/HTTP</td></tr>
-<tr><td>58081</td><td>SSLH (Stack15)</td><td>Multi</td><td>Nginx+MySQL SSH/HTTP</td></tr>
-<tr><td>58082</td><td>SSLH (Stack16)</td><td>Multi</td><td>Nginx+Oracle SSH/HTTP</td></tr>
-<tr><td>58088</td><td>Nginx (Stack14)</td><td>Web</td><td>IIS Emulate HTTP</td></tr>
-<tr><td>58090</td><td>Woodpecker UI</td><td>WebUI</td><td>CI/CD Manage</td></tr>
-<tr><td>58091</td><td>Woodpecker GRPC</td><td>GRPC</td><td>Agent Communication</td></tr>
-<tr><td>58100</td><td>Windmill</td><td>WebUI</td><td>WorkflowAutomation</td></tr>
-<tr><td>58168</td><td>Webmin HTTPS</td><td>WebUI</td><td>Webmin (Nginx TLS Proxy)</td></tr>
-<tr><td>58200</td><td>Nginx-UI HTTPS</td><td>WebUI</td><td>Nginx-UI TLS</td></tr>
-<tr><td>58300</td><td>test-deploy</td><td>Web</td><td>Coolify TestDeploy</td></tr>
-<tr><td>59000</td><td>Integration Portal</td><td>WebUI</td><td>This Portal</td></tr>
-<tr><td>59009</td><td>Portainer CE</td><td>WebUI</td><td>ContainerManage</td></tr>
-<tr><td>65500</td><td>Coolify Sentinel</td><td>Agent</td><td>Coolify Monitor</td></tr>
-</tbody>
+
+<!-- Section 2: Docker Networks (live) -->
+<details open>
+<summary>🔗 Docker Networks (<span id="net-count">--</span>)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadNetworkData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:11px" id="net-table">
+<thead><tr><th>Network Name</th><th>Driver</th><th>Scope</th><th>Subnet</th></tr></thead>
+<tbody id="net-body"><tr><td colspan="4" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
 </table>
 </div>
+</details>
 
-<!-- 09. Security -->
+<!-- Section 3: Port Allocation (live) -->
+<details>
+<summary>🔌 Port Allocation (<span id="port-count">--</span> ports)</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:11px" id="port-table">
+<thead><tr><th>Port</th><th>Service / Container</th></tr></thead>
+<tbody id="port-body"><tr><td colspan="2" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
+</div>
+</details>
+
+<!-- Section 4: Host Network Listeners -->
+<details>
+<summary>🖥️ Host Network Status</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Check all listening ports:
+ss -tlnp | sort -t: -k2 -n
+
+# Check specific port:
+ss -tlnp | grep :53000
+
+# Firewall rules (if active):
+sudo ufw status verbose
+
+# DNS / Hostname:
+hostname -I
+cat /etc/hosts | grep 10.1.4</pre>
+</div>
+</details>
+
+<!-- Section 5: Architecture -->
+<details>
+<summary>📐 Network Topology</summary>
+<div class="card" style="background:#1a1a2e;color:#d4d4d4;padding:16px;border-radius:8px;font-size:11px;font-family:monospace;line-height:1.6">
+<pre style="margin:0;white-space:pre-wrap">
+┌─ LAN 10.1.4.0/24 ─────────────────────────────┐
+│                                                 │
+│  10.1.4.201 (Ubuntu Host - this machine)        │
+│  ├── :53000 Forgejo (Git)                       │
+│  ├── :58000 Windmill (Workflow)                  │
+│  ├── :8001  Woodpecker CI                       │
+│  ├── :9000  Portainer                           │
+│  ├── :5000  Docker Registry                     │
+│  ├── :58190 Webhook Receiver (systemd)          │
+│  ├── :58191 Deploy API (systemd)                │
+│  ├── :58192 Docker Mgmt API (systemd)           │
+│  ├── :59000 Integration Portal                  │
+│  ├── :5432  PostgreSQL                          │
+│  ├── :10000 Webmin                              │
+│  ├── :81    Nginx Proxy Manager                 │
+│  └── :8000  Coolify (bridge→8080)               │
+│                                                 │
+│  Docker Network Mode: host (all except Coolify) │
+│  Coolify Bridge: 172.x.x.x → 8000:8080         │
+│                                                 │
+│  10.1.4.44  (Windows Server - remote)           │
+│  └── Docker Desktop + IIS/MSSQL stack           │
+│                                                 │
+└─────────────────────────────────────────────────┘
+</pre>
+</div>
+</details>

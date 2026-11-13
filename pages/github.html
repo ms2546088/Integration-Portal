@@ -1,33 +1,47 @@
-<!-- Page: 20. GitHub -->
+<!-- Page: 08. GitHub Integration -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🐙 GitHub Mirror</h2>
-<details open><summary><span class="dot dot-green"></span>GitHub: ms2546088</summary>
-<div class="card" style="border-left:4px solid #8b949e">
-<p>Account: <code>jpc202505ms@gmail.com</code> | <a href="https://github.com/ms2546088" target="_blank">Open GitHub →</a></p>
+<h2>🐙 GitHub Integration</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Forgejo → GitHub push mirror status — live from Forgejo API (:53000)</p>
+
+<!-- Section 1: Mirror Status (live) -->
+<details open>
+<summary>🔄 Push Mirror Status (<span id="mirror-count">--</span> repos)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadGitHubData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:11px" id="mirror-table">
+<thead><tr><th>Forgejo Repo</th><th>GitHub Mirror</th><th>Sync on Commit</th><th>Last Sync</th></tr></thead>
+<tbody id="mirror-body"><tr><td colspan="4" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
 </div>
 </details>
-<details open><summary>🔄 Push Mirror Mechanism</summary>
+
+<!-- Section 2: Setup -->
+<details>
+<summary>⚙️ Mirror Setup Guide</summary>
 <div class="card">
-</details>
-<div style="display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;padding:8px 0">
-<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #f97316">Developer</span>
-<span>→ git push</span>
-<span style="background:#fef3e2;padding:6px 10px;border-radius:6px">Forgejo :53000</span>
-<span>→ sync_on_commit</span>
-<span style="background:#fff5eb;padding:6px 10px;border-radius:6px;border:1px solid #d1d5db">GitHub</span>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Forgejo WebUI → Repo → Settings → Mirror Settings
+# Add Push Mirror:
+#   Remote URL: https://github.com/ms2546088/REPO_NAME.git
+#   Auth: Username=jpc202505ms@gmail.com + GitHub PAT (classic, repo scope)
+#   Sync on Commit: ✅ Enabled
+#   Interval: 8h0m0s
+
+# GitHub PAT Token: create at https://github.com/settings/tokens
+# Scope: repo (full control of private repositories)
+
+# Verify mirror manually:
+# Forgejo WebUI → Repo → Settings → Mirror Settings → Sync Now</pre>
 </div>
-<p style="font-size:11px;color:#6b7280">Instant Sync (push at) + 8h Scheduled Backup Sync</p>
-</div>
-<details open><summary>📋 7  ReposSyncStatus</summary>
-<div class="card">
 </details>
-<table style="width:100%;font-size:12px"><thead><tr><th>Forgejo Repo</th><th>GitHub Target</th><th>Status</th></tr></thead><tbody>
-<tr><td>Official-Area-ApacheMYSQL</td><td>ms2546088/Official-Area-ApacheMYSQL</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>Official-Area-IISmssql</td><td>ms2546088/Official-Area-IISmssql</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>Official-Area-NginxMYSQL</td><td>ms2546088/Official-Area-NginxMYSQL</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>Official-Area-NginxOracle21cFree</td><td>ms2546088/Official-Area-NginxOracle21cFree</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>Official-Area-NginxPostgreSQL</td><td>ms2546088/Official-Area-NginxPostgreSQL</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>Official-Area-TomcatMYSQL</td><td>ms2546088/Official-Area-TomcatMYSQL</td><td><span class="dot dot-green"></span></td></tr>
-<tr><td>test-deploy</td><td>ms2546088/test-deploy</td><td><span class="dot dot-green"></span></td></tr>
-</tbody></table></div>
+
+<!-- Section 3: GitHub Links -->
+<details>
+<summary>🔗 GitHub Repository Links</summary>
+<div class="card" id="github-links" style="font-size:12px">
+<p>GitHub Organization: <a href="https://github.com/ms2546088" target="_blank" style="color:#58a6ff">github.com/ms2546088</a></p>
+<ul id="gh-link-list" style="list-style:none;padding:0;margin:0">
+<li style="padding:4px 0">Loading...</li>
+</ul>
+</div>
+</details>
