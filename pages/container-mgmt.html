@@ -1,0 +1,43 @@
+<div class="section">
+<h2>🐳 Container Management</h2>
+<p style="color:var(--text2)">Start, stop, restart containers and manage Docker images</p>
+<button onclick="loadContainerMgmt()" style="padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:8px">🔄 Refresh</button>
+</div>
+
+<div class="section">
+<h2>Container Actions</h2>
+<div style="overflow-x:auto">
+<table class="tbl" id="container-actions-table">
+<tr><th>Container</th><th>Status</th><th>Health</th><th>Uptime</th><th>Actions</th></tr>
+<tr><td colspan="5"><em>Loading...</em></td></tr>
+</table>
+</div>
+<div id="action-result" style="margin-top:12px;font-size:13px"></div>
+</div>
+
+<div class="section">
+<h2>Docker Images</h2>
+<div style="overflow-x:auto">
+<table class="tbl" id="images-table">
+<tr><th>Repository</th><th>Tag</th><th>ID</th><th>Size</th><th>Created</th></tr>
+<tr><td colspan="5"><em>Loading...</em></td></tr>
+</table>
+</div>
+</div>
+
+<div class="section">
+<h2>Pull Image</h2>
+<div style="display:flex;gap:8px;align-items:end">
+  <div style="flex:1">
+    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Image name (e.g. nginx:alpine, mysql:8.0)</label>
+    <input type="text" id="pull-image" placeholder="nginx:alpine" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px">
+  </div>
+  <button onclick="pullImage()" style="padding:8px 20px;background:#2ea043;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">📥 Pull</button>
+</div>
+<div id="pull-result" style="margin-top:8px;font-size:13px"></div>
+</div>
+
+<div class="section">
+<h2>Live Container Stats</h2>
+<div id="container-stats"><em>Click Refresh above to load stats</em></div>
+</div>

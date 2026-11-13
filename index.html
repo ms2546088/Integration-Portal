@@ -151,7 +151,8 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="mysql-stack" class="">24. MySQL Stack</button>
   <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
   <button data-tab="ssh-dev" class="">26. SSH Dev</button>
-  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">28. Config Editor</button>
+  <button data-tab="container-mgmt" class="" style="background:#059669;color:#fff;font-weight:600">28. Container Mgmt</button>
+  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">29. Config Editor</button>
   <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">29. Resources</button>
   <button data-tab="windmill-service" class="">29. Windmill</button>
   <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
@@ -276,6 +277,7 @@ function runPageScripts(tabId) {
   if (tabId === 'oracle-stack') { loadStackStatus('oracle', 'oracle-status'); }
   if (tabId === 'ssh-dev') { loadSSHDevData(); }
   if (tabId === 'smart-update') { loadSmartUpdateData(); }
+  if (tabId === 'container-mgmt') { loadContainerMgmt(); }
   if (tabId === 'config-editor') { loadConfigList(); }
   if (tabId === 'resource-mgmt') { loadResourceData(); }
   if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
@@ -972,6 +974,60 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// Container management + image management
+// ══════════════════════════════════════════════════════
+async function loadContainerMgmt() {
+  try {
+    const [con, img] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/containers').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/images').then(r => r.json())
+    ]);
+    const tbl = document.getElementById('container-actions-table');
+    if (tbl) {
+      tbl.innerHTML = '<tr><th>Container</th><th>Status</th><th>Health</th><th>Uptime</th><th>Actions</th></tr>' +
+        con.containers.map(c => {
+          const health = c.health === 'healthy' ? '🟢' : c.health === 'unhealthy' ? '🔴' : '⚪';
+          const btns = '<button onclick="containerAction(\'' + c.name + '\',\'restart\')" style="padding:2px 6px;background:#f59e0b;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:10px;margin:1px">⟳</button>' +
+            (c.state === 'running' ? '<button onclick="containerAction(\'' + c.name + '\',\'stop\')" style="padding:2px 6px;background:#ef4444;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:10px;margin:1px">⏹</button>' :
+            '<button onclick="containerAction(\'' + c.name + '\',\'start\')" style="padding:2px 6px;background:#22c55e;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:10px;margin:1px">▶</button>');
+          return '<tr><td style="font-size:12px">' + c.name + '</td><td>' + c.state + '</td><td>' + health + '</td><td style="font-size:11px">' + (c.uptime||'-') + '</td><td>' + btns + '</td></tr>';
+        }).join('');
+    }
+    const imgTbl = document.getElementById('images-table');
+    if (imgTbl && img.images) {
+      imgTbl.innerHTML = '<tr><th>Repository</th><th>Tag</th><th>ID</th><th>Size</th><th>Created</th></tr>' +
+        img.images.map(i => '<tr><td style="font-size:12px">' + i.repository + '</td><td>' + i.tag + '</td><td><code style="font-size:10px">' + i.id + '</code></td><td>' + i.size + '</td><td style="font-size:11px">' + i.created + '</td></tr>').join('');
+    }
+  } catch(e) {}
+}
+
+async function containerAction(name, action) {
+  const el = document.getElementById('action-result');
+  if (!confirm(action.toUpperCase() + ' container ' + name + '?')) return;
+  el.innerHTML = '<em>' + action + 'ing ' + name + '...</em>';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/container-action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({container: name, action}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ ' + name + ' ' + action + ' successful</span>'; setTimeout(loadContainerMgmt, 2000); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Failed: ' + e.message + '</span>'; }
+}
+
+async function pullImage() {
+  const image = document.getElementById('pull-image').value;
+  const el = document.getElementById('pull-result');
+  if (!image) { el.innerHTML = '<span style="color:#ef4444">Enter image name</span>'; return; }
+  if (!confirm('Pull image: ' + image + '?')) return;
+  el.innerHTML = '<em>Pulling ' + image + '... (this may take a while)</em>';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/image-pull', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({image}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Pulled successfully</span>'; loadContainerMgmt(); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Pull failed: ' + e.message + '</span>'; }
+}
 
 // ══════════════════════════════════════════════════════
 // Config editor
