@@ -58,11 +58,22 @@
 <div class="arch-node"><strong>📦 Registry :55000</strong><small>Docker Images</small></div>
 </div></div>
 <div class="arch-layer">
+<div class="arch-layer-title">🔔 Webhook + Review-Then-Deploy Layer</div>
+<div class="arch-flow">
+<div class="arch-node" style="border-color:#f97316"><strong>🔔 Webhook :58190</strong><small>Auto-trigger</small></div>
+<span class="arch-arrow">→</span>
+<div class="arch-node" style="border-color:#f97316"><strong>📋 Deploy API :58191</strong><small>Review & Approve</small></div>
+<span class="arch-arrow">→</span>
+<div class="arch-node" style="border-color:#f97316"><strong>🚀 webhook-deploy.sh</strong><small>rsync/compose/coolify</small></div>
+</div></div>
+<div class="arch-layer">
 <div class="arch-layer-title">🚀 Deploy + Management Layer</div>
 <div class="arch-flow">
 <div class="arch-node"><strong>☁️ Coolify :8000</strong><small>Auto Deploy</small></div>
 <span class="arch-arrow">→</span>
 <div class="arch-node"><strong>🔲 Portainer :59009</strong><small>Container Mgmt</small></div>
+<span class="arch-arrow">↔</span>
+<div class="arch-node"><strong>🐳 Docker Mgmt :58192</strong><small>API CRUD</small></div>
 <span class="arch-arrow">↔</span>
 <div class="arch-node"><strong>🐳 Docker Engine</strong><small>24 Containers</small></div>
 </div></div>
@@ -100,6 +111,9 @@
 <tr><td>58090</td><td>Woodpecker</td><td>HTTP</td><td>CI/CD (Apache-2.0)</td></tr>
 <tr><td>58100</td><td>Windmill</td><td>HTTP</td><td>Workflow Automation (AGPL-3.0)</td></tr>
 <tr><td>58168</td><td>Webmin</td><td>HTTPS</td><td>System Management (BSD)</td></tr>
+<tr><td>58190</td><td>Webhook Receiver</td><td>HTTP</td><td>Forgejo Push Webhook → Auto-deploy</td></tr>
+<tr><td>58191</td><td>Deploy API</td><td>HTTP</td><td>Review-Then-Deploy Approval Workflow</td></tr>
+<tr><td>58192</td><td>Docker Mgmt API</td><td>HTTP</td><td>Container/Port/Network/Resource CRUD</td></tr>
 <tr><td>58300</td><td>Test Deploy</td><td>HTTP</td><td>Coolify Test Deploy</td></tr>
 <tr><td>59000</td><td>Integration Portal</td><td>HTTP</td><td>This Portal (Custom-built)</td></tr>
 <tr><td>59009</td><td>Portainer CE</td><td>HTTP</td><td>Docker Management (Zlib)</td></tr>
