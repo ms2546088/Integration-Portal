@@ -146,6 +146,7 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="docker" class="">19. Docker SSH</button>
   <button data-tab="github" class="">20. GitHub</button>
   <button data-tab="remote-docker" class="">21. Remote Docker</button>
+  <button data-tab="deploy" class="" style="background:#2ea043;color:#fff;font-weight:600">22. Deploy</button>
   <button data-tab="sop" class="" style="background:#f97316;color:#fff;font-weight:700">99. USER-SOP</button>
 </div>
 
@@ -229,6 +230,11 @@ async function loadTab(tabId) {
     const html = await resp.text();
     pageCache[tabId] = html;
     content.innerHTML = html;
+    content.querySelectorAll('script').forEach(old => {
+      const s = document.createElement('script');
+      s.textContent = old.textContent;
+      old.replaceWith(s);
+    });
     runPageScripts(tabId);
   } catch (err) {
     content.innerHTML = `<div class="card" style="border-left:4px solid #ef4444"><h3>⚠ Page Load Error</h3><p>Could not load <code>pages/${tabId}.html</code></p><p style="color:#6b7280;font-size:12px">${err.message}</p></div>`;

@@ -1,0 +1,168 @@
+<!-- Page: 22. Deploy Management -->
+<!-- Independent file - DO NOT merge into index.html -->
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>🚀 Deploy Management</h2>
+
+<details open>
+<summary>📡 Pipeline Status</summary>
+<div class="card" style="border-left:4px solid var(--accent)">
+<div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px" id="deploy-status">
+<div><strong>Portal</strong><br><span id="ds-portal">--</span></div>
+<div><strong>GitHub Mirror</strong><br><span id="ds-mirror">--</span></div>
+<div><strong>Webhook</strong><br><span id="ds-webhook">--</span></div>
+<div><strong>Last Check</strong><br><span id="ds-time">--</span></div>
+</div>
+</div>
+</details>
+
+<details open>
+<summary>📋 Recent Commits (main branch)</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:12px" id="commits-table">
+<thead><tr><th>SHA</th><th>Message</th><th>Author</th><th>Date</th><th>Action</th></tr></thead>
+<tbody id="commits-body"><tr><td colspan="5">Loading...</td></tr></tbody>
+</table>
+</div>
+</details>
+
+<details open>
+<summary>📦 Deploy History</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:12px">
+<thead><tr><th>Timestamp</th><th>Status</th><th>Log</th></tr></thead>
+<tbody id="deploy-history"><tr><td colspan="3">Loading...</td></tr></tbody>
+</table>
+</div>
+</details>
+
+<details open>
+<summary>⚡ Manual Deploy</summary>
+<div class="card" style="border-left:4px solid #f59e0b">
+<p style="font-size:12px;margin-bottom:8px">Manually trigger a deploy from the latest main branch commit. This will:</p>
+<ol style="font-size:12px;padding-left:20px;margin:4px 0">
+<li>Backup current portal files</li>
+<li>Clone latest from Forgejo</li>
+<li>Sync files to portal directory</li>
+<li>Fix permissions (644 for HTML, 755 for dirs)</li>
+</ol>
+<button id="deploy-btn" onclick="triggerDeploy()" style="
+  background:var(--accent);color:#fff;border:none;padding:8px 24px;border-radius:6px;
+  font-size:13px;cursor:pointer;margin-top:8px;font-weight:600">
+  🚀 Deploy Now
+</button>
+<span id="deploy-result" style="margin-left:12px;font-size:12px"></span>
+</div>
+</details>
+
+<details>
+<summary>ℹ️ CI/CD Architecture</summary>
+<div class="card" style="font-size:12px">
+<pre style="background:#f8f9fa;padding:12px;border-radius:6px;overflow-x:auto;font-size:11px">
+Developer (VSCode/Cursor)
+    │
+    ▼ git push
+Forgejo :53000 (main branch)
+    │
+    ├──▶ Webhook → Deploy Receiver :58190 → webhook-deploy.sh
+    │       └── Backup → Clone → Sync → Permissions
+    │
+    ├──▶ Push Mirror → GitHub (ms2546088/Integration-Portal)
+    │       └── sync_on_commit (auto, ~5s)
+    │
+    └──▶ Woodpecker CI :58090 (pipeline validation)
+            └── .woodpecker.yml → validate → notify
+
+Portal :59000 ◄── Deploy result
+    └── Deploy API :58191 → /api/deploy/{commits,history,status,trigger}
+</pre>
+</div>
+</details>
+
+<script>
+const DEPLOY_API = 'http://' + location.hostname + ':58191';
+
+function loadStatus() {
+  fetch(DEPLOY_API + '/api/deploy/status')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('ds-portal').innerHTML = d.portal_http === '200'
+        ? '<span style="color:#22c55e">✅ HTTP 200</span>' : '<span style="color:#ef4444">❌ ' + d.portal_http + '</span>';
+      document.getElementById('ds-mirror').textContent = d.github_mirror_sync || 'N/A';
+      document.getElementById('ds-webhook').innerHTML = '<span style="color:#22c55e">✅ Active</span>';
+      document.getElementById('ds-time').textContent = d.timestamp;
+    }).catch(() => {
+      document.getElementById('ds-portal').textContent = 'API unavailable';
+    });
+}
+
+function loadCommits() {
+  fetch(DEPLOY_API + '/api/deploy/commits')
+    .then(r => r.json())
+    .then(d => {
+      const tbody = document.getElementById('commits-body');
+      if (!d.commits || d.commits.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">No commits found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = d.commits.map(c =>
+        `<tr>
+          <td><code>${c.sha}</code></td>
+          <td>${c.message.substring(0, 60)}</td>
+          <td>${c.author}</td>
+          <td>${new Date(c.date).toLocaleString()}</td>
+          <td><a href="http://${location.hostname}:53000/admin958168/Integration-Portal/commit/${c.sha}" target="_blank" style="color:var(--accent)">View</a></td>
+        </tr>`
+      ).join('');
+    }).catch(() => {
+      document.getElementById('commits-body').innerHTML = '<tr><td colspan="5">Failed to load</td></tr>';
+    });
+}
+
+function loadHistory() {
+  fetch(DEPLOY_API + '/api/deploy/history')
+    .then(r => r.json())
+    .then(d => {
+      const tbody = document.getElementById('deploy-history');
+      if (!d.history || d.history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">No deploys yet</td></tr>';
+        return;
+      }
+      tbody.innerHTML = d.history.map(h =>
+        `<tr>
+          <td>${h.timestamp}</td>
+          <td style="color:${h.status === 'success' ? '#22c55e' : '#ef4444'}">${h.status === 'success' ? '✅ Success' : '❌ Failed'}</td>
+          <td><code>${h.log_file}</code></td>
+        </tr>`
+      ).join('');
+    }).catch(() => {
+      document.getElementById('deploy-history').innerHTML = '<tr><td colspan="3">Failed to load</td></tr>';
+    });
+}
+
+function triggerDeploy() {
+  const btn = document.getElementById('deploy-btn');
+  const result = document.getElementById('deploy-result');
+  if (!confirm('Deploy latest main branch to Portal? Current files will be backed up first.')) return;
+  btn.disabled = true;
+  btn.textContent = '⏳ Deploying...';
+  result.textContent = '';
+  
+  fetch(DEPLOY_API + '/api/deploy/trigger', { method: 'POST' })
+    .then(r => r.json())
+    .then(d => {
+      result.innerHTML = '<span style="color:#22c55e">✅ Deploy triggered at ' + d.timestamp + '</span>';
+      btn.textContent = '🚀 Deploy Now';
+      btn.disabled = false;
+      setTimeout(() => { loadHistory(); loadStatus(); }, 5000);
+    }).catch(e => {
+      result.innerHTML = '<span style="color:#ef4444">❌ Failed: ' + e.message + '</span>';
+      btn.textContent = '🚀 Deploy Now';
+      btn.disabled = false;
+    });
+}
+
+loadStatus();
+loadCommits();
+loadHistory();
+setInterval(loadStatus, 30000);
+</script>
