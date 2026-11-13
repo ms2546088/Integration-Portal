@@ -151,34 +151,5 @@
 <div class="card" id="vr-section" style="border-left:4px solid #2ea043;font-size:13px">
 <p style="color:#6b7280">Loading live verification data...</p>
 </div>
-<script data-run="vr">
-(function(){
-  var vr=document.getElementById('vr-section');
-  if(!vr)return;
-  function gb(b){return (b/1073741824).toFixed(1)}
-  Promise.all([
-    fetch('/api/health.json').then(function(r){return r.json()}).catch(function(){return null}),
-    fetch('/api/resources.json').then(function(r){return r.json()}).catch(function(){return null})
-  ]).then(function(d){
-    var h=d[0],res=d[1];
-    if(!h&&!res){vr.innerHTML='<p style="color:#ef4444">API data unavailable</p>';return}
-    var ht=h?h.health:{}, rs=res?res.resources:{};
-    var ct=ht.total||'?', run=ht.running||'?';
-    var memUsed=rs.memory?gb(rs.memory.used):'?', memTotal=rs.memory?gb(rs.memory.total):'?';
-    var memPct=rs.memory?Math.round(rs.memory.used/rs.memory.total*100):0;
-    var diskUsed=rs.disk?gb(rs.disk.used):'?', diskTotal=rs.disk?gb(rs.disk.total):'?';
-    var diskPct=rs.disk?Math.round(rs.disk.used/rs.disk.total*100):0;
-    vr.innerHTML=
-      '<table style="width:100%"><thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead><tbody>'+
-      '<tr><td>Containers</td><td style="color:#2ea043">'+run+'/'+ct+' running</td><td>All containers operational</td></tr>'+
-      '<tr><td>Memory</td><td>'+memUsed+'GB / '+memTotal+'GB</td><td>'+(memPct<85?'<span style="color:#2ea043">OK ('+memPct+'%)</span>':'<span style="color:#f59e0b">High ('+memPct+'%)</span>')+'</td></tr>'+
-      '<tr><td>Disk</td><td>'+diskUsed+'GB / '+diskTotal+'GB</td><td>'+(diskPct<85?'<span style="color:#2ea043">OK ('+diskPct+'%)</span>':'<span style="color:#f59e0b">Monitor ('+diskPct+'%)</span>')+'</td></tr>'+
-      '<tr><td>Portal API</td><td style="color:#2ea043">Active</td><td>health.json + resources.json responding</td></tr>'+
-      '<tr><td>Last Updated</td><td>'+(h?h.timestamp:'?')+'</td><td>Auto-refresh every 30s</td></tr>'+
-      '</tbody></table>';
-    var archCt=document.getElementById('arch-ct-count');
-    if(archCt)archCt.textContent=ct;
-  });
-})();
-</script>
+<!-- VR data loaded by index.html runPageScripts('overview') → loadVerificationReport() -->
 </details>
