@@ -246,9 +246,27 @@ function runPageScripts(tabId) {
   if (tabId === 'overview') { renderOverview(); loadVerificationReport(); }
   if (tabId === 'deploy') { loadDeployData(); }
   if (tabId === 'docker') { loadDockerData(); }
+  if (tabId === 'remote-docker') { /* static page, scan on button click */ }
 }
 
 const DOCKER_API = 'http://10.1.4.201:58192';
+
+async function scanSubnet() {
+  const el = document.getElementById('scan-results');
+  if (!el) return;
+  el.innerHTML = '<span style="color:#58a6ff">⏳ Scanning 10.1.4.0/24 (this may take ~30s)...</span>';
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/scan-subnet').then(r => r.json());
+    if (d.hosts.length === 0) {
+      el.innerHTML = '<span style="color:#6b7280">No remote Docker hosts detected on 10.1.4.0/24</span><br><small>Install Portainer Agent on remote hosts to enable management</small>';
+    } else {
+      el.innerHTML = '<strong style="color:#2ea043">' + d.hosts.length + ' remote host(s) found:</strong><br>' +
+        d.hosts.map(h => '<code>' + h.ip + ':' + h.port + '</code> — ' + h.service).join('<br>');
+    }
+  } catch (e) {
+    el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
+  }
+}
 
 async function loadDockerData() {
   // Load containers
