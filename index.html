@@ -154,7 +154,10 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="container-mgmt" class="" style="background:#059669;color:#fff;font-weight:600">28. Container Mgmt</button>
   <button data-tab="log-viewer" class="" style="background:#0891b2;color:#fff;font-weight:600">29. Log Viewer</button>
   <button data-tab="docker-compose" class="" style="background:#dc2626;color:#fff;font-weight:600">30. Compose Deploy</button>
-  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">31. Config Editor</button>
+  <button data-tab="network-mgmt" class="" style="background:#7c3aed;color:#fff;font-weight:600">31. Networks</button>
+  <button data-tab="volume-mgmt" class="" style="background:#0d9488;color:#fff;font-weight:600">32. Volumes</button>
+  <button data-tab="system-cleanup" class="" style="background:#b91c1c;color:#fff;font-weight:600">33. System Cleanup</button>
+  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">34. Config Editor</button>
   <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">29. Resources</button>
   <button data-tab="windmill-service" class="">29. Windmill</button>
   <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
@@ -282,6 +285,9 @@ function runPageScripts(tabId) {
   if (tabId === 'container-mgmt') { loadContainerMgmt(); }
   if (tabId === 'log-viewer') { loadLogViewerContainers(); }
   if (tabId === 'docker-compose') { loadComposeFiles(); }
+  if (tabId === 'network-mgmt') { loadNetworks(); }
+  if (tabId === 'volume-mgmt') { loadVolumes(); }
+  if (tabId === 'system-cleanup') { loadDiskUsage(); }
   if (tabId === 'config-editor') { loadConfigList(); }
   if (tabId === 'resource-mgmt') { loadResourceData(); }
   if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
@@ -1113,6 +1119,120 @@ async function composeAction(stack, action) {
     const d = await r.json();
     if (d.ok) { pre.textContent = '✅ ' + stack + ' ' + action + ' successful\n\n' + (d.output||''); loadComposeFiles(); }
     else { pre.textContent = '❌ Error:\n' + (d.error||'unknown'); }
+  } catch(e) { pre.textContent = 'Failed: ' + e.message; }
+}
+
+// ══════════════════════════════════════════════════════
+// Network management
+// ══════════════════════════════════════════════════════
+async function loadNetworks() {
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/networks');
+    const d = await r.json();
+    const tbl = document.getElementById('networks-table');
+    if (tbl) {
+      const builtIn = ['bridge','host','none'];
+      tbl.innerHTML = '<tr><th>Network</th><th>Driver</th><th>Scope</th><th>Actions</th></tr>' +
+        d.networks.map(n => {
+          const rmBtn = builtIn.includes(n.name) ? '<span style="color:var(--text2);font-size:11px">built-in</span>' :
+            '<button onclick="removeNetwork(\'' + n.name + '\')" style="padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">🗑 Remove</button>';
+          return '<tr><td><strong>' + n.name + '</strong></td><td>' + n.driver + '</td><td>' + n.scope + '</td><td>' + rmBtn + '</td></tr>';
+        }).join('');
+    }
+  } catch(e) {}
+}
+async function createNetwork() {
+  const name = document.getElementById('new-net-name').value;
+  const driver = document.getElementById('new-net-driver').value;
+  const el = document.getElementById('net-result');
+  if (!name) { el.innerHTML = '<span style="color:#ef4444">Enter a name</span>'; return; }
+  if (!confirm('Create network: ' + name + ' (' + driver + ')?')) return;
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/network-create', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, driver}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Created: ' + d.network + '</span>'; loadNetworks(); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Failed</span>'; }
+}
+async function removeNetwork(name) {
+  if (!confirm('Remove network ' + name + '?')) return;
+  const el = document.getElementById('net-result');
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/network-remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Removed</span>'; loadNetworks(); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Failed</span>'; }
+}
+
+// ══════════════════════════════════════════════════════
+// Volume management
+// ══════════════════════════════════════════════════════
+async function loadVolumes() {
+  try {
+    const [vr, dr] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/volumes').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/disk-usage').then(r => r.json())
+    ]);
+    const tbl = document.getElementById('volumes-table');
+    if (tbl) {
+      tbl.innerHTML = '<tr><th>Volume</th><th>Driver</th><th>Mountpoint</th><th>Actions</th></tr>' +
+        vr.volumes.map(v => '<tr><td><strong style="font-size:12px">' + v.name + '</strong></td><td>' + v.driver + '</td><td style="font-size:10px;max-width:300px;word-break:break-all">' + v.mountpoint + '</td><td>' +
+          '<button onclick="removeVolume(\'' + v.name + '\')" style="padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">🗑 Remove</button></td></tr>').join('');
+    }
+    const duEl = document.getElementById('disk-usage');
+    if (duEl && dr.usage) {
+      duEl.innerHTML = '<table class="tbl"><tr><th>Type</th><th>Total</th><th>Active</th><th>Size</th><th>Reclaimable</th></tr>' +
+        dr.usage.map(r => '<tr><td>' + r.type + '</td><td>' + r.total + '</td><td>' + r.active + '</td><td>' + r.size + '</td><td>' + r.reclaimable + '</td></tr>').join('') + '</table>';
+    }
+  } catch(e) {}
+}
+async function createVolume() {
+  const name = document.getElementById('new-vol-name').value;
+  const el = document.getElementById('vol-result');
+  if (!name) { el.innerHTML = '<span style="color:#ef4444">Enter a name</span>'; return; }
+  if (!confirm('Create volume: ' + name + '?')) return;
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/volume-create', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Created: ' + d.volume + '</span>'; loadVolumes(); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Failed</span>'; }
+}
+async function removeVolume(name) {
+  if (!confirm('Remove volume ' + name + '? Data will be lost!')) return;
+  const el = document.getElementById('vol-result');
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/volume-remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+    const d = await r.json();
+    if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Removed</span>'; loadVolumes(); }
+    else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Failed</span>'; }
+}
+
+// ══════════════════════════════════════════════════════
+// System cleanup
+// ══════════════════════════════════════════════════════
+async function loadDiskUsage() {
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/disk-usage');
+    const d = await r.json();
+    const tbl = document.getElementById('disk-usage-table');
+    if (tbl && d.usage) {
+      tbl.innerHTML = '<tr><th>Type</th><th>Total</th><th>Active</th><th>Size</th><th>Reclaimable</th></tr>' +
+        d.usage.map(r => '<tr><td><strong>' + r.type + '</strong></td><td>' + r.total + '</td><td>' + r.active + '</td><td>' + r.size + '</td><td style="color:#f59e0b">' + r.reclaimable + '</td></tr>').join('');
+    }
+  } catch(e) {}
+}
+async function systemPrune() {
+  if (!confirm('⚠️ SYSTEM PRUNE will remove:\n- Stopped containers\n- Unused networks\n- Dangling images\n- Unused volumes\n\nContinue?')) return;
+  const pre = document.getElementById('prune-output');
+  pre.textContent = 'Pruning... please wait...';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/system-prune', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const d = await r.json();
+    if (d.ok) { pre.textContent = '✅ Prune complete:\n\n' + d.output; loadDiskUsage(); }
+    else { pre.textContent = '❌ Error:\n' + d.error; }
   } catch(e) { pre.textContent = 'Failed: ' + e.message; }
 }
 

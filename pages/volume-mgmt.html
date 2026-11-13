@@ -1,0 +1,30 @@
+<div class="section">
+<h2>💾 Volume Management</h2>
+<p style="color:var(--text2)">Manage Docker volumes — create, inspect, and remove</p>
+<button onclick="loadVolumes()" style="padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:8px">🔄 Refresh</button>
+</div>
+
+<div class="section">
+<h2>Docker Volumes</h2>
+<div style="overflow-x:auto">
+<table class="tbl" id="volumes-table">
+<tr><th>Volume</th><th>Driver</th><th>Mountpoint</th><th>Actions</th></tr>
+<tr><td colspan="4"><em>Loading...</em></td></tr>
+</table>
+</div>
+<div id="vol-result" style="margin-top:8px;font-size:13px"></div>
+</div>
+
+<div class="section">
+<h2>Create Volume</h2>
+<div style="display:flex;gap:8px;align-items:end">
+  <div style="flex:1"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Volume Name</label>
+    <input type="text" id="new-vol-name" placeholder="my-volume" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px"></div>
+  <button onclick="createVolume()" style="padding:8px 20px;background:#2ea043;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">➕ Create</button>
+</div>
+</div>
+
+<div class="section">
+<h2>System Disk Usage</h2>
+<div id="disk-usage"><em>Loading...</em></div>
+</div>
