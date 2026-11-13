@@ -247,9 +247,25 @@ function runPageScripts(tabId) {
   if (tabId === 'deploy') { loadDeployData(); }
   if (tabId === 'docker') { loadDockerData(); }
   if (tabId === 'remote-docker') { /* static page, scan on button click */ }
+  // Auto-load config for service pages
+  const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
+  if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
 }
 
 const DOCKER_API = 'http://10.1.4.201:58192';
+
+async function loadServiceConfig(service, tabId) {
+  const el = document.getElementById('svc-config-' + tabId);
+  if (!el) return;
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/config/' + service).then(r => r.json());
+    if (d.content) {
+      el.innerHTML = '<details><summary>📄 Live Config: <code>' + d.path + '</code> (' + d.lines + ' lines)</summary>'
+        + '<pre style="font-size:11px;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:6px;overflow-x:auto;max-height:400px">'
+        + d.content.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre></details>';
+    }
+  } catch (e) {}
+}
 
 async function scanSubnet() {
   const el = document.getElementById('scan-results');
