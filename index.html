@@ -253,6 +253,9 @@ function runPageScripts(tabId) {
   if (tabId === 'github') { loadGitHubData(); }
   if (tabId === 'security') { loadSecurityData(); }
   if (tabId === 'backend') { loadBackendData(); }
+  if (tabId === 'databases') { loadDatabaseData(); }
+  if (tabId === 'update') { loadSystemData(); }
+  if (tabId === 'files') { loadFileData(); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -316,6 +319,65 @@ async function scanSubnet() {
   } catch (e) {
     el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
   }
+}
+
+async function loadDatabaseData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/databases').then(r => r.json());
+    const dc = document.getElementById('db-count');
+    const db = document.getElementById('db-body');
+    if (dc) dc.textContent = d.databases.length;
+    const svcMap = {forgejo:'Forgejo (Git)',windmill:'Windmill (Workflow)',woodpecker:'Woodpecker (CI)',postgres:'System'};
+    if (db) {
+      db.innerHTML = d.databases.map(b => {
+        const sz = b.size_bytes > 1048576 ? (b.size_bytes/1048576).toFixed(1)+' MB' : (b.size_bytes/1024).toFixed(0)+' KB';
+        return '<tr><td><strong>' + b.name + '</strong></td><td>' + sz + '</td><td>' + (svcMap[b.name]||'-') + '</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
+}
+
+function _fmtBytes(b) {
+  if (b > 1073741824) return (b/1073741824).toFixed(1) + ' GB';
+  if (b > 1048576) return (b/1048576).toFixed(0) + ' MB';
+  return (b/1024).toFixed(0) + ' KB';
+}
+
+async function loadSystemData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/system').then(r => r.json());
+    const sb = document.getElementById('sys-res-body');
+    if (sb) {
+      const memPct = Math.round(d.mem_used / d.mem_total * 100);
+      const diskPct = parseInt(d.disk_pct);
+      sb.innerHTML = [
+        ['CPUs', d.cpus + ' cores', '🟢'],
+        ['Load Average', (d.load_avg||[]).join(' / '), d.load_avg && parseFloat(d.load_avg[0]) > d.cpus ? '🔴 High' : '🟢'],
+        ['Memory', _fmtBytes(d.mem_used) + ' / ' + _fmtBytes(d.mem_total) + ' (' + memPct + '%)', memPct > 90 ? '🔴' : '🟢'],
+        ['Disk', _fmtBytes(d.disk_used) + ' / ' + _fmtBytes(d.disk_total) + ' (' + d.disk_pct + ')', diskPct > 90 ? '🔴' : '🟢'],
+        ['Uptime', d.uptime || '-', '🟢']
+      ].map(([k,v,s]) => '<tr><td><strong>' + k + '</strong></td><td>' + v + '</td><td>' + s + '</td></tr>').join('');
+    }
+    const dd = document.getElementById('docker-disk');
+    if (dd) {
+      try {
+        const c = await fetch(DOCKER_API + '/api/docker/containers').then(r => r.json());
+        dd.innerHTML = '<p style="font-size:12px">Containers: ' + c.containers.length + ' | Images: check with <code>docker system df</code></p>';
+      } catch (e) { dd.textContent = 'Could not load'; }
+    }
+  } catch (e) {}
+}
+
+async function loadFileData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/configs').then(r => r.json());
+    const fc = document.getElementById('file-count');
+    const fb = document.getElementById('file-body');
+    if (fc) fc.textContent = d.configs.length;
+    if (fb) {
+      fb.innerHTML = d.configs.map(c => '<tr><td><strong>' + c.service + '</strong></td><td style="font-size:10px"><code>' + c.path + '</code></td></tr>').join('');
+    }
+  } catch (e) {}
 }
 
 async function loadBackendData() {

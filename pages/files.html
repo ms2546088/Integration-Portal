@@ -1,60 +1,75 @@
-<!-- Page: 04. File Structure -->
+<!-- Page: 16. File Management -->
 <!-- Independent file - DO NOT merge into index.html -->
-<h2>📁 File Structure &amp; Paths</h2>
-<div class="grid">
-<details open><summary>📂 Main Directory Structure</summary>
-<div class="card">
+<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
+<h2>📁 File Management</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Config files and service configs — live from Docker Mgmt API (:58192)</p>
+
+<!-- Section 1: Service Config Files (live) -->
+<details open>
+<summary>📄 Service Config Files (<span id="file-count">--</span>)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadFileData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:11px" id="file-table">
+<thead><tr><th>Service</th><th>Config File Path</th></tr></thead>
+<tbody id="file-body"><tr><td colspan="2" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
+</div>
 </details>
-<pre style="font-size:11px;line-height:1.5">
-/home/admin958168/
+
+<!-- Section 2: Key Directories -->
+<details>
+<summary>📂 Key Directory Structure</summary>
+<div class="card" style="font-size:11px;font-family:monospace">
+<pre style="margin:0;background:#1a1a2e;color:#d4d4d4;padding:12px;border-radius:6px">/home/admin958168/
 ├── _docker/
-│   ├── ubuntu/                              # Docker Main Dir
-│   │   ├── docker-compose.yml               # Core Services compose
-│   │   ├── port-detector.sh                 # PORT Conflict Detection Tool
-│   │   ├── port-registry.json               # PortRegistry
-│   │   ├── PROGRESS.md                      # Progress Tracking
-│   │   ├── forgejo_data/                    # Forgejo Data
-│   │   ├── windmill_worker_data/            # Windmill worker Data
-│   │   ├── Official-Area_Portainer/         # Portainer CE
-│   │   │   └── data/portainer/compose/
-│   │   │       ├── 14/ (.env + stack.env)   # Stack14: IIS+MSSQL
-│   │   │       ├── 15/ (.env + stack.env)   # Stack15: Nginx+MySQL
-│   │   │       └── 16/ (.env + stack.env)   # Stack16: Nginx+Oracle
-│   │   ├── Official-Area_NginxOracle21cFree/# Oracle Data
-│   │   └── Official-Area_SSHDocker/         # SSH Docker
-│   └── _portainer/www/Developer-ms202603jpc/# Portal Web Page
-│       ├── index.html                       # This Portal (20 tabs)
-│       ├── sop.html                         # SOP TutorialPage
-│       └── sop-images/                      # Screenshots (7 )
-├── _ms/                                     # TaskManage
-│   └── docker&amp;GIT/_Taskdocker&amp;GIT.md        # Main Task File (Iron Rule)
-└── .cursor/                                 # Cursor IDE Config
-</pre></div>
-<details open><summary>⚙️ Important Config Files</summary>
-<div class="card">
+│   ├── ubuntu/                    # Linux Docker configs
+│   │   ├── Official-Area_Forgejo/ # docker-compose.yml
+│   │   ├── Official-Area_Windmill/
+│   │   ├── Official-Area_WoodpeckerCI/
+│   │   ├── Official-Area_Portainer/
+│   │   ├── Official-Area_Registry/
+│   │   ├── Official-Area_SSHDocker/
+│   │   ├── Official-Area_NginxMYSQL/
+│   │   ├── Official-Area_NginxOracle21cFree/
+│   │   ├── webhook-receiver.py    # :58190
+│   │   ├── deploy-api.py          # :58191
+│   │   ├── docker-mgmt-api.py     # :58192
+│   │   ├── webhook-deploy.sh      # Multi-target deploy
+│   │   ├── update-portal-api.sh   # Cron API generator
+│   │   └── logs/                  # Deploy + service logs
+│   ├── windows/                   # Windows Docker configs
+│   │   └── Official-Area_IISmssql/
+│   └── _portainer/
+│       └── www/Developer-ms202603jpc/  # Portal WebUI
+│           ├── index.html         # Shell framework
+│           ├── pages/             # 24 page files
+│           ├── api/               # health.json, resources.json
+│           └── sop-images/        # SOP screenshots
+├── _ms/
+│   ├── docker&GIT/
+│   │   ├── _任務docker&GIT.md     # Master task (78 DONEs)
+│   │   └── PROGRESS.md
+│   └── 轉換要求問題/
+│       └── 要求&問題依據真實物理機制已轉換.MD
+└── .config/systemd/user/          # Service definitions
+    ├── webhook-receiver.service
+    ├── deploy-api.service
+    └── docker-mgmt-api.service</pre>
+</div>
 </details>
-<table style="font-size:12px"><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody>
-<tr><td><code>docker-compose.yml</code></td><td>Core Services (Forgejo/Windmill/Woodpecker/Registry)</td></tr>
-<tr><td><code>compose/14/.env</code></td><td>Stack14 EnvironmentVariables (Passwordetc.)</td></tr>
-<tr><td><code>compose/14/stack.env</code></td><td>Stack14 Portainer Use env</td></tr>
-<tr><td><code>port-registry.json</code></td><td>32 reserved + 5 deferred ports</td></tr>
-<tr><td><code>/etc/nginx/</code></td><td>Nginx Config (ReverseProxy)</td></tr>
-<tr><td><code>/etc/webmin/</code></td><td>Webmin Config</td></tr>
-<tr><td><code>/etc/postgresql/18/</code></td><td>PostgreSQL Config</td></tr>
-</tbody></table>
-<p style="font-size:11px;color:#ef4444;margin-top:4px">⚠ Must Before ModifyBackup: <code>cp file file.bak.$(date +%Y%m%d-%H%M)</code></p></div>
-<details open><summary>🔍 Quick File Location</summary>
-<div class="card">
+
+<!-- Section 3: Backup Files -->
+<details>
+<summary>💾 Config Backups</summary>
+<div class="card" style="font-size:12px">
+<p>Config saves via Portal automatically create backups:</p>
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Format: {file}.bak.{YYYYMMDD_HHMMSS}
+# Example: docker-compose.yml.bak.20261113_165500
+
+# Find recent backups:
+find ~/docker/ -name "*.bak.*" -mtime -7 -ls
+
+# Restore a backup:
+cp docker-compose.yml.bak.20261113_165500 docker-compose.yml</pre>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Docker compose File
-find ~/docker/ubuntu -name "docker-compose.yml" -o -name ".env"
-
-# Nginx Config
-ls /etc/nginx/sites-enabled/
-
-# AllServiceConfig
-cat /etc/webmin/miniserv.conf | head -20
-cat /etc/postgresql/18/main/postgresql.conf | grep listen</pre></div>
-</div></div>
-
-<!-- 05. One-ClickUpdate -->

@@ -1,98 +1,90 @@
-<!-- Page: 17. Databases -->
+<!-- Page: 14. Databases -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🗄️ Databases</h2>
-<details open><summary>🐘 Unified PostgreSQL v18 (System-level)</summary>
-<div class="card" style="background:#fff5eb;border-left:4px solid #58a6ff;margin-bottom:12px">
-<p>Port: <code>0.0.0.0:5432</code> | Listen: All Interfaces | License: PostgreSQL License</p>
-<p>Superuser: <code>admin958168</code> | UnifiedPassword | Webmin Manage: <a href="https://10.1.4.201:58168/postgresql/" target="_blank">PostgreSQL Module →</a></p>
-<table style="width:100%;font-size:12px;margin-top:8px"><thead><tr><th>Database</th><th>Owner</th><th>Purpose</th></tr></thead><tbody>
-<tr><td>forgejo</td><td>admin958168</td><td>Forgejo Git Server</td></tr>
-<tr><td>windmill</td><td>admin958168</td><td>Windmill WorkflowEngine</td></tr>
-<tr><td>woodpecker</td><td>admin958168</td><td>Woodpecker CI/CD</td></tr>
-<tr><td>postgres</td><td>postgres</td><td>SystemDefault</td></tr>
-</tbody></table>
-<p style="margin-top:8px;font-size:12px;color:#6b7280">Connection: <code>psql -h 10.1.4.201 -U admin958168 -d postgres</code></p>
-</div>
-</details>
+<h2>🗄️ Database Management</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">PostgreSQL v18 — live data from Docker Mgmt API (:58192)</p>
+
+<!-- Section 1: Database Status (live) -->
 <details open>
-<summary>⚙️ Live Database Configurations</summary>
-<div class="card" id="db-live-config">
-<div id="db-configs-container" style="font-size:12px">Loading...</div>
-<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: container env | Auto-refreshed every 2 min | Passwords hidden</p>
+<summary>📊 Database Status (<span id="db-count">--</span> databases)</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadDatabaseData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:12px" id="db-table">
+<thead><tr><th>Database</th><th>Size</th><th>Used By</th></tr></thead>
+<tbody id="db-body"><tr><td colspan="3" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
 </div>
-<script>
-(async function(){
-  const dbs = ["mssql","mysql","oracle"];
-  const container = document.getElementById("db-configs-container");
-  let html = "";
-  for (const db of dbs) {
-    try {
-      const r = await fetch("/api/config/"+db+".json?_="+Date.now());
-      if (!r.ok) continue;
-      const d = await r.json();
-      html += "<h4 style="color:var(--accent);margin:8px 0 4px">"+db.toUpperCase()+"</h4><table style="width:100%"><tbody>";
-      for (const [k,v] of Object.entries(d.settings)) {
-        html += "<tr><td><code>"+k+"</code></td><td><code>"+v+"</code></td></tr>";
-      }
-      html += "</tbody></table>";
-    } catch(e){}
-  }
-  container.innerHTML = html || "No data available";
-})();
-</script>
 </details>
-<div class="grid">
-<details open><summary><span class="dot dot-green"></span>PostgreSQL 15 (Coolify Docker)</summary>
-<div class="card">
-</details>
-<p>Port: <code>5432</code> (ContainerInternal) | User: coolify | DB: coolify</p>
-<p style="font-size:11px;color:#6b7280">coolify-db Container (postgres:15-alpine), Only Coolify Internal Use</p></div>
-<details open><summary><span class="dot dot-green"></span>MySQL 8.0 (Stack15)</summary>
-<div class="card">
-</details>
-<p>Port: <code>53306</code> | User: root | UnifiedPassword</p>
-<p style="font-size:11px;color:#6b7280">Stack15 Nginx+MySQL Dedicated</p></div>
-<details open><summary><span class="dot dot-green"></span>MSSQL 2022 (Stack14)</summary>
-<div class="card">
-</details>
-<p>Port: <code>51433</code> | User: sa | UnifiedPassword</p>
-<p style="font-size:11px;color:#6b7280">Stack14 IIS+MSSQL Dedicated</p></div>
-<details open><summary><span class="dot dot-green"></span>Oracle 21c XE (Stack16)</summary>
-<div class="card">
-</details>
-<p>Port: <code>51521</code> | DB: XEPDB1 | SYS/SYSTEM</p>
-<p style="font-size:11px;color:#6b7280">Stack16 Oracle Dedicated (1.95GB RAM)</p></div>
+
+<!-- Section 2: Connection Info -->
+<details>
+<summary>🔗 Connection Details</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Setting</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Host</td><td><code>10.1.4.201</code> (or <code>127.0.0.1</code> locally)</td></tr>
+<tr><td>Port</td><td><code>5432</code></td></tr>
+<tr><td>Version</td><td>PostgreSQL 18</td></tr>
+<tr><td>Auth</td><td>md5 (password-based)</td></tr>
+<tr><td>Super User</td><td><code>admin958168</code></td></tr>
+<tr><td>Listen Address</td><td><code>0.0.0.0</code> (all interfaces)</td></tr>
+</tbody>
+</table>
 </div>
-<details open><summary>🔗 ConnectionString Examples</summary>
-<div class="card">
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># PostgreSQL (System-level)
-psql -h 10.1.4.201 -U admin958168 -d forgejo
-postgresql://admin958168:PASSWORD@10.1.4.201:5432/windmill
 
-# MySQL (Stack15)
-mysql -h 10.1.4.201 -P 53306 -u root -p
-
-# MSSQL (Stack14)
-sqlcmd -S 10.1.4.201,51433 -U sa -P 'PASSWORD'
-
-# Oracle (Stack16)
-sqlplus system/PASSWORD@10.1.4.201:51521/XEPDB1</pre></div>
-<details open><summary>📊 DatabaseMonitor</summary>
-<div class="card">
+<!-- Section 3: Database Users -->
+<details>
+<summary>👤 Database Users</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>User</th><th>Database</th><th>Privileges</th></tr></thead>
+<tbody>
+<tr><td>admin958168</td><td>all</td><td>Superuser</td></tr>
+<tr><td>forgejo_user</td><td>forgejo</td><td>Owner</td></tr>
+<tr><td>windmill_user</td><td>windmill</td><td>Owner</td></tr>
+<tr><td>woodpecker_user</td><td>woodpecker</td><td>Owner</td></tr>
+</tbody>
+</table>
+</div>
 </details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># PostgreSQL ConnectionCount
-PGPASSWORD='PASSWORD' psql -h 127.0.0.1 -U admin958168 -d postgres \
-  -c "SELECT datname, numbackends FROM pg_stat_database WHERE datname NOT LIKE 'template%';"
 
-# PostgreSQL Size
-PGPASSWORD='PASSWORD' psql -h 127.0.0.1 -U admin958168 -d postgres \
-  -c "SELECT datname, pg_size_pretty(pg_database_size(datname)) FROM pg_database WHERE datistemplate=false;"
+<!-- Section 4: Common Commands -->
+<details>
+<summary>🔧 Common Commands</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Connect to database:
+PGPASSWORD='0982j;6t/6958' psql -U admin958168 -h 127.0.0.1 -d postgres
 
-# MySQL Status
-docker exec docker_nginxmysql_mysql mysqladmin -u root -p'PASSWORD' status
+# List databases:
+\l
 
-# MSSQL Query
-docker exec docker_iismssql_mssql /opt/mssql-tools18/bin/sqlcmd \
-  -S localhost -U sa -P 'PASSWORD' -C -Q "SELECT name FROM sys.databases"</pre></div>
+# List tables in a database:
+\dt
+
+# Check database size:
+SELECT datname, pg_size_pretty(pg_database_size(datname)) FROM pg_database WHERE datistemplate = false;
+
+# Backup a database:
+pg_dump -U admin958168 -h 127.0.0.1 forgejo > forgejo_backup.sql
+
+# Restore:
+psql -U admin958168 -h 127.0.0.1 forgejo < forgejo_backup.sql</pre>
+</div>
+</details>
+
+<!-- Section 5: Stack-specific DB (MySQL/Oracle/MSSQL) -->
+<details>
+<summary>🐳 Stack Database Containers</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Stack</th><th>DB Engine</th><th>Port</th><th>Container</th></tr></thead>
+<tbody>
+<tr><td>NginxMYSQL</td><td>MySQL 8</td><td>23306</td><td>docker_nginxmysql_mysql</td></tr>
+<tr><td>IIS+MSSQL</td><td>MSSQL 2022</td><td>21433</td><td>docker_iismssql_mssql</td></tr>
+<tr><td>NginxOracle</td><td>Oracle 21c XE</td><td>21521</td><td>docker_nginxoracle_oracle</td></tr>
+</tbody>
+</table>
+</div>
+</details>

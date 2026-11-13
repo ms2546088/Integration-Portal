@@ -1,100 +1,67 @@
-<!-- Page: 05. Smart Update -->
+<!-- Page: 13. System Update -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🚀 One-Click Smart Update</h2>
+<h2>⬆️ System Update</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">System resource usage + update commands — live from Docker Mgmt API (:58192)</p>
 
+<!-- Section 1: System Resources (live) -->
 <details open>
-<summary>⚠️ Read Before Update</summary>
-<div class="card" style="border-left:4px solid #f85149;margin-bottom:12px">
-<p style="font-size:12px">Updating may overwrite custom files. Steps enforced by the script:</p>
-<ol style="padding-left:20px;font-size:12px;margin:4px 0">
-<li>Auto-backup all compose/env/portal files before update</li>
-<li>Snapshot container state (names, images, health)</li>
-<li>Pull latest images + recreate only changed containers</li>
-<li>Verify container count matches pre-update state</li>
-<li>Restore on rollback</li>
-</ol>
+<summary>📊 System Resources</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadSystemData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<table style="width:100%;font-size:12px" id="sys-res-table">
+<thead><tr><th>Resource</th><th>Value</th><th>Status</th></tr></thead>
+<tbody id="sys-res-body"><tr><td colspan="3" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
+</table>
 </div>
 </details>
 
-<div class="grid">
-<details open>
-<summary>🚀 One-Click Update (Recommended)</summary>
-<div class="card" style="border-left:4px solid #2ea043">
-<pre style="font-size:12px;background:#f0fff4;padding:12px;border-radius:6px"># Full update with automatic backup
-bash /home/admin958168/_docker/ubuntu/one-click-update.sh
-
-# Dry run (preview only, no changes)
-bash /home/admin958168/_docker/ubuntu/one-click-update.sh --dry-run
-
-# Skip backup (not recommended)
-bash /home/admin958168/_docker/ubuntu/one-click-update.sh --no-backup</pre>
-<p style="font-size:11px;color:#6b7280;margin-top:6px">Script: <code>/home/admin958168/_docker/ubuntu/one-click-update.sh</code></p>
-<p style="font-size:11px;color:#6b7280">Logs: <code>/home/admin958168/_docker/ubuntu/logs/update-*.log</code></p>
-<p style="font-size:11px;color:#6b7280">Backups: <code>/home/admin958168/_docker/ubuntu/backups/YYYYMMDD-HHMMSS/</code></p>
-</div>
-</details>
-
+<!-- Section 2: Docker Image Sizes (live) -->
 <details>
-<summary>🔧 Manual Update Steps</summary>
-<div class="card">
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Step 1: Backup
-BACKUP=~/docker/ubuntu/backups/$(date +%Y%m%d-%H%M)
-mkdir -p $BACKUP
-cp ~/docker/ubuntu/docker-compose.yml $BACKUP/
-cp ~/docker/_portainer/.env $BACKUP/portainer-.env
-
-# Step 2: Pull and recreate
-cd ~/docker/ubuntu
-docker compose pull && docker compose up -d
-cd ~/docker/_portainer
-docker compose up -d
-
-# Step 3: Stacks
-for s in 14 15 16; do
-  cd ~/docker/ubuntu/Official-Area_Portainer/data/portainer/compose/$s
-  docker compose pull && docker compose up -d
-done
-
-# Step 4: Cleanup
-docker image prune -f</pre>
+<summary>🐳 Docker Disk Usage</summary>
+<div class="card" style="overflow-x:auto">
+<div id="docker-disk">Loading...</div>
 </div>
 </details>
 
-<details open>
-<summary>✅ Post-Update Verification</summary>
-<div class="card">
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Container health check
-docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}'
-
-# Service reachability
-for p in 8000 9000 53000 58090 58100 59000 59009; do
-  curl -so /dev/null -w "%{http_code} :$p\n" http://10.1.4.201:$p/
-done
-
-# Live status JSON
-bash /home/admin958168/_docker/ubuntu/live-status.sh health
-
-# Compare pre/post state
-diff ~/docker/ubuntu/logs/pre-update-state.txt \
-     ~/docker/ubuntu/logs/post-update-state.txt</pre>
-</div>
-</details>
-
+<!-- Section 3: System Update Commands -->
 <details>
-<summary>⏪ Rollback (if update breaks something)</summary>
-<div class="card" style="border-left:4px solid #f85149">
-<pre style="font-size:11px;background:#fef2f2;padding:8px;border-radius:6px"># Find latest backup
-ls -lt ~/docker/ubuntu/backups/ | head -5
+<summary>🔧 System Update Commands</summary>
+<div class="card">
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Full system update:
+sudo apt update && sudo apt upgrade -y
 
-# Restore compose files from backup
-BACKUP=~/docker/ubuntu/backups/YYYYMMDD-HHMMSS
-cp $BACKUP/ubuntu-compose.yml ~/docker/ubuntu/docker-compose.yml
-cp $BACKUP/portainer-.env ~/docker/_portainer/.env
+# Docker container image updates (per stack):
+cd ~/docker/ubuntu/Official-Area_Forgejo && docker compose pull && docker compose up -d
+cd ~/docker/ubuntu/Official-Area_Windmill && docker compose pull && docker compose up -d
+cd ~/docker/ubuntu/Official-Area_WoodpeckerCI && docker compose pull && docker compose up -d
+cd ~/docker/ubuntu/Official-Area_Portainer && docker compose pull && docker compose up -d
 
-# Restart with restored config
-cd ~/docker/ubuntu && docker compose up -d
-cd ~/docker/_portainer && docker compose up -d</pre>
+# Clean unused Docker images:
+docker image prune -af
+
+# Restart all systemd services:
+systemctl --user restart webhook-receiver deploy-api docker-mgmt-api
+
+# Regenerate API data:
+bash ~/docker/ubuntu/update-portal-api.sh</pre>
 </div>
 </details>
+
+<!-- Section 4: Maintenance Schedule -->
+<details>
+<summary>📅 Maintenance Schedule</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Task</th><th>Frequency</th><th>Method</th></tr></thead>
+<tbody>
+<tr><td>Portal API data</td><td>Every 30 seconds</td><td>Cron (update-portal-api.sh)</td></tr>
+<tr><td>Docker healthchecks</td><td>Every 30 seconds</td><td>Docker built-in</td></tr>
+<tr><td>GitHub mirror sync</td><td>On commit + 8h interval</td><td>Forgejo push mirror</td></tr>
+<tr><td>System packages</td><td>Weekly (manual)</td><td>apt upgrade</td></tr>
+<tr><td>Docker images</td><td>Monthly (manual)</td><td>docker compose pull</td></tr>
+<tr><td>PostgreSQL backup</td><td>Weekly (manual)</td><td>pg_dump</td></tr>
+</tbody>
+</table>
 </div>
+</details>
