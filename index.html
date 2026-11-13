@@ -259,6 +259,8 @@ function runPageScripts(tabId) {
   if (tabId === 'coolify') { loadCoolifyData(); }
   if (tabId === 'webmin') { loadWebminData(); }
   if (tabId === 'nginxui') { loadNginxUIData(); }
+  if (tabId === 'sop') { /* health check loaded on button click */ }
+  if (tabId === 'frontend') { loadFrontendData(); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -322,6 +324,31 @@ async function scanSubnet() {
   } catch (e) {
     el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
   }
+}
+
+async function loadSOPCheck() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json());
+    const el = document.getElementById('sop-health');
+    if (el) {
+      const rows = Object.entries(d.services).map(([k, v]) => {
+        const st = v.status === 'up' ? '🟢' : '🔴';
+        return st + ' ' + v.description + ' (:' + v.port + ')';
+      }).join('<br>');
+      el.innerHTML = '<strong>' + d.up + '/' + d.total + ' services UP</strong><br><br>' + rows;
+    }
+  } catch (e) {}
+}
+
+async function loadFrontendData() {
+  try {
+    const [svc, con] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/containers').then(r => r.json())
+    ]);
+    const el = document.getElementById('fe-page-count');
+    if (el) el.textContent = '24 (services: ' + svc.up + '/' + svc.total + ' up, containers: ' + con.containers.length + ')';
+  } catch (e) {}
 }
 
 async function loadCoolifyData() {
