@@ -2,92 +2,115 @@
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
 <h2>🐳 Docker Container Management</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Live data from Docker Management API (:58192) — real-time container status, resources, and port allocation</p>
 
+<!-- Section 1: Live Container Status (from API) -->
 <details open>
-<summary><span class="dot dot-green"></span> SSH Docker Container</summary>
-<div class="card">
-<p>Port: <code>52200</code> | <code>ssh admin958168@10.1.4.201 -p 52200</code></p>
-<p>Ubuntu 24.04 | Isolation Environment (No Docker CLI, No Host Directory Access)</p>
-<p>Purpose: Users can directly SSH to Docker container, not to host Ubuntu</p>
-<p>network_mode: host | Unified Password | CPU: 0.25 | MEM: 128MB</p>
+<summary>📊 Live Container Status (<span id="ct-count">--</span> containers)</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:11px" id="ct-table">
+<thead><tr><th>Container</th><th>Status</th><th>Health</th><th>Network</th><th>CPU</th><th>Memory</th><th>Image</th></tr></thead>
+<tbody id="ct-body"><tr><td colspan="7" style="text-align:center;color:#6b7280">Loading from API...</td></tr></tbody>
+</table>
+<p style="font-size:10px;color:#6b7280;margin-top:8px">Data source: <code>http://10.1.4.201:58192/api/docker/containers</code> | Refresh: on page load</p>
 </div>
 </details>
 
+<!-- Section 2: Port Allocation -->
 <details open>
-<summary>📊 Container Resource Allocation (24 containers)</summary>
-<div class="card" style="overflow-x:auto">
-<table style="width:100%;font-size:12px">
-<thead><tr><th>Container</th><th>CPU Limit</th><th>Memory</th><th>Swap</th><th>Category</th></tr></thead>
+<summary>🔌 Port Allocation (<span id="port-count">--</span> ports in use)</summary>
+<div class="card">
+<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px;margin-bottom:12px">
+  <div><strong>Total Used:</strong> <span id="pa-total">--</span></div>
+  <div><strong>Next Available:</strong> <code id="pa-next">--</code></div>
+  <div><strong>Valid Range:</strong> 10000-65534</div>
+</div>
+<div id="port-grid" style="display:flex;flex-wrap:wrap;gap:3px;font-size:10px;font-family:monospace"></div>
+<p style="font-size:10px;color:#6b7280;margin-top:8px">Green = system (22,80,443,5432) | Orange = registered Docker | Gray = ephemeral/other</p>
+</div>
+</details>
+
+<!-- Section 3: SSH Docker -->
+<details open>
+<summary><span class="dot dot-green"></span> SSH Docker Container (Isolated Environment)</summary>
+<div class="card">
+<p>Port: <code>52200</code> | Command: <code>ssh admin958168@10.1.4.201 -p 52200</code></p>
+<p>Ubuntu 24.04 | Isolated: No Docker CLI, no host directory access</p>
+<p>Purpose: Users SSH to Docker container (not host Ubuntu) for development</p>
+<p>network_mode: host | Unified credentials | Same subnet as all services</p>
+</div>
+</details>
+
+<!-- Section 4: Resource Allocation Guide -->
+<details>
+<summary>⚙️ Resource Allocation (CPU / Memory)</summary>
+<div class="card" style="overflow-x:auto;font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Category</th><th>CPU</th><th>Memory</th><th>Swap</th><th>Examples</th></tr></thead>
 <tbody>
-<tr style="background:#fef2f2"><td>docker_nginxoracle_oracle</td><td>1.50</td><td>3072MB</td><td>6144MB</td><td>Database (Heavy)</td></tr>
-<tr style="background:#fef2f2"><td>docker_iismssql_mssql</td><td>1.00</td><td>2048MB</td><td>4096MB</td><td>Database (Heavy)</td></tr>
-<tr style="background:#fffbeb"><td>docker_nginxmysql_mysql</td><td>0.50</td><td>1024MB</td><td>2048MB</td><td>Database</td></tr>
-<tr style="background:#fffbeb"><td>docker_windmill_server</td><td>0.50</td><td>512MB</td><td>1024MB</td><td>Application</td></tr>
-<tr style="background:#fffbeb"><td>docker_windmill_worker</td><td>0.50</td><td>512MB</td><td>1024MB</td><td>Application</td></tr>
-<tr style="background:#fffbeb"><td>coolify</td><td>0.50</td><td>512MB</td><td>1024MB</td><td>Platform</td></tr>
-<tr><td>docker_forgejo</td><td>0.50</td><td>256MB</td><td>512MB</td><td>Application</td></tr>
-<tr><td>docker_woodpecker_server</td><td>0.50</td><td>256MB</td><td>512MB</td><td>CI/CD</td></tr>
-<tr><td>docker_woodpecker_agent</td><td>0.50</td><td>256MB</td><td>512MB</td><td>CI/CD</td></tr>
-<tr><td>coolify-db</td><td>0.25</td><td>256MB</td><td>512MB</td><td>Platform</td></tr>
-<tr><td>docker_portainer</td><td>0.25</td><td>128MB</td><td>256MB</td><td>Management</td></tr>
-<tr><td>docker_ssh_container</td><td>0.25</td><td>128MB</td><td>256MB</td><td>SSH</td></tr>
-<tr><td>coolify-redis</td><td>0.25</td><td>128MB</td><td>256MB</td><td>Platform</td></tr>
-<tr><td>coolify-sentinel</td><td>0.25</td><td>128MB</td><td>256MB</td><td>Platform</td></tr>
-<tr><td>docker_portainer_docs</td><td>0.10</td><td>64MB</td><td>128MB</td><td>Portal</td></tr>
-<tr><td>docker_registry</td><td>0.10</td><td>64MB</td><td>128MB</td><td>Registry</td></tr>
-<tr><td>3x nginx containers</td><td>0.10 each</td><td>64MB</td><td>128MB</td><td>Web</td></tr>
-<tr><td>3x sslh containers</td><td>0.10 each</td><td>32MB</td><td>64MB</td><td>Router</td></tr>
-<tr><td>docker_nginxoracle_php</td><td>0.10</td><td>64MB</td><td>128MB</td><td>Runtime</td></tr>
+<tr style="background:#fef2f2"><td>Database (Heavy)</td><td>1.0-1.5</td><td>2048-3072MB</td><td>4096-6144MB</td><td>Oracle, MSSQL</td></tr>
+<tr style="background:#fffbeb"><td>Database</td><td>0.5</td><td>1024MB</td><td>2048MB</td><td>MySQL</td></tr>
+<tr style="background:#fffbeb"><td>Application</td><td>0.5</td><td>512MB</td><td>1024MB</td><td>Windmill, Coolify</td></tr>
+<tr><td>Service</td><td>0.25-0.5</td><td>256MB</td><td>512MB</td><td>Forgejo, Woodpecker</td></tr>
+<tr><td>Lightweight</td><td>0.1</td><td>64-128MB</td><td>128-256MB</td><td>Nginx, SSLH, Portal, Registry</td></tr>
 </tbody>
 </table>
-<p style="font-size:11px;color:#6b7280;margin-top:8px">Total: ~9.3GB mem allocated | Host: 22GB RAM + 4GB swap | Set via <code>docker update --memory --cpus</code></p>
+<p style="margin-top:8px;color:#6b7280">Total allocated: ~9.3GB | Host: 22GB RAM + 8GB swap</p>
+<pre style="background:#f6f8fa;padding:8px;border-radius:6px;font-size:11px;margin-top:8px"># Update container resources:
+docker update --cpus 0.5 --memory 512m --memory-swap 1024m CONTAINER_NAME</pre>
 </div>
 </details>
 
-<details open>
-<summary>🔍 Smart PORT Conflict Detection</summary>
-<div class="card" style="border-left:4px solid #d29922">
-<p>Before creating new Docker containers, use the Port Detector to avoid conflicts:</p>
-<pre style="background:#fef3e2;padding:12px;border-radius:6px;font-size:12px;margin:8px 0"># Full port scan with registry check
-bash /home/admin958168/_docker/ubuntu/port-detector.sh
-
-# Output: JSON with all ports, registration status, next available port
-# "status": "ok" = registered | "unregistered" = in use but not in registry</pre>
-<p style="font-size:11px;color:#6b7280">Path: <code>/home/admin958168/_docker/ubuntu/port-detector.sh</code> | Registry: <code>port-registry.json</code> | Range: 10000-60999</p>
-</div>
-</details>
-
-<details open>
-<summary>🐳 Container Rules</summary>
+<!-- Section 5: Container Rules -->
+<details>
+<summary>📋 Container Rules &amp; Standards</summary>
 <div class="card">
 <ul style="padding-left:20px;font-size:13px;color:#374151">
 <li>All containers IP: <code>10.1.4.201</code>, only port differs</li>
-<li>Valid port range: <code>10000 ~ 60999</code></li>
+<li>Valid port range: <code>10000 ~ 65534</code></li>
 <li>Ephemeral range <code>61000-65500</code> — avoid</li>
-<li>Each container isolated, network_mode: host</li>
+<li>Each container physically isolated, <code>network_mode: host</code></li>
+<li>Exception: Coolify uses bridge network (172.18.0.0/16) — by design</li>
 <li>Unified credentials: <code>admin958168</code> / unified password</li>
-<li>Must run <code>port-detector.sh</code> before creating new containers</li>
-<li>Resource limits mandatory: <code>docker update --memory --cpus</code></li>
+<li>Must check port availability before creating new containers</li>
+<li>Resource limits mandatory via <code>docker update</code></li>
+<li>Healthcheck required for all containers</li>
 </ul>
 </div>
 </details>
 
+<!-- Section 6: Networks -->
 <details>
-<summary>📋 Container Lifecycle Commands</summary>
+<summary>🌐 Docker Networks</summary>
+<div class="card" style="overflow-x:auto">
+<table style="width:100%;font-size:12px" id="net-table">
+<thead><tr><th>Network</th><th>Driver</th><th>Scope</th><th>Note</th></tr></thead>
+<tbody id="net-body"><tr><td colspan="4" style="color:#6b7280;text-align:center">Loading...</td></tr></tbody>
+</table>
+</div>
+</details>
+
+<!-- Section 7: Lifecycle Commands -->
+<details>
+<summary>🛠️ Container Lifecycle Commands</summary>
 <div class="card">
 <pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Core Services (Forgejo/Windmill/Woodpecker/Registry)
 cd ~/docker/ubuntu && docker compose up -d
 
 # Stacks (Stack14/15/16)
-cd Official-Area_Portainer/data/portainer/compose/14
-docker compose --env-file .env up -d
+cd ~/docker/ubuntu/Official-Area_IISmssql && docker compose up -d
 
 # New Container Creation Flow:
-# 1. port-detector.sh → get available port
+# 1. Check port: curl http://10.1.4.201:58192/api/docker/ports
 # 2. Create docker-compose.yml (network_mode: host)
 # 3. Set unified credentials in .env
 # 4. docker compose up -d
-# 5. docker update --memory X --cpus Y container_name
-# 6. Verify: curl http://10.1.4.201:PORT → HTTP 200</pre>
+# 5. docker update --memory 512m --cpus 0.5 CONTAINER
+# 6. Verify: curl http://10.1.4.201:PORT
+
+# Resource update via API:
+# curl -X POST http://10.1.4.201:58192/api/docker/resource \
+#   -H "Content-Type: application/json" \
+#   -d '{"container":"NAME","cpu":0.5,"memory":512}'</pre>
 </div>
 </details>

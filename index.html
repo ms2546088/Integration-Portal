@@ -245,6 +245,63 @@ async function loadTab(tabId) {
 function runPageScripts(tabId) {
   if (tabId === 'overview') { renderOverview(); loadVerificationReport(); }
   if (tabId === 'deploy') { loadDeployData(); }
+  if (tabId === 'docker') { loadDockerData(); }
+}
+
+const DOCKER_API = 'http://10.1.4.201:58192';
+
+async function loadDockerData() {
+  // Load containers
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/containers').then(r => r.json());
+    const tbody = document.getElementById('ct-body');
+    const countEl = document.getElementById('ct-count');
+    if (countEl) countEl.textContent = d.containers.length;
+    if (tbody) {
+      tbody.innerHTML = d.containers.map(c => {
+        const hc = c.health === 'healthy' ? '#2ea043' : c.health === 'none' ? '#6b7280' : '#f85149';
+        const cpu = c.cpu_limit === 'unlimited' ? '—' : c.cpu_limit;
+        const mem = c.memory_mb === 'unlimited' ? '—' : c.memory_mb + 'MB';
+        return '<tr><td><strong>' + c.name + '</strong></td>'
+          + '<td>' + c.status.substring(0, 20) + '</td>'
+          + '<td style="color:' + hc + '">' + c.health + '</td>'
+          + '<td>' + c.network + '</td>'
+          + '<td>' + cpu + '</td><td>' + mem + '</td>'
+          + '<td style="font-size:10px">' + c.image.substring(0, 30) + '</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
+
+  // Load ports
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/ports').then(r => r.json());
+    const el = id => document.getElementById(id);
+    if (el('port-count')) el('port-count').textContent = d.count;
+    if (el('pa-total')) el('pa-total').textContent = d.count;
+    if (el('pa-next')) el('pa-next').textContent = d.next_available;
+    const grid = el('port-grid');
+    if (grid) {
+      const system = new Set([22, 80, 443, 5432, 10000]);
+      grid.innerHTML = d.used_ports.map(p => {
+        const bg = system.has(p) ? '#dcfce7' : (p >= 50000 && p < 60000 ? '#fff8f0' : '#f3f4f6');
+        return '<span style="background:' + bg + ';padding:2px 5px;border-radius:3px;border:1px solid #d0d7de">' + p + '</span>';
+      }).join('');
+    }
+  } catch (e) {}
+
+  // Load networks
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/networks').then(r => r.json());
+    const tbody = document.getElementById('net-body');
+    if (tbody) {
+      tbody.innerHTML = d.networks.map(n => {
+        const note = n.name === 'coolify' ? 'Coolify bridge (172.18.0.0/16) — ONLY exception to host-network rule'
+          : n.name === 'host' ? 'All Docker containers use this (host network mode)'
+          : n.name === 'bridge' ? 'Docker default (unused by our containers)' : '';
+        return '<tr><td>' + n.name + '</td><td>' + n.driver + '</td><td>' + n.scope + '</td><td style="font-size:11px;color:#6b7280">' + note + '</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
 }
 
 async function loadVerificationReport() {
