@@ -233,7 +233,8 @@ async function loadTab(tabId) {
     content.querySelectorAll('script').forEach(old => {
       const s = document.createElement('script');
       s.textContent = old.textContent;
-      old.replaceWith(s);
+      old.parentNode.removeChild(old);
+      document.head.appendChild(s);
     });
     runPageScripts(tabId);
   } catch (err) {
