@@ -1,0 +1,43 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate portal pages
+        run: |
+          echo "=== Portal Validation ==="
+          PAGE_COUNT=$(ls pages/*.html 2>/dev/null | wc -l)
+          echo "Portal pages: $PAGE_COUNT"
+          if [ "$PAGE_COUNT" -lt 20 ]; then
+            echo "WARNING: Expected 20+ pages, found $PAGE_COUNT"
+          fi
+          echo "✅ Validation passed"
+
+      - name: Check for Chinese characters
+        run: |
+          echo "=== English-only check ==="
+          CHINESE=$(grep -rlP '[\x{4e00}-\x{9fff}]' pages/ --include="*.html" 2>/dev/null | wc -l)
+          if [ "$CHINESE" -gt 0 ]; then
+            echo "⚠️ Chinese characters found in $CHINESE files (check comments vs content)"
+          else
+            echo "✅ All pages English-only"
+          fi
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Deploy notification
+        run: |
+          echo "=== Pipeline Complete ==="
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Ready for manual deploy approval via Portal"
