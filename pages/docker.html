@@ -41,7 +41,20 @@
 </div>
 </details>
 
-<!-- Section 4: Resource Allocation Guide -->
+<!-- Section 4: Live Resource Usage -->
+<details open>
+<summary>📈 Live Resource Usage</summary>
+<div class="card" style="overflow-x:auto">
+<div style="margin-bottom:8px"><button onclick="loadLiveStats()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh Stats</button></div>
+<table style="width:100%;font-size:11px" id="stats-table">
+<thead><tr><th>Container</th><th>CPU %</th><th>Memory Usage</th><th>Mem %</th><th>Net I/O</th><th>Block I/O</th></tr></thead>
+<tbody id="stats-body"><tr><td colspan="6" style="text-align:center;color:#6b7280">Click "Refresh Stats" to load live data</td></tr></tbody>
+</table>
+<p style="font-size:10px;color:#6b7280;margin-top:4px">Source: <code>docker stats --no-stream</code> via API | Each refresh = fresh snapshot</p>
+</div>
+</details>
+
+<!-- Section 5: Resource Allocation Guide -->
 <details>
 <summary>⚙️ Resource Allocation (CPU / Memory)</summary>
 <div class="card" style="overflow-x:auto;font-size:12px">
