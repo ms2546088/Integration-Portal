@@ -151,7 +151,8 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="mysql-stack" class="">24. MySQL Stack</button>
   <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
   <button data-tab="ssh-dev" class="">26. SSH Dev</button>
-  <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">28. Resources</button>
+  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">28. Config Editor</button>
+  <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">29. Resources</button>
   <button data-tab="windmill-service" class="">29. Windmill</button>
   <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
   <button data-tab="registry-service" class="">30. Registry</button>
@@ -275,6 +276,7 @@ function runPageScripts(tabId) {
   if (tabId === 'oracle-stack') { loadStackStatus('oracle', 'oracle-status'); }
   if (tabId === 'ssh-dev') { loadSSHDevData(); }
   if (tabId === 'smart-update') { loadSmartUpdateData(); }
+  if (tabId === 'config-editor') { loadConfigList(); }
   if (tabId === 'resource-mgmt') { loadResourceData(); }
   if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
   if (tabId === 'woodpecker-service') { loadStackStatus('woodpecker', 'woodpecker-svc-status'); }
@@ -970,6 +972,57 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// Config editor
+// ══════════════════════════════════════════════════════
+async function loadConfigList() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/configs').then(r => r.json());
+    const el = document.getElementById('config-list');
+    const sel = document.getElementById('cfg-service');
+    if (el) {
+      el.innerHTML = '<table class="tbl"><tr><th>Service</th><th>File</th><th>Size</th><th>Action</th></tr>' +
+        d.configs.map(c => '<tr><td>' + c.service + '</td><td style="font-size:11px"><code>' + c.path + '</code></td><td>' + (c.size_bytes ? Math.round(c.size_bytes/1024) + 'KB' : '-') + '</td><td><button onclick="document.getElementById(\'cfg-service\').value=\'' + c.service + '\';loadConfig()" style="padding:2px 8px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Open</button></td></tr>').join('') + '</table>';
+    }
+    if (sel) {
+      sel.innerHTML = '<option value="">Select a service configuration...</option>' +
+        d.configs.map(c => '<option value="' + c.service + '">' + c.service + ' — ' + c.path.split('/').pop() + '</option>').join('');
+    }
+  } catch(e) {}
+}
+
+async function loadConfig() {
+  const svc = document.getElementById('cfg-service').value;
+  if (!svc) return;
+  const el = document.getElementById('cfg-content');
+  const fn = document.getElementById('cfg-filename');
+  const res = document.getElementById('cfg-result');
+  el.value = 'Loading...';
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/config/' + svc).then(r => r.json());
+    if (d.error) { el.value = 'Error: ' + d.error; return; }
+    el.value = d.content;
+    fn.textContent = 'File: ' + d.path + ' (' + d.content.length + ' chars)';
+    res.innerHTML = '';
+  } catch(e) { el.value = 'Failed to load: ' + e.message; }
+}
+
+async function saveConfig() {
+  const svc = document.getElementById('cfg-service').value;
+  const content = document.getElementById('cfg-content').value;
+  const res = document.getElementById('cfg-result');
+  if (!svc) { res.innerHTML = '<span style="color:#ef4444">Select a service first</span>'; return; }
+  if (!content) { res.innerHTML = '<span style="color:#ef4444">Content is empty</span>'; return; }
+  if (!confirm('Save changes to ' + svc + '? A backup will be created automatically.')) return;
+  res.innerHTML = '<em>Saving...</em>';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/config/' + svc, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({content}) });
+    const d = await r.json();
+    if (d.error) { res.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+    else { res.innerHTML = '<span style="color:#22c55e">✅ Saved! Backup: ' + (d.backup || 'created') + '</span>'; }
+  } catch(e) { res.innerHTML = '<span style="color:#ef4444">Save failed: ' + e.message + '</span>'; }
+}
 
 // ══════════════════════════════════════════════════════
 // Resource management

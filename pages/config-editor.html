@@ -1,0 +1,41 @@
+<div class="section">
+<h2>📝 Live Configuration Editor</h2>
+<p style="color:var(--text2)">View and edit service configuration files directly from the WebUI</p>
+<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:12px;margin-top:12px">
+  <strong style="color:#991b1b">⚠️ WARNING:</strong> Changes are applied immediately to actual config files. A backup is created automatically before each edit.
+</div>
+</div>
+
+<div class="section">
+<h2>Available Configurations</h2>
+<div id="config-list"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Configuration Editor</h2>
+<div style="margin-bottom:12px">
+  <select id="cfg-service" onchange="loadConfig()" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;min-width:300px;font-size:14px">
+    <option value="">Select a service configuration...</option>
+  </select>
+</div>
+<div id="cfg-filename" style="font-size:12px;color:var(--text2);margin-bottom:8px"></div>
+<textarea id="cfg-content" style="width:100%;min-height:400px;font-family:'Fira Code',monospace;font-size:12px;padding:12px;border:1px solid var(--border);border-radius:8px;background:#1e293b;color:#e2e8f0;line-height:1.6;tab-size:2" spellcheck="false" placeholder="Select a configuration file above to view/edit"></textarea>
+<div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+  <button onclick="saveConfig()" style="padding:8px 20px;background:#2ea043;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">💾 Save Changes</button>
+  <button onclick="loadConfig()" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer">🔄 Reload</button>
+  <span id="cfg-result" style="font-size:13px;margin-left:12px"></span>
+</div>
+</div>
+
+<div class="section">
+<h2>Edit Guide</h2>
+<table class="tbl">
+<tr><th>Config Type</th><th>Format</th><th>After Edit</th></tr>
+<tr><td>docker-compose.yml</td><td>YAML</td><td>Run <code>docker compose up -d</code> to apply</td></tr>
+<tr><td>*.py (API services)</td><td>Python</td><td><code>systemctl --user restart &lt;service&gt;</code></td></tr>
+<tr><td>*.sh (deploy scripts)</td><td>Bash</td><td>Takes effect on next trigger</td></tr>
+</table>
+<p style="color:var(--text2);margin-top:8px;font-size:12px">
+  Backups are saved as <code>{file}.backup.{seq}.{timestamp}</code> (max 3 copies, oldest replaced by 4th).
+</p>
+</div>
