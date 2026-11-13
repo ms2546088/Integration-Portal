@@ -1,0 +1,46 @@
+<div class="section">
+<h2>📋 Docker Registry</h2>
+<p style="color:var(--text2)">Private Docker image registry (OCI/Docker v2)</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="registry-svc-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Container</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Port</th></tr>
+<tr><td>docker_registry</td><td>registry:2</td><td>:58200</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Usage</h2>
+<details open>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Push and Pull Images</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+# Tag an image for local registry
+docker tag my-app:latest 10.1.4.201:58200/my-app:latest
+
+# Push to registry
+docker push 10.1.4.201:58200/my-app:latest
+
+# Pull from registry
+docker pull 10.1.4.201:58200/my-app:latest
+
+# List repositories
+curl -s http://10.1.4.201:58200/v2/_catalog | python3 -m json.tool
+
+# List tags for an image
+curl -s http://10.1.4.201:58200/v2/my-app/tags/list | python3 -m json.tool
+</pre>
+</details>
+</div>
+
+<div class="section">
+<h2>Registry Catalog</h2>
+<div id="registry-catalog"><em>Click button to load catalog</em></div>
+<button onclick="loadRegistryCatalog()" style="margin-top:8px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer">Load Catalog</button>
+</div>

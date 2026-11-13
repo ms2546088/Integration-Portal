@@ -151,7 +151,10 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="mysql-stack" class="">24. MySQL Stack</button>
   <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
   <button data-tab="ssh-dev" class="">26. SSH Dev</button>
-  <button data-tab="smart-update" class="" style="background:#8b5cf6;color:#fff;font-weight:600">27. Smart Update</button>
+  <button data-tab="windmill-service" class="">28. Windmill</button>
+  <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
+  <button data-tab="registry-service" class="">30. Registry</button>
+  <button data-tab="smart-update" class="" style="background:#8b5cf6;color:#fff;font-weight:600">31. Smart Update</button>
   <button data-tab="sop" class="" style="background:#f97316;color:#fff;font-weight:700">99. USER-SOP</button>
 </div>
 
@@ -271,6 +274,9 @@ function runPageScripts(tabId) {
   if (tabId === 'oracle-stack') { loadStackStatus('oracle', 'oracle-status'); }
   if (tabId === 'ssh-dev') { loadSSHDevData(); }
   if (tabId === 'smart-update') { loadSmartUpdateData(); }
+  if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
+  if (tabId === 'woodpecker-service') { loadStackStatus('woodpecker', 'woodpecker-svc-status'); }
+  if (tabId === 'registry-service') { loadStackStatus('registry', 'registry-svc-status'); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -962,6 +968,25 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// Registry catalog loader
+// ══════════════════════════════════════════════════════
+async function loadRegistryCatalog() {
+  const el = document.getElementById('registry-catalog');
+  if (!el) return;
+  el.innerHTML = '<em>Loading catalog...</em>';
+  try {
+    const r = await fetch('http://10.1.4.201:58200/v2/_catalog');
+    const d = await r.json();
+    if (d.repositories && d.repositories.length > 0) {
+      el.innerHTML = '<table class="tbl"><tr><th>Repository</th></tr>' +
+        d.repositories.map(repo => '<tr><td>' + repo + '</td></tr>').join('') + '</table>';
+    } else {
+      el.innerHTML = '<p style="color:var(--text2)">Registry is empty (no images pushed yet)</p>';
+    }
+  } catch(e) { el.innerHTML = '<p style="color:var(--danger)">Error loading catalog: ' + e.message + '</p>'; }
+}
 
 // ══════════════════════════════════════════════════════
 // Stack status + SSH Dev + Smart Update loaders

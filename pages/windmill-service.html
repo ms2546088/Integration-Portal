@@ -1,0 +1,48 @@
+<div class="section">
+<h2>⚡ Windmill Workflow Engine</h2>
+<p style="color:var(--text2)">Open-source workflow engine (Python/TypeScript/Go/Bash/SQL)</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="windmill-svc-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Containers</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Role</th></tr>
+<tr><td>docker_windmill_server</td><td>ghcr.io/windmill-labs/windmill:latest</td><td>Server (API + UI) — :58100</td></tr>
+<tr><td>docker_windmill_worker</td><td>ghcr.io/windmill-labs/windmill:latest</td><td>Worker (job executor)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Access</h2>
+<table class="tbl">
+<tr><th>Protocol</th><th>URL</th><th>Credentials</th></tr>
+<tr><td>Web UI</td><td><a href="http://10.1.4.201:58100" target="_blank">http://10.1.4.201:58100</a></td><td>admin958168@local.dev / 0982j;6t/6958</td></tr>
+<tr><td>API</td><td><code>http://10.1.4.201:58100/api/</code></td><td>Bearer token</td></tr>
+</table>
+<p style="color:var(--text2);font-size:12px;margin-top:8px">Note: Windmill requires @ in email (PostgreSQL CHECK constraint). Use admin958168@local.dev</p>
+</div>
+
+<div class="section">
+<h2>Database</h2>
+<table class="tbl">
+<tr><th>Database</th><th>Host</th><th>Tables</th></tr>
+<tr><td>windmill</td><td>PostgreSQL :5432</td><td>191 tables</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Key Features</h2>
+<ul style="padding-left:20px;line-height:2">
+<li>Scripts: Python, TypeScript, Go, Bash, SQL, GraphQL</li>
+<li>Flows: multi-step workflows with branching/retries</li>
+<li>Schedules: cron-based triggers</li>
+<li>Webhooks: HTTP triggers for external events</li>
+<li>Resources: connection strings, secrets management</li>
+<li>Apps: low-code UI builder</li>
+</ul>
+</div>

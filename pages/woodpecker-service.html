@@ -1,0 +1,58 @@
+<div class="section">
+<h2>🪵 Woodpecker CI</h2>
+<p style="color:var(--text2)">Lightweight CI/CD pipeline engine (Forgejo integration)</p>
+</div>
+
+<div class="section">
+<h2>Service Status</h2>
+<div id="woodpecker-svc-status"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Containers</h2>
+<table class="tbl">
+<tr><th>Container</th><th>Image</th><th>Ports</th></tr>
+<tr><td>docker_woodpecker_server</td><td>woodpeckerci/woodpecker-server:latest</td><td>:58090 (HTTP) / :58091 (GRPC)</td></tr>
+<tr><td>docker_woodpecker_agent</td><td>woodpeckerci/woodpecker-agent:latest</td><td>(internal)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Access</h2>
+<table class="tbl">
+<tr><th>Protocol</th><th>URL</th><th>Credentials</th></tr>
+<tr><td>Web UI</td><td><a href="http://10.1.4.201:58090" target="_blank">http://10.1.4.201:58090</a></td><td>OAuth via Forgejo (admin958168)</td></tr>
+<tr><td>GRPC</td><td><code>10.1.4.201:58091</code></td><td>Agent secret (env WOODPECKER_AGENT_SECRET)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Pipeline Configuration</h2>
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Example .woodpecker.yml</summary>
+<pre style="background:var(--code-bg);padding:12px;border-radius:6px;margin-top:8px;font-size:12px">
+pipeline:
+  build:
+    image: node:20-alpine
+    commands:
+      - npm install
+      - npm test
+      - npm run build
+  deploy:
+    image: alpine
+    commands:
+      - apk add rsync openssh-client
+      - rsync -avz ./dist/ admin958168@10.1.4.201:/target/
+    when:
+      branch: main
+</pre>
+</details>
+</div>
+
+<div class="section">
+<h2>Database</h2>
+<table class="tbl">
+<tr><th>Database</th><th>Host</th><th>Tables</th></tr>
+<tr><td>woodpecker</td><td>PostgreSQL :5432</td><td>19 tables</td></tr>
+</table>
+</div>
