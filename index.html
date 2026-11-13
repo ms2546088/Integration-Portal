@@ -256,6 +256,9 @@ function runPageScripts(tabId) {
   if (tabId === 'databases') { loadDatabaseData(); }
   if (tabId === 'update') { loadSystemData(); }
   if (tabId === 'files') { loadFileData(); }
+  if (tabId === 'coolify') { loadCoolifyData(); }
+  if (tabId === 'webmin') { loadWebminData(); }
+  if (tabId === 'nginxui') { loadNginxUIData(); }
   // Auto-load config for service pages
   const configMap = {forgejo:'forgejo',windmill:'windmill',woodpecker:'woodpecker',portainer:'portainer',coolify:'coolify',stacks:'stack15'};
   if (configMap[tabId]) { loadServiceConfig(configMap[tabId], tabId); }
@@ -319,6 +322,46 @@ async function scanSubnet() {
   } catch (e) {
     el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
   }
+}
+
+async function loadCoolifyData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/containers').then(r => r.json());
+    const cb = document.getElementById('coolify-body');
+    if (cb) {
+      const coolifyC = d.containers.filter(c => c.name.startsWith('coolify'));
+      cb.innerHTML = coolifyC.map(c => {
+        const st = c.health === 'healthy' ? '🟢' : c.health === 'none' ? '⚪' : '🔴';
+        return '<tr><td><strong>' + c.name + '</strong></td><td style="font-size:10px">' + c.image + '</td><td>' + st + ' ' + c.health + '</td></tr>';
+      }).join('');
+    }
+  } catch (e) {}
+}
+
+async function loadWebminData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json());
+    const wi = document.getElementById('webmin-info');
+    if (wi) {
+      const svc = d.services.webmin;
+      const st = svc && svc.status === 'up' ? '🟢' : '🔴';
+      wi.innerHTML = '<p>' + st + ' <strong>Webmin</strong> on port ' + (svc ? svc.port : '?') + ' — ' + (svc ? svc.status : '?') + '</p>'
+        + '<p style="font-size:11px;color:#6b7280">Total services: ' + d.up + '/' + d.total + ' up</p>';
+    }
+  } catch (e) {}
+}
+
+async function loadNginxUIData() {
+  try {
+    const d = await fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json());
+    const ni = document.getElementById('npm-info');
+    if (ni) {
+      const svc = d.services.nginxui;
+      const st = svc && svc.status === 'up' ? '🟢' : '🔴';
+      ni.innerHTML = '<p>' + st + ' <strong>Nginx Proxy Manager</strong> on port ' + (svc ? svc.port : '?') + ' — ' + (svc ? svc.status : '?') + '</p>'
+        + '<p style="font-size:11px;color:#6b7280">Total services: ' + d.up + '/' + d.total + ' up</p>';
+    }
+  } catch (e) {}
 }
 
 async function loadDatabaseData() {

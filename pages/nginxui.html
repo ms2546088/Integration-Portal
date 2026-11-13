@@ -1,86 +1,64 @@
-<!-- Page: 15. Nginx-UI -->
+<!-- Page: 18. Nginx Proxy Manager -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>🌐 Nginx-UI v2.9.1</h2>
-<details open><summary><span class="dot dot-green"></span>Nginx-UI — Nginx ManageUI</summary>
-<div class="card" style="border-left:4px solid #58a6ff">
-<p>Port: <code>9000</code> (HTTP) / <code>58200</code> (HTTPS) | License: AGPLv3 | <a href="http://10.1.4.201:9000" target="_blank">Open Nginx-UI →</a></p>
-</div>
-</details>
+<h2>🌐 Nginx Proxy Manager</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Reverse proxy and SSL management — live status from Docker Mgmt API (:58192)</p>
+
+<!-- Section 1: Service Status (live) -->
 <details open>
-<summary>⚙️ Live Configuration</summary>
-<div class="card" id="nginxui-live-config">
-<table style="width:100%;font-size:12px" id="nginxui-config-table">
-<thead><tr><th>Key</th><th>Value</th></tr></thead>
-<tbody><tr><td colspan="2" style="color:#6b7280">Loading...</td></tr></tbody>
+<summary>📊 Service Status</summary>
+<div class="card">
+<div style="margin-bottom:8px"><button onclick="loadNginxUIData()" style="padding:4px 12px;background:#58a6ff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">🔄 Refresh</button></div>
+<div id="npm-info" style="font-size:12px">Loading...</div>
+</div>
+</details>
+
+<!-- Section 2: Access -->
+<details>
+<summary>🔗 Access</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>Setting</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Admin URL</td><td><a href="http://10.1.4.201:58181" target="_blank" style="color:#58a6ff">http://10.1.4.201:58181</a></td></tr>
+<tr><td>HTTP Port</td><td>80</td></tr>
+<tr><td>HTTPS Port</td><td>443</td></tr>
+<tr><td>Account</td><td>admin958168 / 0982j;6t/6958</td></tr>
+</tbody>
 </table>
-<p style="font-size:11px;color:#6b7280;margin-top:4px">Source: host nginx-ui config | Auto-refreshed every 2 min</p>
 </div>
-<script>
-(async function(){
-  try {
-    const r = await fetch("/api/config/nginxui.json?_="+Date.now());
-    if (!r.ok) return;
-    const d = await r.json();
-    const tb = document.getElementById("nginxui-config-table").querySelector("tbody");
-    tb.innerHTML = Object.entries(d.settings).map(([k,v]) =>
-      "<tr><td><code>"+k+"</code></td><td><code>"+(v||"(empty)")+"</code></td></tr>").join("");
-  } catch(e){}
-})();
-</script>
 </details>
-<div class="grid">
-<details open><summary>🔧 ManageFeatures</summary>
-<div class="card">
-</details>
-<ul style="padding-left:16px;font-size:12px;margin:4px 0">
-<li>Nginx ConfigVisual Editor (syntax highlight)</li>
-<li>SSL CertificateManage (Let's Encrypt / Self-Signed)</li>
-<li>Upstream / ReverseProxySettings</li>
-<li>TrafficMonitor + AccessLogsi.e.atView</li>
-<li>One-Click Test + Reload Nginx</li>
-<li>Dark mode / Multi-Language</li>
-</ul></div>
-<details open><summary>📋 Architecture</summary>
-<div class="card">
-</details>
-<p>Go binary (Non-Docker Docker, host native)</p>
-<p>Database: SQLite (Built-in)</p>
-<p>Nginx Config: <code>/etc/nginx/</code></p>
-<p>Logs: <code>/usr/local/etc/nginx-ui/</code></p>
+
+<!-- Section 3: Proxy Hosts -->
+<details>
+<summary>🔀 Configured Proxy Hosts</summary>
+<div class="card" style="font-size:12px">
+<table style="width:100%">
+<thead><tr><th>External Port</th><th>Target</th><th>Service</th></tr></thead>
+<tbody>
+<tr><td>:58168 (HTTPS)</td><td>localhost:10000</td><td>Webmin</td></tr>
+<tr><td>:80 (HTTP)</td><td>Various</td><td>Default redirect</td></tr>
+</tbody>
+</table>
+<p style="margin-top:8px;color:#6b7280;font-size:11px">Configure additional hosts via NPM admin panel</p>
 </div>
-<details open><summary>🔀 AlreadyConfigReverseProxy</summary>
-<div class="card">
 </details>
-<table style="font-size:12px"><thead><tr><th>External</th><th>Internal Target</th><th>Description</th></tr></thead><tbody>
-<tr><td>:58168</td><td>:10000</td><td>Webmin HTTPS Proxy</td></tr>
-<tr><td>:59000</td><td>/www/Developer-ms202603jpc/</td><td>Portal Static Site</td></tr>
-<tr><td>:58200</td><td>:9000</td><td>Nginx-UI HTTPS</td></tr>
-</tbody></table></div>
-<details open><summary>🐙 GitHub</summary>
+
+<!-- Section 4: Nginx Config -->
+<details>
+<summary>⚙️ Nginx Server Config</summary>
 <div class="card">
-</details>
-<p><a href="https://github.com/0xJacky/nginx-ui" target="_blank">0xJacky/nginx-ui</a> (16K+ ⭐)</p>
-<p>Install: <code>curl -sSL https://nginxui.com/install.sh | bash</code></p>
-<p>Restart: <code>systemctl restart nginx-ui</code></p></div>
-<details open><summary>📝 Common Operations</summary>
-<div class="card">
-</details>
-<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Test Nginx Config
+<pre style="font-size:11px;background:#fef3e2;padding:8px;border-radius:6px"># Check nginx config:
 nginx -t
 
-# Reload Nginx (No Downtime)
-nginx -s reload
+# Active sites:
+ls /etc/nginx/sites-enabled/
 
-# View Nginx ErrorLogs
-tail -50 /var/log/nginx/error.log
+# Reload nginx:
+sudo systemctl reload nginx
 
-# View Nginx-UI ServiceStatus
-systemctl status nginx-ui
-
-# Nginx-UI Config
-cat /usr/local/etc/nginx-ui/app.ini
-
-# Nginx-UI Update
-curl -sSL https://nginxui.com/install.sh | bash</pre></div>
+# Nginx logs:
+tail -f /var/log/nginx/access.log
+tail -f /var/log/nginx/error.log</pre>
 </div>
+</details>
