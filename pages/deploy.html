@@ -1,168 +1,129 @@
-<!-- Page: 22. Deploy Management -->
+<!-- Page: 22. Deploy Management — Review-Then-Deploy Workflow -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
 <h2>🚀 Deploy Management</h2>
+<p style="color:#6b7280;font-size:12px;margin-bottom:16px">Core workflow: Dev → Git → GitHub → <strong>Review &amp; Approve</strong> → Deploy to target Docker container</p>
 
+<!-- Section 1: Pipeline Status -->
 <details open>
-<summary>📡 Pipeline Status</summary>
-<div class="card" style="border-left:4px solid var(--accent)">
-<div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px" id="deploy-status">
-<div><strong>Portal</strong><br><span id="ds-portal">--</span></div>
-<div><strong>GitHub Mirror</strong><br><span id="ds-mirror">--</span></div>
-<div><strong>Webhook</strong><br><span id="ds-webhook">--</span></div>
-<div><strong>Last Check</strong><br><span id="ds-time">--</span></div>
+<summary>🔧 Pipeline Status</summary>
+<div class="card" id="pipeline-status" style="border-left:4px solid #2ea043;font-size:13px">
+<div style="display:flex;gap:24px;flex-wrap:wrap">
+  <div><strong>Portal</strong><br><span id="ps-portal">...</span></div>
+  <div><strong>GitHub Mirror</strong><br><span id="ps-github">...</span></div>
+  <div><strong>Webhook</strong><br><span id="ps-webhook">...</span></div>
+  <div><strong>Containers</strong><br><span id="ps-containers">...</span></div>
+  <div><strong>Last Check</strong><br><span id="ps-time">...</span></div>
 </div>
 </div>
 </details>
 
+<!-- Section 2: All Repositories + Deploy Targets -->
 <details open>
-<summary>📋 Recent Commits (main branch)</summary>
+<summary>📦 Repositories &amp; Deploy Targets</summary>
 <div class="card" style="overflow-x:auto">
-<table style="width:100%;font-size:12px" id="commits-table">
-<thead><tr><th>SHA</th><th>Message</th><th>Author</th><th>Date</th><th>Action</th></tr></thead>
-<tbody id="commits-body"><tr><td colspan="5">Loading...</td></tr></tbody>
+<table style="width:100%;font-size:12px" id="repos-table">
+<thead><tr><th>Repository</th><th>Description</th><th>Deploy Target</th><th>Method</th><th>Latest Commit</th><th>Action</th></tr></thead>
+<tbody id="repos-body"><tr><td colspan="6" style="text-align:center;color:#6b7280">Loading repositories...</td></tr></tbody>
 </table>
 </div>
 </details>
 
+<!-- Section 3: Review & Approve -->
 <details open>
-<summary>📦 Deploy History</summary>
+<summary>✅ Review &amp; Approve Deployments</summary>
+<div class="card" id="review-section">
+<div id="review-panel" style="font-size:13px">
+  <p style="color:#6b7280">Select a repository and commit above to review before deploying.</p>
+  <div id="review-content" style="display:none">
+    <div style="background:#f6f8fa;border-radius:8px;padding:12px;margin-bottom:12px">
+      <strong>Reviewing:</strong> <span id="rv-repo">—</span> / <span id="rv-sha" style="font-family:monospace">—</span>
+      <br><strong>Message:</strong> <span id="rv-msg">—</span>
+      <br><strong>Author:</strong> <span id="rv-author">—</span> | <strong>Date:</strong> <span id="rv-date">—</span>
+    </div>
+    <div style="margin-bottom:12px">
+      <label><strong>Deploy Target:</strong></label>
+      <select id="rv-target" style="padding:6px 12px;border:1px solid #d0d7de;border-radius:6px;margin-left:8px;font-size:13px">
+        <option value="">— Select target container —</option>
+      </select>
+      <span id="rv-target-info" style="color:#6b7280;font-size:11px;margin-left:8px"></span>
+    </div>
+    <button id="btn-approve" onclick="approveAndDeploy()" style="background:#2ea043;color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px">
+      ✅ Approve &amp; Deploy
+    </button>
+    <button onclick="cancelReview()" style="background:#6b7280;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;margin-left:8px;font-size:13px">Cancel</button>
+    <span id="rv-result" style="margin-left:12px;font-size:13px"></span>
+  </div>
+</div>
+</div>
+</details>
+
+<!-- Section 4: Deploy History -->
+<details open>
+<summary>📋 Deploy History</summary>
 <div class="card" style="overflow-x:auto">
 <table style="width:100%;font-size:12px">
 <thead><tr><th>Timestamp</th><th>Status</th><th>Log</th></tr></thead>
-<tbody id="deploy-history"><tr><td colspan="3">Loading...</td></tr></tbody>
+<tbody id="history-body"><tr><td colspan="3" style="text-align:center;color:#6b7280">Loading...</td></tr></tbody>
 </table>
 </div>
 </details>
 
-<details open>
-<summary>⚡ Manual Deploy</summary>
-<div class="card" style="border-left:4px solid #f59e0b">
-<p style="font-size:12px;margin-bottom:8px">Manually trigger a deploy from the latest main branch commit. This will:</p>
-<ol style="font-size:12px;padding-left:20px;margin:4px 0">
-<li>Backup current portal files</li>
-<li>Clone latest from Forgejo</li>
-<li>Sync files to portal directory</li>
-<li>Fix permissions (644 for HTML, 755 for dirs)</li>
-</ol>
-<button id="deploy-btn" onclick="triggerDeploy()" style="
-  background:var(--accent);color:#fff;border:none;padding:8px 24px;border-radius:6px;
-  font-size:13px;cursor:pointer;margin-top:8px;font-weight:600">
-  🚀 Deploy Now
-</button>
-<span id="deploy-result" style="margin-left:12px;font-size:12px"></span>
-</div>
-</details>
-
+<!-- Section 5: Manual Portal Deploy -->
 <details>
-<summary>ℹ️ CI/CD Architecture</summary>
-<div class="card" style="font-size:12px">
-<pre style="background:#f8f9fa;padding:12px;border-radius:6px;overflow-x:auto;font-size:11px">
-Developer (VSCode/Cursor)
-    │
-    ▼ git push
-Forgejo :53000 (main branch)
-    │
-    ├──▶ Webhook → Deploy Receiver :58190 → webhook-deploy.sh
-    │       └── Backup → Clone → Sync → Permissions
-    │
-    ├──▶ Push Mirror → GitHub (ms2546088/Integration-Portal)
-    │       └── sync_on_commit (auto, ~5s)
-    │
-    └──▶ Woodpecker CI :58090 (pipeline validation)
-            └── .woodpecker.yml → validate → notify
-
-Portal :59000 ◄── Deploy result
-    └── Deploy API :58191 → /api/deploy/{commits,history,status,trigger}
-</pre>
+<summary>⚡ Manual Portal Deploy</summary>
+<div class="card" style="border-left:4px solid #f97316">
+<p>Manually trigger a deploy from the latest main branch commit. This will:</p>
+<ol style="font-size:13px;line-height:1.8"><li>Backup current portal files</li><li>Clone latest from Forgejo</li><li>Sync files to portal directory</li><li>Fix permissions (644 for HTML, 755 for dirs)</li></ol>
+<button onclick="triggerManualDeploy()" style="background:#f97316;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px">⚡ Deploy Now</button>
+<span id="manual-result" style="margin-left:12px;font-size:13px"></span>
 </div>
 </details>
 
-<script>
-const DEPLOY_API = 'http://' + location.hostname + ':58191';
+<!-- Section 6: CI/CD Architecture -->
+<details>
+<summary>🏗️ CI/CD Architecture</summary>
+<div class="card" style="overflow-x:auto;padding:16px">
+<div style="text-align:center;font-size:13px;line-height:2.2">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center">
+    <span style="background:#dbeafe;padding:6px 12px;border-radius:6px;border:2px solid #3b82f6">👨‍💻 Developer</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#fff8f0;padding:6px 12px;border-radius:6px;border:2px solid #f97316">VS Code / Cursor (SSH)</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#dcfce7;padding:6px 12px;border-radius:6px;border:2px solid #22c55e">🦊 Forgejo (:53000)</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#f3e8ff;padding:6px 12px;border-radius:6px;border:2px solid #a855f7">🐙 GitHub Mirror</span>
+  </div>
+  <div style="font-size:24px;margin:4px 0">⬇️ Webhook</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center">
+    <span style="background:#fef3c7;padding:6px 12px;border-radius:6px;border:2px solid #f59e0b">📨 Webhook Receiver (:58190)</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#fff8f0;padding:6px 12px;border-radius:6px;border:2px solid #f97316;font-weight:700">🔍 Portal Review (YOU ARE HERE)</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#dcfce7;padding:6px 12px;border-radius:6px;border:2px solid #22c55e">✅ Approve</span>
+    <span style="font-size:18px">→</span>
+    <span style="background:#dbeafe;padding:6px 12px;border-radius:6px;border:2px solid #3b82f6">🐳 Target Docker</span>
+  </div>
+</div>
+</div>
+</details>
 
-function loadStatus() {
-  fetch(DEPLOY_API + '/api/deploy/status')
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('ds-portal').innerHTML = d.portal_http === '200'
-        ? '<span style="color:#22c55e">✅ HTTP 200</span>' : '<span style="color:#ef4444">❌ ' + d.portal_http + '</span>';
-      document.getElementById('ds-mirror').textContent = d.github_mirror_sync || 'N/A';
-      document.getElementById('ds-webhook').innerHTML = '<span style="color:#22c55e">✅ Active</span>';
-      document.getElementById('ds-time').textContent = d.timestamp;
-    }).catch(() => {
-      document.getElementById('ds-portal').textContent = 'API unavailable';
-    });
-}
-
-function loadCommits() {
-  fetch(DEPLOY_API + '/api/deploy/commits')
-    .then(r => r.json())
-    .then(d => {
-      const tbody = document.getElementById('commits-body');
-      if (!d.commits || d.commits.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5">No commits found</td></tr>';
-        return;
-      }
-      tbody.innerHTML = d.commits.map(c =>
-        `<tr>
-          <td><code>${c.sha}</code></td>
-          <td>${c.message.substring(0, 60)}</td>
-          <td>${c.author}</td>
-          <td>${new Date(c.date).toLocaleString()}</td>
-          <td><a href="http://${location.hostname}:53000/admin958168/Integration-Portal/commit/${c.sha}" target="_blank" style="color:var(--accent)">View</a></td>
-        </tr>`
-      ).join('');
-    }).catch(() => {
-      document.getElementById('commits-body').innerHTML = '<tr><td colspan="5">Failed to load</td></tr>';
-    });
-}
-
-function loadHistory() {
-  fetch(DEPLOY_API + '/api/deploy/history')
-    .then(r => r.json())
-    .then(d => {
-      const tbody = document.getElementById('deploy-history');
-      if (!d.history || d.history.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3">No deploys yet</td></tr>';
-        return;
-      }
-      tbody.innerHTML = d.history.map(h =>
-        `<tr>
-          <td>${h.timestamp}</td>
-          <td style="color:${h.status === 'success' ? '#22c55e' : '#ef4444'}">${h.status === 'success' ? '✅ Success' : '❌ Failed'}</td>
-          <td><code>${h.log_file}</code></td>
-        </tr>`
-      ).join('');
-    }).catch(() => {
-      document.getElementById('deploy-history').innerHTML = '<tr><td colspan="3">Failed to load</td></tr>';
-    });
-}
-
-function triggerDeploy() {
-  const btn = document.getElementById('deploy-btn');
-  const result = document.getElementById('deploy-result');
-  if (!confirm('Deploy latest main branch to Portal? Current files will be backed up first.')) return;
-  btn.disabled = true;
-  btn.textContent = '⏳ Deploying...';
-  result.textContent = '';
-  
-  fetch(DEPLOY_API + '/api/deploy/trigger', { method: 'POST' })
-    .then(r => r.json())
-    .then(d => {
-      result.innerHTML = '<span style="color:#22c55e">✅ Deploy triggered at ' + d.timestamp + '</span>';
-      btn.textContent = '🚀 Deploy Now';
-      btn.disabled = false;
-      setTimeout(() => { loadHistory(); loadStatus(); }, 5000);
-    }).catch(e => {
-      result.innerHTML = '<span style="color:#ef4444">❌ Failed: ' + e.message + '</span>';
-      btn.textContent = '🚀 Deploy Now';
-      btn.disabled = false;
-    });
-}
-
-loadStatus();
-loadCommits();
-loadHistory();
-setInterval(loadStatus, 30000);
-</script>
+<!-- Section 7: Beginner Guide -->
+<details>
+<summary>📚 Beginner Guide (VS Code / Cursor → Git → Deploy)</summary>
+<div class="card" style="font-size:13px;line-height:1.8">
+<h4>For developers with no experience (Windows users)</h4>
+<ol>
+<li><strong>Install VS Code or Cursor</strong> on your Windows machine</li>
+<li><strong>Install Remote-SSH extension</strong> in VS Code/Cursor</li>
+<li><strong>Connect via SSH</strong>: <code>ssh admin958168@10.1.4.201 -p 52200</code> (SSH Docker, isolated)</li>
+<li><strong>Clone repository</strong>: <code>git clone http://10.1.4.201:53000/admin958168/&lt;repo&gt;.git</code></li>
+<li><strong>Edit files</strong> in VS Code/Cursor (remote editing via SSH)</li>
+<li><strong>Commit &amp; Push</strong>: <code>git add . && git commit -m "your changes" && git push</code></li>
+<li><strong>Wait for review</strong>: Your push triggers a webhook notification</li>
+<li><strong>Admin reviews</strong> changes in this Deploy page → selects target → clicks Approve</li>
+<li><strong>Deployment</strong> runs automatically to the selected Docker container</li>
+</ol>
+<p style="color:#f97316;font-weight:600">Important: All commits are mirrored to GitHub automatically. Code review happens in this Portal before deployment.</p>
+</div>
+</details>

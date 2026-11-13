@@ -270,8 +270,128 @@ async function loadVerificationReport() {
   } catch (e) { vr.innerHTML = '<p style="color:#ef4444">API data unavailable: ' + e.message + '</p>'; }
 }
 
+const DEPLOY_API = 'http://10.1.4.201:58191';
+let _deployReviewState = {};
+
 async function loadDeployData() {
-  /* Deploy page scripts auto-load via inline fetch — this is a fallback trigger */
+  loadPipelineStatus();
+  loadReposTable();
+  loadDeployHistory();
+}
+
+async function loadPipelineStatus() {
+  try {
+    const d = await fetch(DEPLOY_API + '/api/deploy/status').then(r => r.json());
+    const el = id => document.getElementById(id);
+    if (el('ps-portal')) el('ps-portal').innerHTML = d.portal_http === '200' ? '✅ HTTP 200' : '❌ ' + d.portal_http;
+    if (el('ps-github')) el('ps-github').textContent = d.github_mirror_sync || '—';
+    if (el('ps-webhook')) el('ps-webhook').innerHTML = '✅ Active';
+    if (el('ps-containers')) el('ps-containers').textContent = (d.containers_healthy||0) + '/' + (d.containers_total||0) + ' healthy';
+    if (el('ps-time')) el('ps-time').textContent = d.timestamp;
+  } catch (e) {}
+}
+
+async function loadReposTable() {
+  try {
+    const d = await fetch(DEPLOY_API + '/api/deploy/repos').then(r => r.json());
+    const tbody = document.getElementById('repos-body');
+    if (!tbody) return;
+    tbody.innerHTML = d.repos.map(r => {
+      const t = r.deploy_target;
+      const latest = (r.latest_commits && r.latest_commits[0]) || {};
+      const tName = t ? t.name : '<span style="color:#6b7280">Not mapped</span>';
+      const method = t ? t.deploy_method : '—';
+      const commitInfo = latest.sha ? latest.sha + ' — ' + (latest.message||'').substring(0,40) : '—';
+      const action = t && latest.sha
+        ? '<button onclick="startReview(\'' + r.name + '\',\'' + (latest.full_sha||latest.sha) + '\',\'' + (latest.message||'').replace(/'/g,'') + '\',\'' + (latest.author||'') + '\',\'' + (latest.date||'') + '\')" style="background:#2ea043;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">Review</button>'
+        : '';
+      return '<tr><td><a href="http://10.1.4.201:53000/admin958168/' + r.name + '" target="_blank">' + r.name + '</a></td>'
+        + '<td>' + (r.description||'').substring(0,35) + '</td>'
+        + '<td>' + tName + '</td><td>' + method + '</td>'
+        + '<td style="font-family:monospace;font-size:11px">' + commitInfo + '</td>'
+        + '<td>' + action + '</td></tr>';
+    }).join('');
+  } catch (e) {}
+}
+
+function startReview(repo, sha, msg, author, date) {
+  _deployReviewState = { repo, sha, msg, author, date };
+  const el = id => document.getElementById(id);
+  el('review-content').style.display = 'block';
+  el('rv-repo').textContent = repo;
+  el('rv-sha').textContent = sha.substring(0, 8);
+  el('rv-msg').textContent = msg;
+  el('rv-author').textContent = author;
+  el('rv-date').textContent = new Date(date).toLocaleString('en-US');
+  el('rv-result').textContent = '';
+  // Load targets into selector
+  fetch(DEPLOY_API + '/api/deploy/targets').then(r => r.json()).then(d => {
+    const sel = el('rv-target');
+    sel.innerHTML = '<option value="">— Select target —</option>';
+    d.targets.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name + ' (' + t.container + ':' + t.port + ')';
+      if (t.repo === repo) { opt.selected = true; }
+      sel.appendChild(opt);
+    });
+  });
+  el('review-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelReview() {
+  document.getElementById('review-content').style.display = 'none';
+  _deployReviewState = {};
+}
+
+async function approveAndDeploy() {
+  const target = document.getElementById('rv-target').value;
+  if (!target) { document.getElementById('rv-result').innerHTML = '❌ Select a target first'; return; }
+  const btn = document.getElementById('btn-approve');
+  btn.disabled = true;
+  btn.textContent = '⏳ Deploying...';
+  try {
+    const resp = await fetch(DEPLOY_API + '/api/deploy/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        repo: _deployReviewState.repo,
+        sha: _deployReviewState.sha,
+        target: target
+      })
+    });
+    const d = await resp.json();
+    document.getElementById('rv-result').innerHTML = d.status === 'approved'
+      ? '✅ Approved! Deploy triggered to <strong>' + (d.approval?.target_name || target) + '</strong>'
+      : '❌ ' + (d.error || 'Unknown error');
+    setTimeout(loadDeployHistory, 3000);
+  } catch (e) {
+    document.getElementById('rv-result').innerHTML = '❌ Error: ' + e.message;
+  }
+  btn.disabled = false;
+  btn.textContent = '✅ Approve & Deploy';
+}
+
+async function loadDeployHistory() {
+  try {
+    const d = await fetch(DEPLOY_API + '/api/deploy/history').then(r => r.json());
+    const tbody = document.getElementById('history-body');
+    if (!tbody) return;
+    tbody.innerHTML = d.history.map(h => {
+      const st = h.status === 'success' ? '✅ Success' : '❌ Failed';
+      return '<tr><td>' + h.timestamp + '</td><td style="color:' + (h.status==='success'?'#2ea043':'#ef4444') + '">' + st + '</td><td>' + h.log + '</td></tr>';
+    }).join('') || '<tr><td colspan="3" style="text-align:center;color:#6b7280">No deploys yet</td></tr>';
+  } catch (e) {}
+}
+
+async function triggerManualDeploy() {
+  const el = document.getElementById('manual-result');
+  el.innerHTML = '⏳ Deploying...';
+  try {
+    const d = await fetch(DEPLOY_API + '/api/deploy/trigger', { method: 'POST' }).then(r => r.json());
+    el.innerHTML = d.status === 'triggered' ? '✅ Deploy triggered' : '❌ ' + (d.message || 'Error');
+    setTimeout(loadDeployHistory, 3000);
+  } catch (e) { el.innerHTML = '❌ ' + e.message; }
 }
 
 document.querySelectorAll('.tab-bar button').forEach(btn => {
