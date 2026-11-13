@@ -1,0 +1,62 @@
+<div class="section">
+<h2>📊 Container Resource Management</h2>
+<p style="color:var(--text2)">View and adjust CPU/Memory allocation per container</p>
+<button onclick="loadResourceData()" style="padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-bottom:12px">🔄 Refresh</button>
+</div>
+
+<div class="section">
+<h2>Resource Allocation</h2>
+<div style="overflow-x:auto">
+<table class="tbl" id="resource-table">
+<tr><th>Container</th><th>CPU (cores)</th><th>Memory (MB)</th><th>Status</th><th>Actions</th></tr>
+<tr><td colspan="5"><em>Loading...</em></td></tr>
+</table>
+</div>
+</div>
+
+<div class="section">
+<h2>System Resources</h2>
+<div id="sys-resources"><em>Loading...</em></div>
+</div>
+
+<div class="section">
+<h2>Update Container Resources</h2>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;align-items:end">
+    <div>
+      <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Container</label>
+      <select id="res-container" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px">
+        <option value="">Select container...</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">CPU (cores, e.g. 0.5)</label>
+      <input type="number" id="res-cpu" step="0.1" min="0.1" max="4" placeholder="0.5" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px">
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Memory (MB, e.g. 512)</label>
+      <input type="number" id="res-memory" step="64" min="32" max="16384" placeholder="512" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px">
+    </div>
+    <div>
+      <button onclick="updateResource()" style="padding:8px 20px;background:#2ea043;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Apply</button>
+    </div>
+  </div>
+  <div id="res-result" style="margin-top:12px;font-size:13px"></div>
+</div>
+</div>
+
+<div class="section">
+<h2>Resource Guidelines</h2>
+<table class="tbl">
+<tr><th>Service Type</th><th>Recommended CPU</th><th>Recommended Memory</th></tr>
+<tr><td>Database (PostgreSQL/MySQL/MSSQL)</td><td>0.5-1.0 cores</td><td>512-2048 MB</td></tr>
+<tr><td>Database (Oracle XE)</td><td>1.0-2.0 cores</td><td>2048-4096 MB</td></tr>
+<tr><td>Git Server (Forgejo)</td><td>0.25-0.5 cores</td><td>256-512 MB</td></tr>
+<tr><td>Web Server (Nginx)</td><td>0.1 cores</td><td>64 MB</td></tr>
+<tr><td>CI/CD (Woodpecker)</td><td>0.5 cores</td><td>256 MB</td></tr>
+<tr><td>Workflow (Windmill)</td><td>0.5-1.0 cores</td><td>512-1024 MB</td></tr>
+<tr><td>SSH Container</td><td>0.25 cores</td><td>128 MB</td></tr>
+<tr><td>Registry</td><td>0.1 cores</td><td>64 MB</td></tr>
+</table>
+<p style="color:var(--text2);margin-top:8px;font-size:12px">Total system: 4 cores, 22GB RAM. Reserved for host: ~2GB. Available for containers: ~20GB.</p>
+</div>

@@ -151,7 +151,8 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="mysql-stack" class="">24. MySQL Stack</button>
   <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
   <button data-tab="ssh-dev" class="">26. SSH Dev</button>
-  <button data-tab="windmill-service" class="">28. Windmill</button>
+  <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">28. Resources</button>
+  <button data-tab="windmill-service" class="">29. Windmill</button>
   <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
   <button data-tab="registry-service" class="">30. Registry</button>
   <button data-tab="smart-update" class="" style="background:#8b5cf6;color:#fff;font-weight:600">31. Smart Update</button>
@@ -274,6 +275,7 @@ function runPageScripts(tabId) {
   if (tabId === 'oracle-stack') { loadStackStatus('oracle', 'oracle-status'); }
   if (tabId === 'ssh-dev') { loadSSHDevData(); }
   if (tabId === 'smart-update') { loadSmartUpdateData(); }
+  if (tabId === 'resource-mgmt') { loadResourceData(); }
   if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
   if (tabId === 'woodpecker-service') { loadStackStatus('woodpecker', 'woodpecker-svc-status'); }
   if (tabId === 'registry-service') { loadStackStatus('registry', 'registry-svc-status'); }
@@ -968,6 +970,67 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// Resource management
+// ══════════════════════════════════════════════════════
+async function loadResourceData() {
+  try {
+    const [res, sys] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/resources').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/system').then(r => r.json())
+    ]);
+    const tbl = document.getElementById('resource-table');
+    if (tbl) {
+      tbl.innerHTML = '<tr><th>Container</th><th>CPU (cores)</th><th>Memory (MB)</th><th>Status</th><th>Actions</th></tr>' +
+        res.containers.map(c => {
+          const cpu = c.cpu_cores !== null ? c.cpu_cores : '<em>unlimited</em>';
+          const mem = c.memory_mb !== null ? c.memory_mb : '<em>unlimited</em>';
+          const st = c.status === 'running' ? '<span style="color:#22c55e">🟢 Running</span>' : '<span style="color:#ef4444">🔴 ' + c.status + '</span>';
+          return '<tr><td>' + c.name + '</td><td>' + cpu + '</td><td>' + mem + '</td><td>' + st + '</td><td><button onclick="prefillResource(\'' + c.name + '\',' + (c.cpu_cores||0.5) + ',' + (c.memory_mb||512) + ')" style="padding:2px 8px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Edit</button></td></tr>';
+        }).join('');
+    }
+    const sel = document.getElementById('res-container');
+    if (sel) {
+      sel.innerHTML = '<option value="">Select container...</option>' +
+        res.containers.map(c => '<option value="' + c.name + '">' + c.name + '</option>').join('');
+    }
+    const sysEl = document.getElementById('sys-resources');
+    if (sysEl && sys.mem_total) {
+      const memPct = Math.round(sys.mem_used / sys.mem_total * 100);
+      sysEl.innerHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">' +
+        '<div style="background:#1a2332;border-radius:8px;padding:12px;text-align:center"><div style="color:#3b82f6;font-size:20px;font-weight:700">' + sys.cpus + '</div><div style="color:#94a3b8;font-size:12px">CPU Cores</div></div>' +
+        '<div style="background:#1a2332;border-radius:8px;padding:12px;text-align:center"><div style="color:#a855f7;font-size:20px;font-weight:700">' + _fmtBytes(sys.mem_used) + '/' + _fmtBytes(sys.mem_total) + '</div><div style="color:#94a3b8;font-size:12px">RAM (' + memPct + '%)</div></div>' +
+        '<div style="background:#1a2332;border-radius:8px;padding:12px;text-align:center"><div style="color:#ec4899;font-size:20px;font-weight:700">' + sys.disk_pct + '</div><div style="color:#94a3b8;font-size:12px">Disk</div></div></div>';
+    }
+  } catch(e) {}
+}
+
+function prefillResource(name, cpu, mem) {
+  document.getElementById('res-container').value = name;
+  document.getElementById('res-cpu').value = cpu;
+  document.getElementById('res-memory').value = mem;
+  document.getElementById('res-result').innerHTML = '<em>Ready to update ' + name + '</em>';
+}
+
+async function updateResource() {
+  const container = document.getElementById('res-container').value;
+  const cpu = parseFloat(document.getElementById('res-cpu').value);
+  const memory = parseInt(document.getElementById('res-memory').value);
+  const el = document.getElementById('res-result');
+  if (!container) { el.innerHTML = '<span style="color:#ef4444">Select a container first</span>'; return; }
+  if (!cpu && !memory) { el.innerHTML = '<span style="color:#ef4444">Set CPU or memory value</span>'; return; }
+  el.innerHTML = '<em>Updating...</em>';
+  try {
+    const body = { container };
+    if (cpu) body.cpu = cpu;
+    if (memory) body.memory = memory * 1048576;
+    const r = await fetch(DOCKER_API + '/api/docker/resource', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (d.error) { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
+    else { el.innerHTML = '<span style="color:#22c55e">✅ Updated ' + container + ' successfully</span>'; loadResourceData(); }
+  } catch(e) { el.innerHTML = '<span style="color:#ef4444">Request failed: ' + e.message + '</span>'; }
+}
 
 // ══════════════════════════════════════════════════════
 // Registry catalog loader
