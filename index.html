@@ -243,7 +243,7 @@ async function loadTab(tabId) {
 }
 
 function runPageScripts(tabId) {
-  if (tabId === 'overview') { renderOverview(); loadVerificationReport(); }
+  if (tabId === 'overview') { renderOverview(); loadVerificationReport(); loadDashboard(); }
   if (tabId === 'deploy') { loadDeployData(); }
   if (tabId === 'docker') { loadDockerData(); }
   if (tabId === 'remote-docker') { /* static page, scan on button click */ }
@@ -324,6 +324,28 @@ async function scanSubnet() {
   } catch (e) {
     el.innerHTML = '<span style="color:#f85149">Scan failed: ' + e.message + '</span>';
   }
+}
+
+async function loadDashboard() {
+  try {
+    const [con, svc, ports, sys] = await Promise.all([
+      fetch(DOCKER_API + '/api/docker/containers').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/service-status').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/ports').then(r => r.json()),
+      fetch(DOCKER_API + '/api/docker/system').then(r => r.json())
+    ]);
+    const el = id => document.getElementById(id);
+    if (el('dash-containers')) el('dash-containers').textContent = con.containers.length;
+    if (el('dash-services')) el('dash-services').textContent = svc.up + '/' + svc.total;
+    if (el('dash-ports')) el('dash-ports').textContent = ports.ports.length;
+    if (el('dash-mem')) {
+      const pct = Math.round(sys.mem_used / sys.mem_total * 100);
+      el('dash-mem').textContent = _fmtBytes(sys.mem_used) + ' (' + pct + '%)';
+    }
+    if (el('dash-disk')) el('dash-disk').textContent = sys.disk_pct;
+    if (el('dash-uptime')) el('dash-uptime').textContent = (sys.uptime || '').replace('up ', '');
+    if (el('dash-time')) el('dash-time').textContent = new Date().toLocaleString();
+  } catch (e) {}
 }
 
 async function loadSOPCheck() {

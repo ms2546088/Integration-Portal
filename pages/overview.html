@@ -1,7 +1,43 @@
 <!-- Page: 01. Overview -->
 <!-- Independent file - DO NOT merge into index.html -->
 <!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>📊 System Overview</h2>
+<h2>📊 System Overview — Live Dashboard</h2>
+
+<!-- Real-time Dashboard from Docker Mgmt API -->
+<details open>
+<summary>🎯 Live Dashboard</summary>
+<div class="card" style="border-left:4px solid #2ea043">
+<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px" id="dashboard-grid">
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:28px;font-weight:700;color:#2ea043" id="dash-containers">--</div>
+    <div style="font-size:11px;color:#6b7280">Containers</div>
+  </div>
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:28px;font-weight:700;color:#58a6ff" id="dash-services">--</div>
+    <div style="font-size:11px;color:#6b7280">Services UP</div>
+  </div>
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:28px;font-weight:700;color:#d29922" id="dash-ports">--</div>
+    <div style="font-size:11px;color:#6b7280">Ports</div>
+  </div>
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:18px;font-weight:700;color:#f0883e" id="dash-mem">--</div>
+    <div style="font-size:11px;color:#6b7280">Memory</div>
+  </div>
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:18px;font-weight:700;color:#bc8cff" id="dash-disk">--</div>
+    <div style="font-size:11px;color:#6b7280">Disk</div>
+  </div>
+  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
+    <div style="font-size:18px;font-weight:700;color:#79c0ff" id="dash-uptime">--</div>
+    <div style="font-size:11px;color:#6b7280">Uptime</div>
+  </div>
+</div>
+<div style="margin-top:8px;font-size:10px;color:#6b7280">
+  <span id="dash-time">--</span> | Data: Docker Mgmt API :58192 | <button onclick="loadDashboard()" style="background:none;border:none;color:#58a6ff;cursor:pointer;font-size:10px">🔄 Refresh</button>
+</div>
+</div>
+</details>
 
 <details open>
 <summary>💚 Live System Health</summary>
@@ -14,7 +50,7 @@
 <div><strong>CPU</strong><br><span id="h-cpu">--</span> cores | Load: <span id="h-load">--</span></div>
 <div><strong>Last Check</strong><br><span id="h-time">--</span></div>
 </div>
-<p style="font-size:11px;color:#6b7280;margin-top:8px">Data source: <code>bash live-status.sh health</code> | Path: <code>/home/admin958168/_docker/ubuntu/live-status.sh</code></p>
+<p style="font-size:11px;color:#6b7280;margin-top:8px">Data source: cron /api/*.json (30s) + Docker Mgmt API :58192</p>
 </div>
 </details>
 
