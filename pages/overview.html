@@ -1,205 +1,147 @@
-<!-- Page: 01. Overview -->
-<!-- Independent file - DO NOT merge into index.html -->
-<!-- Iron Rule: Before maintenance, read /home/admin958168/_ms/轉換要求問題/要求&問題依據真實物理機制已轉換.MD and obey all rules -->
-<h2>📊 System Overview — Live Dashboard</h2>
-
-<!-- Real-time Dashboard from Docker Mgmt API -->
-<details open>
-<summary>🎯 Live Dashboard</summary>
-<div class="card" style="border-left:4px solid #2ea043">
-<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px" id="dashboard-grid">
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:28px;font-weight:700;color:#2ea043" id="dash-containers">--</div>
-    <div style="font-size:11px;color:#6b7280">Containers</div>
+<div class="section">
+<h2>📊 Dashboard</h2>
+<div id="dashboard-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#22c55e" id="dash-containers">-</div>
+    <div style="color:#94a3b8;font-size:12px">Containers</div>
   </div>
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:28px;font-weight:700;color:#58a6ff" id="dash-services">--</div>
-    <div style="font-size:11px;color:#6b7280">Services UP</div>
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#3b82f6" id="dash-services">-</div>
+    <div style="color:#94a3b8;font-size:12px">Services UP</div>
   </div>
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:28px;font-weight:700;color:#d29922" id="dash-ports">--</div>
-    <div style="font-size:11px;color:#6b7280">Ports</div>
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#f97316" id="dash-ports">-</div>
+    <div style="color:#94a3b8;font-size:12px">Active Ports</div>
   </div>
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:18px;font-weight:700;color:#f0883e" id="dash-mem">--</div>
-    <div style="font-size:11px;color:#6b7280">Memory</div>
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#a855f7" id="dash-memory">-</div>
+    <div style="color:#94a3b8;font-size:12px">Memory Used</div>
   </div>
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:18px;font-weight:700;color:#bc8cff" id="dash-disk">--</div>
-    <div style="font-size:11px;color:#6b7280">Disk</div>
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#ec4899" id="dash-disk">-</div>
+    <div style="color:#94a3b8;font-size:12px">Disk Used</div>
   </div>
-  <div style="text-align:center;min-width:100px;padding:12px;background:#1a2332;border-radius:8px">
-    <div style="font-size:18px;font-weight:700;color:#79c0ff" id="dash-uptime">--</div>
-    <div style="font-size:11px;color:#6b7280">Uptime</div>
+  <div style="background:#1a2332;border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:#14b8a6" id="dash-uptime">-</div>
+    <div style="color:#94a3b8;font-size:12px">Uptime</div>
   </div>
 </div>
-<div style="margin-top:8px;font-size:10px;color:#6b7280">
-  <span id="dash-time">--</span> | Data: Docker Mgmt API :58192 | <button onclick="loadDashboard()" style="background:none;border:none;color:#58a6ff;cursor:pointer;font-size:10px">🔄 Refresh</button>
 </div>
-</div>
-</details>
 
-<details open>
-<summary>💚 Live System Health</summary>
-<div class="card" id="live-health" style="border-left:4px solid #2ea043">
-<div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px" id="health-grid">
-<div><strong>Containers</strong><br><span id="h-total">--</span> total / <span id="h-running" style="color:#2ea043">--</span> running</div>
-<div><strong>Memory</strong><br><span id="h-mem">--</span></div>
-<div><strong>Swap</strong><br><span id="h-swap">--</span></div>
-<div><strong>Disk</strong><br><span id="h-disk">--</span></div>
-<div><strong>CPU</strong><br><span id="h-cpu">--</span> cores | Load: <span id="h-load">--</span></div>
-<div><strong>Last Check</strong><br><span id="h-time">--</span></div>
+<div class="section">
+<h2>🔌 All Services & Ports</h2>
+<p style="color:var(--text2);margin-bottom:12px">Complete port allocation map for 10.1.4.201</p>
+<div style="overflow-x:auto">
+<table class="tbl" id="port-map-table">
+<tr><th>Port</th><th>Service</th><th>Type</th><th>Status</th><th>Description</th></tr>
+</table>
 </div>
-<p style="font-size:11px;color:#6b7280;margin-top:8px">Data source: cron /api/*.json (30s) + Docker Mgmt API :58192</p>
 </div>
-</details>
 
-<div class="grid" id="overview-cards"></div>
+<div class="section">
+<h2>🗺️ Architecture Route Map</h2>
+<p style="color:var(--text2);margin-bottom:12px">Service dependency and data flow topology</p>
+<div id="route-diagram" style="background:#0f172a;border-radius:12px;padding:20px;overflow-x:auto;position:relative;min-height:420px">
+  <style>
+    @keyframes flowPulse { 0%{opacity:0.4} 50%{opacity:1} 100%{opacity:0.4} }
+    @keyframes slideIn { from{transform:translateY(10px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .arch-box { border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;text-align:center;display:inline-block;min-width:120px;animation:slideIn 0.5s ease-out both;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative }
+    .arch-box::after { content:'';position:absolute;bottom:-2px;left:10%;width:80%;height:2px;border-radius:2px }
+    .arch-row { display:flex;gap:12px;margin-bottom:16px;align-items:center;flex-wrap:wrap;justify-content:center }
+    .arch-arrow { color:#f97316;font-size:20px;animation:flowPulse 2s infinite;font-weight:bold }
+    .arch-label { color:#94a3b8;font-size:11px;text-align:center;display:block;margin-top:4px }
+  </style>
 
-<details open>
-<summary>🏗️ Service Architecture</summary>
-<div class="card" style="overflow-x:auto;padding:16px">
-<style>
-.arch-flow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;padding:12px 0}
-.arch-node{background:#fff8f0;border:2px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:100px;transition:all .3s;cursor:default;position:relative}
-.arch-node:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 6px 20px rgba(88,166,255,.25)}
-.arch-node strong{display:block;color:var(--accent);font-size:13px}.arch-node small{color:var(--text2);font-size:11px}
-.arch-arrow{font-size:20px;color:var(--success);animation:pulse 2s infinite}
-.arch-layer{border:1px dashed var(--border);border-radius:12px;padding:10px;margin:8px 0;width:100%}
-.arch-layer-title{color:var(--warning);font-size:12px;font-weight:700;margin-bottom:6px}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
-.arch-flow .arch-node{animation:slideIn .5s ease-out backwards}
-.arch-flow .arch-node:nth-child(2){animation-delay:.1s}.arch-flow .arch-node:nth-child(4){animation-delay:.2s}
-.arch-flow .arch-node:nth-child(6){animation-delay:.3s}.arch-flow .arch-node:nth-child(8){animation-delay:.4s}
-</style>
-<div class="arch-layer">
-<div class="arch-layer-title">👤 Developer Layer</div>
-<div class="arch-flow">
-<div class="arch-node"><strong>Developer</strong><small>VSCode/Cursor</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node"><strong>SSH :52200</strong><small>Docker Container</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node"><strong>git push</strong><small>Code Changes</small></div>
-</div></div>
-<div class="arch-layer">
-<div class="arch-layer-title">📦 Version Control + CI/CD Layer</div>
-<div class="arch-flow">
-<div class="arch-node"><strong>🦊 Forgejo :53000</strong><small>Git Server</small></div>
-<span class="arch-arrow">⇄</span>
-<div class="arch-node"><strong>🐙 GitHub</strong><small>Push Mirror</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node"><strong>🪵 Woodpecker :58090</strong><small>CI/CD</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node"><strong>📦 Registry :55000</strong><small>Docker Images</small></div>
-</div></div>
-<div class="arch-layer">
-<div class="arch-layer-title">🔔 Webhook + Review-Then-Deploy Layer</div>
-<div class="arch-flow">
-<div class="arch-node" style="border-color:#f97316"><strong>🔔 Webhook :58190</strong><small>Auto-trigger</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node" style="border-color:#f97316"><strong>📋 Deploy API :58191</strong><small>Review & Approve</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node" style="border-color:#f97316"><strong>🚀 webhook-deploy.sh</strong><small>rsync/compose/coolify</small></div>
-</div></div>
-<div class="arch-layer">
-<div class="arch-layer-title">🚀 Deploy + Management Layer</div>
-<div class="arch-flow">
-<div class="arch-node"><strong>☁️ Coolify :8000</strong><small>Auto Deploy</small></div>
-<span class="arch-arrow">→</span>
-<div class="arch-node"><strong>🔲 Portainer :59009</strong><small>Container Mgmt</small></div>
-<span class="arch-arrow">↔</span>
-<div class="arch-node"><strong>🐳 Docker Mgmt :58192</strong><small>API CRUD</small></div>
-<span class="arch-arrow">↔</span>
-<div class="arch-node"><strong>🐳 Docker Engine</strong><small>24 Containers</small></div>
-</div></div>
-<div class="arch-layer">
-<div class="arch-layer-title">⚙️ Automation + System Layer</div>
-<div class="arch-flow">
-<div class="arch-node"><strong>⚡ Windmill :58100</strong><small>Workflows</small></div>
-<div class="arch-node"><strong>🌐 Nginx-UI :9000</strong><small>Proxy</small></div>
-<div class="arch-node"><strong>🛠️ Webmin :58168</strong><small>System Admin</small></div>
-<div class="arch-node"><strong>🗄️ PostgreSQL :5432</strong><small>Database</small></div>
-</div></div>
+  <div style="text-align:center;color:#e2e8f0;font-size:14px;font-weight:700;margin-bottom:18px">
+    🏗️ Development+Enterprise Integration Architecture
+  </div>
+
+  <!-- Layer 1: Users -->
+  <div class="arch-row" style="animation-delay:0.1s">
+    <div class="arch-box" style="background:#1e40af;color:#bfdbfe">👤 Developer (VSCode/Cursor)<span class="arch-label">SSH / HTTPS</span></div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box" style="background:#1e40af;color:#bfdbfe">🌐 Browser<span class="arch-label">HTTP :59000</span></div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box" style="background:#1e40af;color:#bfdbfe">📱 GitHub<span class="arch-label">Push Mirror</span></div>
+  </div>
+
+  <!-- Layer 2: Gateway -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.2s">
+    <div class="arch-box" style="background:#065f46;color:#a7f3d0">🔒 Nginx :80/:443<span class="arch-label">TLS + Reverse Proxy</span></div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box" style="background:#065f46;color:#a7f3d0">🔑 SSH :22<span class="arch-label">Secure Shell</span></div>
+  </div>
+
+  <!-- Layer 3: Git + CI/CD -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.3s">
+    <div class="arch-box" style="background:#7c2d12;color:#fed7aa">📦 Forgejo :53000<span class="arch-label">Git Server</span></div>
+    <span class="arch-arrow">→ webhook →</span>
+    <div class="arch-box" style="background:#7c2d12;color:#fed7aa">🔔 Webhook :58190<span class="arch-label">Deploy Trigger</span></div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box" style="background:#7c2d12;color:#fed7aa">✅ Deploy API :58191<span class="arch-label">Approve/Reject</span></div>
+  </div>
+
+  <!-- Layer 4: Portal + Management -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.4s">
+    <div class="arch-box" style="background:#581c87;color:#d8b4fe">🏢 Portal :59000<span class="arch-label">WebUI</span></div>
+    <div class="arch-box" style="background:#581c87;color:#d8b4fe">🐳 Docker API :58192<span class="arch-label">17+ Endpoints</span></div>
+    <div class="arch-box" style="background:#581c87;color:#d8b4fe">🔧 Portainer :9000<span class="arch-label">Container Mgmt</span></div>
+    <div class="arch-box" style="background:#581c87;color:#d8b4fe">☁️ Coolify :8000<span class="arch-label">PaaS</span></div>
+  </div>
+
+  <!-- Layer 5: Services -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.5s">
+    <div class="arch-box" style="background:#164e63;color:#a5f3fc">⚡ Windmill :58100<span class="arch-label">Workflow</span></div>
+    <div class="arch-box" style="background:#164e63;color:#a5f3fc">🪵 Woodpecker :58090<span class="arch-label">CI/CD</span></div>
+    <div class="arch-box" style="background:#164e63;color:#a5f3fc">📋 Registry :58200<span class="arch-label">Docker Images</span></div>
+    <div class="arch-box" style="background:#164e63;color:#a5f3fc">🌐 NPM :58181<span class="arch-label">Proxy Manager</span></div>
+  </div>
+
+  <!-- Layer 6: Database -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.6s">
+    <div class="arch-box" style="background:#713f12;color:#fef08a">🐘 PostgreSQL :5432<span class="arch-label">Main DB</span></div>
+    <div class="arch-box" style="background:#713f12;color:#fef08a">🟦 MSSQL :51433<span class="arch-label">iismssql</span></div>
+    <div class="arch-box" style="background:#713f12;color:#fef08a">🐬 MySQL :53306<span class="arch-label">nginxmysql</span></div>
+    <div class="arch-box" style="background:#713f12;color:#fef08a">🔶 Oracle :51521<span class="arch-label">nginxoracle</span></div>
+  </div>
+
+  <!-- Layer 7: OS -->
+  <div style="text-align:center"><span class="arch-arrow" style="font-size:28px">⬇</span></div>
+  <div class="arch-row" style="animation-delay:0.7s">
+    <div class="arch-box" style="background:#1e293b;color:#cbd5e1;border:1px solid #475569">🐧 Ubuntu 26.04 LTS (10.1.4.201)<span class="arch-label">4 Cores | 22GB RAM | Docker 29.9.3</span></div>
+  </div>
 </div>
-</details>
-
-<details open>
-<summary>🔌 All Service Ports</summary>
-<div class="card" style="overflow-x:auto">
-<table style="width:100%;font-size:12px"><thead><tr><th>Port</th><th>Service</th><th>Protocol</th><th>Description</th></tr></thead><tbody>
-<tr><td>22</td><td>SSH (Host)</td><td>TCP</td><td>Ubuntu Host Management</td></tr>
-<tr><td>80</td><td>Nginx</td><td>HTTP</td><td>Reverse Proxy Entry</td></tr>
-<tr><td>443</td><td>Nginx HTTPS</td><td>HTTPS</td><td>TLS Entry</td></tr>
-<tr><td>5432</td><td>PostgreSQL</td><td>TCP</td><td>Coolify/Windmill Shared Database</td></tr>
-<tr><td>8000</td><td>Coolify</td><td>HTTP</td><td>Automation Deploy Platform (Apache-2.0)</td></tr>
-<tr><td>9000</td><td>Nginx-UI</td><td>HTTP</td><td>Nginx Management UI</td></tr>
-<tr><td>51433</td><td>MSSQL</td><td>TCP</td><td>Stack14 SQL Server 2022</td></tr>
-<tr><td>51521</td><td>Oracle</td><td>TCP</td><td>Stack16 Oracle 21c XE</td></tr>
-<tr><td>52200</td><td>SSH Docker</td><td>SSH</td><td>Dev Use Docker Container SSH</td></tr>
-<tr><td>52222</td><td>Forgejo SSH</td><td>SSH</td><td>Git SSH (git clone)</td></tr>
-<tr><td>53000</td><td>Forgejo</td><td>HTTP</td><td>Git Server (GPL-3.0)</td></tr>
-<tr><td>53306</td><td>MySQL</td><td>TCP</td><td>Stack15 MySQL 8.0</td></tr>
-<tr><td>55000</td><td>Registry</td><td>HTTP</td><td>Docker Image Registry</td></tr>
-<tr><td>58080</td><td>SSLH (IIS+MSSQL)</td><td>SSH/HTTP</td><td>Stack14 Multi-Protocol Router</td></tr>
-<tr><td>58081</td><td>SSLH (Nginx+MySQL)</td><td>SSH/HTTP</td><td>Stack15 Multi-Protocol Router</td></tr>
-<tr><td>58082</td><td>SSLH (Oracle)</td><td>SSH/HTTP</td><td>Stack16 Multi-Protocol Router</td></tr>
-<tr><td>58090</td><td>Woodpecker</td><td>HTTP</td><td>CI/CD (Apache-2.0)</td></tr>
-<tr><td>58100</td><td>Windmill</td><td>HTTP</td><td>Workflow Automation (AGPL-3.0)</td></tr>
-<tr><td>58168</td><td>Webmin</td><td>HTTPS</td><td>System Management (BSD)</td></tr>
-<tr><td>58190</td><td>Webhook Receiver</td><td>HTTP</td><td>Forgejo Push Webhook → Auto-deploy</td></tr>
-<tr><td>58191</td><td>Deploy API</td><td>HTTP</td><td>Review-Then-Deploy Approval Workflow</td></tr>
-<tr><td>58192</td><td>Docker Mgmt API</td><td>HTTP</td><td>Container/Port/Network/Resource CRUD</td></tr>
-<tr><td>58300</td><td>Test Deploy</td><td>HTTP</td><td>Coolify Test Deploy</td></tr>
-<tr><td>59000</td><td>Integration Portal</td><td>HTTP</td><td>This Portal (Custom-built)</td></tr>
-<tr><td>59009</td><td>Portainer CE</td><td>HTTP</td><td>Docker Management (Zlib)</td></tr>
-<tr><td>65500</td><td>Coolify Sentinel</td><td>HTTP</td><td>Monitor Proxy</td></tr>
-</tbody></table>
 </div>
-</details>
 
-<details open>
-<summary>🔗 Quick Links</summary>
-<div>
-  <a class="svc-link" href="http://10.1.4.201:59009" target="_blank">🔲 Portainer</a>
-  <a class="svc-link" href="http://10.1.4.201:8000" target="_blank">☁️ Coolify</a>
-  <a class="svc-link" href="http://10.1.4.201:53000" target="_blank">🦊 Forgejo</a>
-  <a class="svc-link" href="http://10.1.4.201:58100" target="_blank">⚡ Windmill</a>
-  <a class="svc-link" href="http://10.1.4.201:58090" target="_blank">🪵 Woodpecker</a>
-  <a class="svc-link" href="http://10.1.4.201:9000" target="_blank">🌐 Nginx-UI</a>
-  <a class="svc-link" href="https://10.1.4.201:58168" target="_blank">🛠️ Webmin</a>
-  <a class="svc-link" href="https://github.com/ms2546088" target="_blank">🐙 GitHub</a>
+<div class="section">
+<h2>📊 Comparison: Local Stack vs N8N vs Argo CD</h2>
+<details>
+<summary style="cursor:pointer;font-weight:600;color:var(--accent)">Click to expand comparison table</summary>
+<table class="tbl" style="margin-top:12px">
+<tr><th>Feature</th><th>This Integration Stack</th><th>N8N</th><th>Argo CD</th></tr>
+<tr><td><strong>Purpose</strong></td><td>Full DevOps + Git + Deploy + Multi-DB</td><td>Workflow automation (iPaaS)</td><td>GitOps CD for Kubernetes</td></tr>
+<tr><td><strong>License</strong></td><td>100% Open Source (MIT/Apache)</td><td>Fair-code (Sustainable Use License)</td><td>Apache 2.0</td></tr>
+<tr><td><strong>Pricing</strong></td><td>Free (self-hosted)</td><td>Free self-host; Cloud from $24/mo</td><td>Free (self-hosted)</td></tr>
+<tr><td><strong>Git Server</strong></td><td>✅ Forgejo (built-in)</td><td>❌ External required</td><td>❌ External required</td></tr>
+<tr><td><strong>CI/CD</strong></td><td>✅ Woodpecker + Webhook deploy</td><td>⚠️ Limited (webhook triggers)</td><td>✅ GitOps sync</td></tr>
+<tr><td><strong>Container Mgmt</strong></td><td>✅ Portainer + Coolify + API</td><td>❌ Not included</td><td>✅ K8s only</td></tr>
+<tr><td><strong>Multi-DB</strong></td><td>✅ PostgreSQL+MSSQL+MySQL+Oracle</td><td>⚠️ Connectors only</td><td>❌ Not included</td></tr>
+<tr><td><strong>WebUI Portal</strong></td><td>✅ Custom 24-page portal</td><td>✅ Node editor</td><td>✅ App dashboard</td></tr>
+<tr><td><strong>Kubernetes</strong></td><td>❌ Docker-native (no K8s needed)</td><td>❌ Docker/K8s optional</td><td>✅ K8s required</td></tr>
+<tr><td><strong>Workflow Engine</strong></td><td>✅ Windmill (Python/TS/Go/Bash)</td><td>✅ Visual workflow</td><td>❌ Not included</td></tr>
+<tr><td><strong>SSH Isolation</strong></td><td>✅ Per-stack SSH (sslh)</td><td>❌ Not included</td><td>❌ Not included</td></tr>
+<tr><td><strong>Unique Strength</strong></td><td>All-in-one: Git→CI→Deploy→Monitor</td><td>400+ integrations, visual flows</td><td>K8s GitOps, auto-sync</td></tr>
+<tr><td><strong>Best For</strong></td><td>Small-to-mid team, Docker-native</td><td>Business automation, iPaaS</td><td>K8s-native orgs</td></tr>
+</table>
+</details>
 </div>
-</details>
 
-<details open>
-<summary>📊 N8N vs Argo CD Comparison (Why NOT Installed)</summary>
-<div class="card" style="overflow-x:auto">
-<table style="width:100%;font-size:12px"><thead>
-<tr><th>Item</th><th style="color:#22c55e">✅ Local (Installed)</th><th style="color:#f59e0b">⚠ N8N</th><th style="color:#ef4444">❌ Argo CD</th></tr>
-</thead><tbody>
-<tr><td>License</td><td>Apache/AGPL/Zlib/MIT</td><td style="color:#ef4444">SULA (Not Open Source)</td><td>Apache-2.0</td></tr>
-<tr><td>Workflow Automation</td><td>Windmill (Python/TS/Go)</td><td>Visual Drag-Drop 400+</td><td>❌ No</td></tr>
-<tr><td>CI/CD</td><td>Woodpecker + Coolify</td><td>❌ No</td><td>GitOps (K8s only)</td></tr>
-<tr><td>Git Integration</td><td>Forgejo→GitHub Mirror</td><td>GitHub Node</td><td>K8s Manifest</td></tr>
-<tr><td>Container Mgmt</td><td>Portainer 24/24</td><td>❌ No</td><td>K8s Pod Only</td></tr>
-<tr><td>Needs Kubernetes</td><td style="color:#22c55e">❌ Not Required</td><td>❌ Not Required</td><td style="color:#ef4444">✅ Required</td></tr>
-<tr><td>RAM</td><td>~3GB (Already Included)</td><td>+500MB~1GB</td><td>+3~4GB (Incl. K8s)</td></tr>
-<tr><td>Feature Coverage</td><td style="color:#22c55e">95%+ (6 Services)</td><td>70% Overlap Windmill</td><td>90% Overlap Coolify</td></tr>
-</tbody></table>
-<p style="color:#ef4444;font-weight:700;margin-top:8px">🚫 Iron Rule: N8N and Argo CD NEVER to be installed. Coolify+Woodpecker+Windmill covers 95%+ features.</p>
+<div class="section">
+<h2>📝 Verification Report</h2>
+<div id="verification-report"><em>Loading...</em></div>
 </div>
-</details>
-
-<details open>
-<summary>📦 Container Status</summary>
-<table><thead><tr><th>Container</th><th>Status</th><th>Image</th></tr></thead><tbody id="container-table"></tbody></table>
-</details>
-
-<details open>
-<summary>✅ Verification Report (Live)</summary>
-<div class="card" id="vr-section" style="border-left:4px solid #2ea043;font-size:13px">
-<p style="color:#6b7280">Loading live verification data...</p>
-</div>
-<!-- VR data loaded by index.html runPageScripts('overview') → loadVerificationReport() -->
-</details>

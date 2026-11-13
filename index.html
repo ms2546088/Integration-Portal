@@ -338,13 +338,22 @@ async function loadDashboard() {
     if (el('dash-containers')) el('dash-containers').textContent = con.containers.length;
     if (el('dash-services')) el('dash-services').textContent = svc.up + '/' + svc.total;
     if (el('dash-ports')) el('dash-ports').textContent = ports.ports.length;
-    if (el('dash-mem')) {
+    if (el('dash-memory')) {
       const pct = Math.round(sys.mem_used / sys.mem_total * 100);
-      el('dash-mem').textContent = _fmtBytes(sys.mem_used) + ' (' + pct + '%)';
+      el('dash-memory').textContent = _fmtBytes(sys.mem_used) + ' (' + pct + '%)';
     }
     if (el('dash-disk')) el('dash-disk').textContent = sys.disk_pct;
     if (el('dash-uptime')) el('dash-uptime').textContent = (sys.uptime || '').replace('up ', '');
-    if (el('dash-time')) el('dash-time').textContent = new Date().toLocaleString();
+    // Populate port map table
+    const tbl = document.getElementById('port-map-table');
+    if (tbl && svc.services) {
+      const rows = Object.entries(svc.services).sort((a,b) => a[1].port - b[1].port).map(([k, v]) => {
+        const st = v.status === 'up' ? '<span style="color:#22c55e;font-weight:700">🟢 UP</span>' : '<span style="color:#ef4444;font-weight:700">🔴 DOWN</span>';
+        const type = v.port < 10000 ? 'Host' : 'Docker/Service';
+        return '<tr><td>:' + v.port + '</td><td>' + k + '</td><td>' + type + '</td><td>' + st + '</td><td>' + v.description + '</td></tr>';
+      }).join('');
+      tbl.innerHTML = '<tr><th>Port</th><th>Service</th><th>Type</th><th>Status</th><th>Description</th></tr>' + rows;
+    }
   } catch (e) {}
 }
 
@@ -943,6 +952,51 @@ async function fetchContainerTable() {
   } catch(e) { /* silent */ }
 }
 fetchContainerTable();
+
+// ══════════════════════════════════════════════════════
+// AUTO-REFRESH: Dashboard + active page every 30 seconds
+// ══════════════════════════════════════════════════════
+let _autoRefreshTimer = null;
+function startAutoRefresh() {
+  if (_autoRefreshTimer) clearInterval(_autoRefreshTimer);
+  _autoRefreshTimer = setInterval(() => {
+    fetchContainerTable();
+    const active = document.querySelector('.tab-bar button.active');
+    if (active) {
+      const tabId = active.getAttribute('onclick')?.match(/switchTab\('([^']+)'/)?.[1];
+      if (tabId && typeof runPageScripts === 'function') runPageScripts(tabId);
+    }
+  }, 30000);
+}
+startAutoRefresh();
+
+// ══════════════════════════════════════════════════════
+// ALERT BANNER: Poll /api/docker/alerts every 30s
+// ══════════════════════════════════════════════════════
+async function checkAlerts() {
+  try {
+    const r = await fetch('http://10.1.4.201:58192/api/docker/alerts?_=' + Date.now());
+    if (!r.ok) return;
+    const d = await r.json();
+    let banner = document.getElementById('alert-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'alert-banner';
+      banner.style.cssText = 'background:#fef2f2;border:2px solid #ef4444;color:#991b1b;padding:10px 20px;font-size:13px;font-weight:600;display:none;text-align:center;position:sticky;top:0;z-index:200;';
+      document.body.insertBefore(banner, document.body.firstChild);
+    }
+    if (d.count > 0) {
+      banner.innerHTML = '⚠️ ALERTS: ' + d.alerts.map(a =>
+        `<span style="margin:0 8px;${a.level==='critical'?'color:#dc2626':'color:#d97706'}">[${a.level.toUpperCase()}] ${a.message}</span>`
+      ).join('');
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
+  } catch(e) { /* silent */ }
+}
+checkAlerts();
+setInterval(checkAlerts, 30000);
 </script>
 </body>
 </html>
