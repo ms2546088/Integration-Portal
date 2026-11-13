@@ -152,7 +152,9 @@ details summary:hover { text-decoration: underline; }
   <button data-tab="oracle-stack" class="">25. Oracle Stack</button>
   <button data-tab="ssh-dev" class="">26. SSH Dev</button>
   <button data-tab="container-mgmt" class="" style="background:#059669;color:#fff;font-weight:600">28. Container Mgmt</button>
-  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">29. Config Editor</button>
+  <button data-tab="log-viewer" class="" style="background:#0891b2;color:#fff;font-weight:600">29. Log Viewer</button>
+  <button data-tab="docker-compose" class="" style="background:#dc2626;color:#fff;font-weight:600">30. Compose Deploy</button>
+  <button data-tab="config-editor" class="" style="background:#d97706;color:#fff;font-weight:600">31. Config Editor</button>
   <button data-tab="resource-mgmt" class="" style="background:#0ea5e9;color:#fff;font-weight:600">29. Resources</button>
   <button data-tab="windmill-service" class="">29. Windmill</button>
   <button data-tab="woodpecker-service" class="">29. Woodpecker CI</button>
@@ -278,6 +280,8 @@ function runPageScripts(tabId) {
   if (tabId === 'ssh-dev') { loadSSHDevData(); }
   if (tabId === 'smart-update') { loadSmartUpdateData(); }
   if (tabId === 'container-mgmt') { loadContainerMgmt(); }
+  if (tabId === 'log-viewer') { loadLogViewerContainers(); }
+  if (tabId === 'docker-compose') { loadComposeFiles(); }
   if (tabId === 'config-editor') { loadConfigList(); }
   if (tabId === 'resource-mgmt') { loadResourceData(); }
   if (tabId === 'windmill-service') { loadStackStatus('windmill', 'windmill-svc-status'); }
@@ -1027,6 +1031,89 @@ async function pullImage() {
     if (d.ok) { el.innerHTML = '<span style="color:#22c55e">✅ Pulled successfully</span>'; loadContainerMgmt(); }
     else { el.innerHTML = '<span style="color:#ef4444">Error: ' + d.error + '</span>'; }
   } catch(e) { el.innerHTML = '<span style="color:#ef4444">Pull failed: ' + e.message + '</span>'; }
+}
+
+// ══════════════════════════════════════════════════════
+// Log viewer
+// ══════════════════════════════════════════════════════
+let _logAutoTimer = null;
+async function loadLogViewerContainers() {
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/containers');
+    const d = await r.json();
+    const sel = document.getElementById('log-container-select');
+    if (sel) {
+      sel.innerHTML = d.containers.map(c => '<option value="' + c.name + '">' + c.name + ' (' + c.state + ')</option>').join('');
+    }
+  } catch(e) {}
+}
+async function viewLogs() {
+  const name = document.getElementById('log-container-select')?.value;
+  const lines = document.getElementById('log-lines')?.value || '100';
+  const pre = document.getElementById('log-output');
+  const title = document.getElementById('log-title');
+  if (!name) return;
+  title.textContent = 'Logs: ' + name + ' (last ' + lines + ' lines)';
+  pre.textContent = 'Loading...';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/container-logs/' + name + '?tail=' + lines);
+    const d = await r.json();
+    pre.textContent = d.logs || '(no output)';
+    pre.scrollTop = pre.scrollHeight;
+  } catch(e) { pre.textContent = 'Error: ' + e.message; }
+}
+async function viewEnv() {
+  const name = document.getElementById('log-container-select')?.value;
+  const sec = document.getElementById('env-section');
+  const out = document.getElementById('env-output');
+  if (!name) return;
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/container-env?name=' + name);
+    const d = await r.json();
+    sec.style.display = 'block';
+    out.innerHTML = d.env.map(e => '<div style="padding:2px 0;border-bottom:1px solid #334155">' + e.replace(/=/, ' <span style="color:#f59e0b">=</span> ') + '</div>').join('');
+  } catch(e) { out.textContent = 'Error: ' + e.message; }
+}
+function autoRefreshLogs() {
+  if (_logAutoTimer) { clearInterval(_logAutoTimer); _logAutoTimer = null; document.getElementById('auto-refresh-btn').textContent = '🔄 Auto-refresh'; return; }
+  _logAutoTimer = setInterval(viewLogs, 5000);
+  document.getElementById('auto-refresh-btn').textContent = '⏸ Stop Auto';
+  viewLogs();
+}
+
+// ══════════════════════════════════════════════════════
+// Docker Compose deploy
+// ══════════════════════════════════════════════════════
+async function loadComposeFiles() {
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/compose-scan', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const d = await r.json();
+    const tbl = document.getElementById('compose-table');
+    if (tbl) {
+      tbl.innerHTML = '<tr><th>Stack</th><th>File</th><th>Exists</th><th>Actions</th></tr>' +
+        d.stacks.map(s => {
+          const ok = s.exists ? '🟢 Yes' : '🔴 No';
+          const btns = s.exists ? (
+            '<button onclick="composeAction(\'' + s.name + '\',\'restart\')" style="padding:2px 8px;background:#f59e0b;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin:1px">⟳ Restart</button>' +
+            '<button onclick="composeAction(\'' + s.name + '\',\'up\')" style="padding:2px 8px;background:#22c55e;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin:1px">▶ Up</button>' +
+            '<button onclick="composeAction(\'' + s.name + '\',\'down\')" style="padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin:1px">⏹ Down</button>' +
+            '<button onclick="composeAction(\'' + s.name + '\',\'pull\')" style="padding:2px 8px;background:#6366f1;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin:1px">📥 Pull</button>'
+          ) : '-';
+          return '<tr><td><strong>' + s.name + '</strong></td><td style="font-size:11px">' + s.path + '</td><td>' + ok + '</td><td>' + btns + '</td></tr>';
+        }).join('');
+    }
+  } catch(e) {}
+}
+async function composeAction(stack, action) {
+  if (!confirm(action.toUpperCase() + ' stack ' + stack + '?')) return;
+  const pre = document.getElementById('compose-output');
+  pre.textContent = action + 'ing ' + stack + '... (may take a while)';
+  try {
+    const r = await fetch(DOCKER_API + '/api/docker/compose-action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({stack, action}) });
+    const d = await r.json();
+    if (d.ok) { pre.textContent = '✅ ' + stack + ' ' + action + ' successful\n\n' + (d.output||''); loadComposeFiles(); }
+    else { pre.textContent = '❌ Error:\n' + (d.error||'unknown'); }
+  } catch(e) { pre.textContent = 'Failed: ' + e.message; }
 }
 
 // ══════════════════════════════════════════════════════

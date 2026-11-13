@@ -1,0 +1,33 @@
+<div class="section">
+<h2>🚀 Docker Compose Deploy</h2>
+<p style="color:var(--text2)">Deploy services using Docker Compose files from registered compose paths</p>
+<button onclick="loadComposeFiles()" style="padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:8px">🔄 Scan Compose Files</button>
+</div>
+
+<div class="section">
+<h2>Registered Compose Files</h2>
+<table class="tbl" id="compose-table">
+<tr><th>Stack</th><th>File</th><th>Status</th><th>Actions</th></tr>
+<tr><td colspan="4"><em>Click "Scan Compose Files"...</em></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Compose Output</h2>
+<pre id="compose-output" style="background:#0f172a;color:#22d3ee;padding:16px;border-radius:8px;font-size:11px;max-height:400px;overflow:auto">No operation performed yet.</pre>
+</div>
+
+<div class="section">
+<h2>Quick Reference</h2>
+<table class="tbl">
+<tr><th>Stack</th><th>Path</th><th>Containers</th></tr>
+<tr><td>iismssql</td><td>_docker/iismssql/docker-compose.yml</td><td>nginx-mssql, mssql2022, sslh-mssql</td></tr>
+<tr><td>nginxmysql</td><td>_docker/nginxmysql/docker-compose.yml</td><td>nginx-mysql, mysql8, sslh-mysql</td></tr>
+<tr><td>nginxoracle</td><td>_docker/nginxoracle/docker-compose.yml</td><td>nginx-oracle, oracle-xe, php-fpm-oracle, sslh-oracle</td></tr>
+<tr><td>ubuntu-ssh</td><td>_docker/ubuntu-ssh/docker-compose.yml</td><td>ubuntu_ssh_container</td></tr>
+<tr><td>portainer</td><td>_docker/_portainer/docker-compose.yml</td><td>portainer</td></tr>
+<tr><td>windmill</td><td>_docker/_windmill/docker-compose.yml</td><td>windmill_server, windmill_worker (x2), windmill_lsp</td></tr>
+<tr><td>woodpecker</td><td>_docker/_woodpecker/docker-compose.yml</td><td>woodpecker-server, woodpecker-agent</td></tr>
+<tr><td>registry</td><td>_docker/_registry/docker-compose.yml</td><td>docker_registry</td></tr>
+</table>
+</div>

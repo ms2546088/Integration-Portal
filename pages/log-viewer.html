@@ -1,0 +1,30 @@
+<div class="section">
+<h2>📋 Container Log Viewer</h2>
+<p style="color:var(--text2)">View real-time container logs and environment variables</p>
+<div style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+  <div>
+    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Container</label>
+    <select id="log-container-select" style="padding:8px;border:1px solid var(--border);border-radius:6px;min-width:200px"></select>
+  </div>
+  <div>
+    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Tail lines</label>
+    <select id="log-lines" style="padding:8px;border:1px solid var(--border);border-radius:6px">
+      <option value="50">50</option><option value="100" selected>100</option>
+      <option value="200">200</option><option value="500">500</option>
+    </select>
+  </div>
+  <button onclick="viewLogs()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">📋 View Logs</button>
+  <button onclick="viewEnv()" style="padding:8px 16px;background:#8b5cf6;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">🔧 Env Vars</button>
+  <button onclick="autoRefreshLogs()" id="auto-refresh-btn" style="padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">🔄 Auto-refresh</button>
+</div>
+</div>
+
+<div class="section" id="env-section" style="display:none">
+<h2>🔧 Environment Variables</h2>
+<div id="env-output" style="background:#1e293b;color:#22d3ee;padding:16px;border-radius:8px;font-family:monospace;font-size:12px;max-height:300px;overflow-y:auto"></div>
+</div>
+
+<div class="section">
+<h2 id="log-title">Logs</h2>
+<pre id="log-output" style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11px;max-height:600px;overflow:auto;white-space:pre-wrap;word-break:break-all"></pre>
+</div>
